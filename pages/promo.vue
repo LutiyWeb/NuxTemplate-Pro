@@ -11,18 +11,19 @@ const PROMO_BANNERS = [
   { gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)', title: 'до -25%', subtitle: 'на аудио и аксессуары' },
 ]
 
-// Dynamic grid: Row A = 5 cards, Row B = 1 span-2 + 3 standard
+// Row A = 5 cards | Row B = horizontal span-2 + 3 cards, alternating left/right
 const rows = computed(() => {
   const products = store.products
-  const result: Array<{ type: 'A' | 'B'; items: typeof products }> = []
+  const result: Array<{ type: 'A' | 'B'; items: typeof products; bIndex?: number }> = []
   let i = 0
   let rowIndex = 0
+  let bIndex = 0
   while (i < products.length) {
     if (rowIndex % 2 === 0) {
       result.push({ type: 'A', items: products.slice(i, i + 5) })
       i += 5
     } else {
-      result.push({ type: 'B', items: products.slice(i, i + 4) })
+      result.push({ type: 'B', items: products.slice(i, i + 4), bIndex: bIndex++ })
       i += 4
     }
     rowIndex++
@@ -56,15 +57,31 @@ const rows = computed(() => {
             <TheProductCard v-for="p in row.items" :key="p.id" :product="p" />
           </div>
           <div v-else class="promo-page__row promo-page__row--b">
-            <NuxtLink :to="`/product/${row.items[0].id}`" class="promo-page__featured">
-              <TheCardHorizontal
-                :image="row.items[0].thumbnail ?? undefined"
-                :title="row.items[0].title"
-                :description="row.items[0].description"
-                :badge="row.items[0].category ?? undefined"
-              />
-            </NuxtLink>
-            <TheProductCard v-for="p in row.items.slice(1)" :key="p.id" :product="p" />
+            <!-- Even bIndex: featured LEFT -->
+            <template v-if="row.bIndex! % 2 === 0">
+              <NuxtLink :to="`/product/${row.items[0].id}`" class="promo-page__featured">
+                <TheCardHorizontal
+                  :image="row.items[0].thumbnail ?? undefined"
+                  :title="row.items[0].title"
+                  :description="row.items[0].description"
+                  :badge="row.items[0].category ?? undefined"
+                />
+              </NuxtLink>
+              <TheProductCard v-for="p in row.items.slice(1)" :key="p.id" :product="p" />
+            </template>
+            <!-- Odd bIndex: featured RIGHT, image mirrored -->
+            <template v-else>
+              <TheProductCard v-for="p in row.items.slice(1)" :key="p.id" :product="p" />
+              <NuxtLink :to="`/product/${row.items[0].id}`" class="promo-page__featured">
+                <TheCardHorizontal
+                  :image="row.items[0].thumbnail ?? undefined"
+                  :title="row.items[0].title"
+                  :description="row.items[0].description"
+                  :badge="row.items[0].category ?? undefined"
+                  image-right
+                />
+              </NuxtLink>
+            </template>
           </div>
         </template>
       </div>
