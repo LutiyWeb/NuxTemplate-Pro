@@ -1,0 +1,173 @@
+<script setup lang="ts">
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Navigation, Pagination, Autoplay } from 'swiper/modules'
+import type { Swiper as SwiperType } from 'swiper'
+import type { RouteLocationRaw } from 'vue-router'
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
+
+type SlideItem = { id: string | number; [key: string]: unknown }
+
+interface Props {
+  slides?: SlideItem[]
+  slidesPerView?: number | 'auto'
+  spaceBetween?: number
+  loop?: boolean
+  autoplay?: boolean
+  autoplayDelay?: number
+  breakpoints?: Record<number, { slidesPerView: number }>
+  title?: string
+  linkLabel?: string
+  linkTo?: RouteLocationRaw
+  linkCount?: number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  slides: () => [] as SlideItem[],
+  slidesPerView: 1,
+  spaceBetween: 12,
+  loop: false,
+  autoplay: false,
+  autoplayDelay: 3000,
+  breakpoints: () => ({}),
+  title: '',
+  linkLabel: '',
+  linkTo: undefined,
+  linkCount: undefined,
+})
+
+
+const swiperRef = ref<SwiperType | null>(null)
+const isBeginning = ref(true)
+const isEnd = ref(false)
+
+function onSwiper(swiper: SwiperType) {
+  swiperRef.value = swiper
+  isBeginning.value = swiper.isBeginning
+  isEnd.value = swiper.isEnd
+}
+
+function onSlideChange() {
+  if (!swiperRef.value) return
+  isBeginning.value = swiperRef.value.isBeginning
+  isEnd.value = swiperRef.value.isEnd
+}
+
+onBeforeUnmount(() => {
+  swiperRef.value?.autoplay?.stop()
+  swiperRef.value = null
+})
+</script>
+
+<template>
+  <div class="the-slider">
+    <div v-if="title" class="the-slider__header">
+      <h2 class="the-slider__title">{{ title }}</h2>
+      <div class="the-slider__controls">
+        <NuxtLink v-if="linkTo && linkLabel" :to="linkTo" class="the-slider__link">
+          {{ linkLabel }}<template v-if="linkCount !== undefined"> ({{ linkCount }})</template>
+        </NuxtLink>
+        <AppArrow direction="left" :disabled="isBeginning" @click="swiperRef?.slidePrev()" />
+        <AppArrow direction="right" :disabled="isEnd" @click="swiperRef?.slideNext()" />
+      </div>
+    </div>
+
+    <ClientOnly>
+      <Swiper
+        :modules="[Navigation, Pagination, Autoplay]"
+        :slides-per-view="slidesPerView"
+        :space-between="spaceBetween"
+        :navigation="!title"
+        :pagination="{ clickable: true }"
+        :loop="loop"
+        :autoplay="autoplay ? { delay: autoplayDelay, disableOnInteraction: false } : false"
+        :breakpoints="breakpoints"
+        class="the-slider__swiper"
+        @swiper="onSwiper"
+        @slide-change="onSlideChange"
+      >
+        <SwiperSlide v-for="slide in slides" :key="slide.id">
+          <slot v-if="slide" :slide="slide" />
+        </SwiperSlide>
+      </Swiper>
+    </ClientOnly>
+  </div>
+</template>
+
+<style lang="scss">
+.the-slider {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  &__title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $color-gray-900;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__link {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-primary;
+    margin-right: 8px;
+    transition: color $transition-fast;
+
+    &:hover { color: $color-primary-dark; }
+  }
+
+
+  &__swiper {
+    overflow: hidden;
+    border-radius: $radius-xl;
+    padding-block-start: 12px;
+    padding-block-end: 40px;
+  }
+
+  :deep(.swiper-slide) {
+    display: flex;
+    height: auto;
+  }
+
+  :deep(.swiper-pagination-bullet) {
+    background: $color-gray-300;
+    opacity: 1;
+  }
+
+  :deep(.swiper-pagination-bullet-active) {
+    background: $color-primary;
+  }
+
+}
+
+.the-slider__swiper {
+  --swiper-navigation-color: #{$color-gray-500};
+  --swiper-navigation-size: 20px;
+}
+
+.the-slider__swiper .swiper-button-prev,
+.the-slider__swiper .swiper-button-next {
+  width: 20px;
+  height: 20px;
+  padding: 14px;
+  box-sizing: content-box;
+  transition: opacity $transition-fast;
+
+  &::after { font-weight: 700; }
+}
+
+.the-slider__swiper .swiper-button-prev:hover,
+.the-slider__swiper .swiper-button-next:hover {
+  opacity: 0.6;
+}
+</style>

@@ -1,0 +1,20 @@
+@use 'variables' as *;
+
+@mixin respond-to($bp) {
+  @if $bp == sm  { @media (min-width: $breakpoint-sm)  { @content; } }
+  @if $bp == md  { @media (min-width: $breakpoint-md)  { @content; } }
+  @if $bp == lg  { @media (min-width: $breakpoint-lg)  { @content; } }
+  @if $bp == xl  { @media (min-width: $breakpoint-xl)  { @content; } }
+  @if $bp == 2xl { @media (min-width: $breakpoint-2xl) { @content; } }
+}
+
+@mixin shimmer {
+  background: linear-gradient(90deg, $color-gray-100 25%, $color-gray-200 50%, $color-gray-100 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
