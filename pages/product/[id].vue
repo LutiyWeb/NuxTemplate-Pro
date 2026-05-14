@@ -140,7 +140,7 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
         </ClientOnly>
       </div>
 
-      <!-- Info -->
+      <!-- Info  -->
       <div class="pdp__info">
         <NuxtLink
           v-if="product.categorySlug"
@@ -231,6 +231,9 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
         </table>
       </div>
     </div>
+
+    <!-- Reviews -->
+    <ProductReviews v-if="product" :product-id="product.id" />
   </div>
 </template>
 
