@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Product } from '~/types/product'
-import { ShoppingCart } from 'lucide-vue-next'
+import { ShoppingCart, Heart } from 'lucide-vue-next'
 
 interface Props { product?: Product; loading?: boolean }
 withDefaults(defineProps<Props>(), { loading: false })
@@ -8,6 +8,8 @@ withDefaults(defineProps<Props>(), { loading: false })
 const NuxtLink = resolveComponent('NuxtLink')
 
 const cartStore = useCartStore()
+const favoritesStore = useFavoritesStore()
+const authStore = useAuthStore()
 const uiStore = useUiStore()
 
 const toastVisible = ref(false)
@@ -18,6 +20,11 @@ function handleCartClick(product: Product) {
   toastVisible.value = true
   if (toastTimer) clearTimeout(toastTimer)
   toastTimer = setTimeout(() => { toastVisible.value = false }, 2000)
+}
+
+function handleFavClick(product: Product) {
+  if (!authStore.isLoggedIn) { uiStore.authModalOpen = true; return }
+  favoritesStore.toggle(product.id)
 }
 
 onUnmounted(() => { if (toastTimer) clearTimeout(toastTimer) })
@@ -51,6 +58,16 @@ onUnmounted(() => { if (toastTimer) clearTimeout(toastTimer) })
         </div>
       </template>
     </div>
+
+    <!-- Fav button — always visible -->
+    <button
+      v-if="!loading && product"
+      :class="['product-card__fav-btn', { 'product-card__fav-btn--active': favoritesStore.has(product.id) }]"
+      type="button"
+      @click.prevent="handleFavClick(product)"
+    >
+      <Heart :size="14" :fill="favoritesStore.has(product.id) ? 'currentColor' : 'none'" />
+    </button>
 
     <div v-if="!loading && product" class="product-card__overlay">
       <p v-if="toastVisible" class="product-card__toast">Товар добавлен в корзину</p>
@@ -151,6 +168,28 @@ onUnmounted(() => { if (toastTimer) clearTimeout(toastTimer) })
     font-size: $font-size-base;
     font-weight: $font-weight-bold;
     color: $color-gray-900;
+  }
+
+  &__fav-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    border-radius: $radius-full;
+    background: $color-white;
+    border: 1px solid $color-gray-100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $color-gray-400;
+    z-index: 2;
+    transition: color $transition-fast, background $transition-fast, border-color $transition-fast;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 8%);
+
+    &:hover { color: $color-danger; border-color: $color-danger; }
+    &--active { color: $color-danger; border-color: rgb(239 68 68 / 30%); }
   }
 
   &__overlay {

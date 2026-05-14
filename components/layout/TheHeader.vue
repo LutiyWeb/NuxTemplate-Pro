@@ -11,24 +11,9 @@ const route = useRoute()
 const isSidebarOpen = ref(false)
 const isCatalogOpen = ref(false)
 const isSearchOpen = ref(false)
-const isCartOpen = ref(false)
-
-function openCart() {
-  if (!process.client) return
-  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
-  document.body.style.paddingRight = `${scrollbarWidth}px`
-  document.body.style.overflow = 'hidden'
-  isCartOpen.value = true
-}
-
-function closeCart() {
-  document.body.style.paddingRight = ''
-  document.body.style.overflow = ''
-  isCartOpen.value = false
-}
 
 function handleCart() {
-  openCart()
+  navigateTo('/cart')
 }
 
 function handleUser() {
@@ -51,7 +36,6 @@ function onKeydown(e: KeyboardEvent) {
     isCatalogOpen.value = false
     isSearchOpen.value = false
     isSidebarOpen.value = false
-    closeCart()
   }
 }
 
@@ -99,7 +83,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
           </span>
         </button>
 
-        <button class="the-header__action-btn" type="button" @click="handleUser">
+        <button class="the-header__action-btn" type="button" @click="authStore.isLoggedIn ? router.push('/cabinet?section=favorites') : uiStore.authModalOpen = true">
           <Heart :size="20" />
           <span v-if="favoritesStore.count" class="the-header__badge">{{ favoritesStore.count }}</span>
         </button>
@@ -119,7 +103,6 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
   <HeaderSearchOverlay :open="isSearchOpen" @close="isSearchOpen = false" />
   <HeaderSidebar :open="isSidebarOpen" @close="isSidebarOpen = false" />
   <HeaderAuthModal v-model:open="uiStore.authModalOpen" />
-  <CartModal v-model:open="isCartOpen" @update:open="(v) => { if (!v) closeCart() }" />
 </template>
 
 <style lang="scss">
