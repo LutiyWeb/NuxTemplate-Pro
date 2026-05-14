@@ -56,7 +56,14 @@ const rows = computed(() => {
             <TheProductCard v-for="p in row.items" :key="p.id" :product="p" />
           </div>
           <div v-else class="promo-page__row promo-page__row--b">
-            <TheProductCard class="promo-page__span2" :product="row.items[0]" />
+            <NuxtLink :to="`/product/${row.items[0].id}`" class="promo-page__featured">
+              <TheCardHorizontal
+                :image="row.items[0].thumbnail ?? undefined"
+                :title="row.items[0].title"
+                :description="row.items[0].description"
+                :badge="row.items[0].category ?? undefined"
+              />
+            </NuxtLink>
             <TheProductCard v-for="p in row.items.slice(1)" :key="p.id" :product="p" />
           </div>
         </template>
@@ -93,7 +100,7 @@ const rows = computed(() => {
     gap: 12px;
 
     &--a { grid-template-columns: repeat(5, 1fr); }
-    &--b { grid-template-columns: repeat(4, 1fr); }
+    &--b { grid-template-columns: repeat(5, 1fr); }
 
     @media (max-width: 1024px) {
       &--a { grid-template-columns: repeat(3, 1fr); }
@@ -105,10 +112,13 @@ const rows = computed(() => {
     }
   }
 
-  &__span2 {
+  &__featured {
     grid-column: span 2;
+    display: block;
 
-    @media (max-width: 640px) { grid-column: span 1; }
+    .card-horizontal { height: 100%; }
+
+    @media (max-width: 640px) { grid-column: span 2; }
   }
 }
 </style>
