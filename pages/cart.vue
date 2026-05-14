@@ -52,6 +52,10 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
 
 <template>
   <div class="cart-page container">
+    <AppBreadcrumbs
+      :crumbs="[{ label: 'Главная', to: '/' }, { label: 'Корзина' }]"
+      class="cart-page__breadcrumbs"
+    />
     <h1 class="cart-page__heading">Корзина <span class="cart-page__count">{{ cartStore.count }}</span></h1>
 
     <!-- Empty -->
@@ -149,6 +153,8 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
   display: flex;
   flex-direction: column;
   gap: 40px;
+
+  &__breadcrumbs { margin-bottom: -24px; }
 
   &__heading {
     font-size: $font-size-2xl;

@@ -114,10 +114,14 @@ onUnmounted(() => {
     top: 50%;
     transform: translateY(-50%);
     box-shadow: $shadow-sm;
+    opacity: 0;
+    transition: opacity $transition-fast;
 
     &--left { left: 0; }
     &--right { right: 0; }
   }
+
+  &:hover &__arrow { opacity: 1; }
 
   &__skeleton {
     @include mixins.shimmer;

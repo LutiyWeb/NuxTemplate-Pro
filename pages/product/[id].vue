@@ -76,9 +76,15 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
 
 <template>
   <div class="pdp container">
-    <NuxtLink to="/catalog" class="pdp__back">
-      <AppArrow direction="left" /> Назад в каталог
-    </NuxtLink>
+    <AppBreadcrumbs
+      :crumbs="[
+        { label: 'Главная', to: '/' },
+        { label: 'Каталог', to: '/catalog' },
+        { label: product?.category ?? '...', to: product?.categorySlug ? `/catalog?categorySlug=${product.categorySlug}` : '/catalog' },
+        { label: product?.title ?? '...' },
+      ]"
+      class="pdp__breadcrumbs"
+    />
 
     <!-- Loading -->
     <div v-if="loading" class="pdp__layout">
@@ -232,16 +238,7 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
 .pdp {
   padding-block: 32px;
 
-  &__back {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: $font-size-sm;
-    color: $color-gray-500;
-    margin-bottom: 24px;
-    transition: color $transition-fast;
-    &:hover { color: $color-primary; }
-  }
+  &__breadcrumbs { margin-bottom: 24px; }
 
   &__layout {
     display: grid;

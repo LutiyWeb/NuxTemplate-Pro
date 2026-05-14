@@ -90,7 +90,10 @@ onUnmounted(() => { if (toastTimer) clearTimeout(toastTimer) })
   height: 100%;
   border-radius: $radius-xl;
   background: $color-white;
-  box-shadow: 2px 0 10px rgb(0 0 0 / 10%);
+  box-shadow:
+    -6px 0 16px -6px rgb(0 0 0 / 8%),
+    6px 0 16px -6px rgb(0 0 0 / 8%),
+    0 8px 20px -4px rgb(0 0 0 / 10%);
   overflow: hidden;
   cursor: pointer;
   transition: box-shadow $transition-base, transform $transition-base;
@@ -98,7 +101,10 @@ onUnmounted(() => { if (toastTimer) clearTimeout(toastTimer) })
   color: inherit;
 
   &:hover:not(&--loading) {
-    box-shadow: 0 0 10px rgb(0 0 0 / 11%);
+    box-shadow:
+      -6px 0 24px -6px rgb(0 0 0 / 12%),
+      6px 0 24px -6px rgb(0 0 0 / 12%),
+      0 14px 28px -4px rgb(0 0 0 / 16%);
     transform: translateY(-3px);
   }
 
@@ -226,8 +232,8 @@ onUnmounted(() => { if (toastTimer) clearTimeout(toastTimer) })
   }
 
   &__cart-btn {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     background: $color-gray-100;
     border: 1px solid $color-gray-200;
     border-radius: $radius-md;
