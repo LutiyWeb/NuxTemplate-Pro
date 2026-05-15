@@ -134,6 +134,10 @@ onBeforeUnmount(() => {
     padding-block-end: 40px;
   }
 
+  :deep(.swiper-wrapper) {
+    align-items: stretch;
+  }
+
   :deep(.swiper-slide) {
     display: flex;
     height: auto;
