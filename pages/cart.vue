@@ -245,7 +245,7 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
     }
   }
 
-  &__bulk-delete { color: $color-danger !important; }
+  &__bulk-delete { color: $color-danger; }
 
   // Confirm bar
   &__confirm {

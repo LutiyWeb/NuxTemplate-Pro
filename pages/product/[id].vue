@@ -267,7 +267,7 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
   &__main-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
 
   &__thumbs { margin-top: 8px; }
-  &__thumb-slide { width: 72px !important; }
+  &__thumb-slide { width: 72px; }
 
   &__thumb-img {
     width: 72px;
