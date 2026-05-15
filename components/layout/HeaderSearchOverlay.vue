@@ -5,7 +5,8 @@ import {
   Camera, Watch, Gamepad2, Home, Package, Cpu, Tv,
 } from 'lucide-vue-next'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-import { FreeMode } from 'swiper/modules'
+import { Navigation } from 'swiper/modules'
+import 'swiper/css/navigation'
 import type { Component } from 'vue'
 import type { Product } from '~/types/product'
 
@@ -258,17 +259,17 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
               </section>
 
               <!-- Trending Now -->
-              <section v-if="trendingProducts.length" class="search-modal__section search-modal__section--last">
+              <section v-if="trendingProducts.length" class="search-modal__section search-modal__section--last search-modal__section--trending">
                 <div class="search-modal__section-head">
                   <span class="search-modal__section-title"><TrendingUp :size="13" />Trending Now</span>
                 </div>
                 <ClientOnly>
                   <Swiper
-                    :modules="[FreeMode]"
-                    :free-mode="true"
-                    :slides-per-view="2.4"
+                    :modules="[Navigation]"
+                    navigation
+                    :slides-per-view="2"
                     :space-between="10"
-                    :breakpoints="{ 540: { slidesPerView: 3.4 }, 768: { slidesPerView: 4.4 }, 1024: { slidesPerView: 5.4 } }"
+                    :breakpoints="{ 480: { slidesPerView: 3 }, 768: { slidesPerView: 4 }, 1024: { slidesPerView: 5 } }"
                     class="search-modal__trending"
                   >
                     <SwiperSlide v-for="p in trendingProducts" :key="p.id">
@@ -384,13 +385,10 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
 </template>
 
 <style lang="scss">
-// ─── Modal backdrop ────────────────────────────────────────────────────────────
+// ─── Positioning wrapper (backdrop provided by AppBackdrop in layout) ─────────
 .search-modal {
   position: fixed;
   inset: 0;
-  background: rgb(0 0 0 / 55%);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   z-index: $z-modal-overlay;
   display: flex;
   align-items: flex-start;
@@ -457,13 +455,16 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
   overflow-y: auto;
   overflow-x: hidden;
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 // ─── Sections ─────────────────────────────────────────────────────────────────
 .search-modal__section {
   padding: 16px 20px 0;
 
-  &--last { padding-bottom: 16px; }
+  &--last     { padding-bottom: 16px; }
+  &--trending { margin-top: auto; border-top: 1px solid $color-gray-100; }
 }
 
 .search-modal__section-head {
@@ -563,6 +564,24 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
 // ─── Trending Swiper ──────────────────────────────────────────────────────────
 .search-modal__trending {
   overflow: hidden;
+
+  --swiper-navigation-color: #{$color-gray-500};
+  --swiper-navigation-size: 16px;
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    width: 28px;
+    height: 28px;
+    background: $color-white;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-full;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 8%);
+    top: 30%;
+
+    &::after { font-size: 10px; font-weight: 700; }
+    &:hover { background: $color-gray-50; }
+    &.swiper-button-disabled { opacity: 0.3; }
+  }
 }
 
 .search-modal__trend-card {

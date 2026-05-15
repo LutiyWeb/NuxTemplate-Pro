@@ -8,10 +8,6 @@ const uiStore = useUiStore()
 const router = useRouter()
 const route = useRoute()
 
-const isSidebarOpen = ref(false)
-const isCatalogOpen = ref(false)
-const isSearchOpen = ref(false)
-
 function handleCart() {
   navigateTo('/cart')
 }
@@ -22,37 +18,27 @@ function handleUser() {
 }
 
 function toggleCatalog() {
-  isCatalogOpen.value = !isCatalogOpen.value
-  if (isCatalogOpen.value) isSearchOpen.value = false
+  uiStore.catalogOpen = !uiStore.catalogOpen
+  if (uiStore.catalogOpen) uiStore.searchOpen = false
 }
 
 function toggleSearch() {
-  isSearchOpen.value = !isSearchOpen.value
-  if (isSearchOpen.value) isCatalogOpen.value = false
-}
-
-function onKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape') {
-    isCatalogOpen.value = false
-    isSearchOpen.value = false
-    isSidebarOpen.value = false
-  }
+  uiStore.searchOpen = !uiStore.searchOpen
+  if (uiStore.searchOpen) uiStore.catalogOpen = false
 }
 
 watch(() => route.path, () => {
-  isCatalogOpen.value = false
-  isSearchOpen.value = false
+  uiStore.catalogOpen = false
+  uiStore.searchOpen  = false
 })
 
-onMounted(() => document.addEventListener('keydown', onKeydown))
-onUnmounted(() => document.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
   <header class="the-header">
     <div class="the-header__inner container">
       <!-- Mobile burger -->
-      <button class="the-header__burger" type="button" @click="isSidebarOpen = true">
+      <button class="the-header__burger" type="button" @click="uiStore.sidebarOpen = true">
         <Menu :size="22" />
       </button>
 
@@ -62,7 +48,7 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
       <!-- Desktop nav -->
       <div class="the-header__nav">
         <button
-          :class="['the-header__catalog-btn', { 'the-header__catalog-btn--active': isCatalogOpen }]"
+          :class="['the-header__catalog-btn', { 'the-header__catalog-btn--active': uiStore.catalogOpen }]"
           type="button"
           @click="toggleCatalog"
         >
@@ -95,13 +81,11 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
       </div>
     </div>
 
-    <HeaderCatalogMenu :open="isCatalogOpen" @close="isCatalogOpen = false" />
+    <HeaderCatalogMenu :open="uiStore.catalogOpen" @close="uiStore.catalogOpen = false" />
   </header>
 
-  <div v-if="isCatalogOpen" class="catalog-backdrop" @click="isCatalogOpen = false" />
-
-  <HeaderSearchOverlay :open="isSearchOpen" @close="isSearchOpen = false" />
-  <HeaderSidebar :open="isSidebarOpen" @close="isSidebarOpen = false" />
+  <HeaderSearchOverlay :open="uiStore.searchOpen" @close="uiStore.searchOpen = false" />
+  <HeaderSidebar :open="uiStore.sidebarOpen" @close="uiStore.sidebarOpen = false" />
   <HeaderAuthModal v-model:open="uiStore.authModalOpen" />
 </template>
 
@@ -220,16 +204,4 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
   }
 }
 
-.catalog-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: calc(#{$z-dropdown} - 1);
-  background: rgb(0 0 0 / 50%);
-  animation: fadeIn 0.15s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
 </style>
