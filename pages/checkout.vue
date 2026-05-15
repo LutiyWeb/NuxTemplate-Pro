@@ -87,6 +87,13 @@ function selectAddress(addr: Address) {
   applyAddress(addr)
 }
 
+const ERROR_MESSAGES: Record<string, string> = {
+  ADDRESS_NOT_FOUND:      'Адрес не найден. Выберите другой.',
+  CART_EMPTY:             'Корзина пуста.',
+  CART_ITEM_UNAVAILABLE:  'Один из товаров больше недоступен.',
+  NOT_ENOUGH_STOCK:       'Недостаточно товара на складе.',
+}
+
 async function submit() {
   errors.value = {}
   const result = schema.safeParse(form)
@@ -100,31 +107,26 @@ async function submit() {
 
   submitting.value = true
   try {
-    // TODO: replace with real API call when /api/orders is ready
-    // const res = await authFetch('/api/orders', {
-    //   method: 'POST',
-    //   body: {
-    //     deliveryAddress: {
-    //       recipientName: form.recipientName,
-    //       phone: form.phone,
-    //       city: form.city,
-    //       street: form.street,
-    //       house: form.house,
-    //       apartment: form.apartment || undefined,
-    //     },
-    //     notes: form.notes || undefined,
-    //   },
-    // })
-    // cartStore.clear()
-    // navigateTo(`/order/${res.data.id}`)
+    const body = selectedAddressId.value
+      ? { addressId: selectedAddressId.value, notes: form.notes || undefined }
+      : {
+          deliveryAddress: {
+            recipientName: form.recipientName,
+            phone: form.phone,
+            city: form.city,
+            street: form.street,
+            house: form.house,
+            apartment: form.apartment || undefined,
+          },
+          notes: form.notes || undefined,
+        }
 
-    // Temporary: just show toast and clear cart
-    await new Promise(r => setTimeout(r, 800))
+    const res = await authFetch<{ data: { id: number } }>('/api/orders', { method: 'POST', body })
     cartStore.clear()
-    toastStore.add('Заказ успешно оформлен!')
-    navigateTo('/')
-  } catch {
-    toastStore.add('Не удалось оформить заказ. Попробуйте снова.', 'error')
+    navigateTo(`/order/${res.data.id}`)
+  } catch (err: unknown) {
+    const msg = (err as { data?: { error?: { message?: string } } })?.data?.error?.message
+    toastStore.add(ERROR_MESSAGES[msg ?? ''] ?? 'Не удалось оформить заказ. Попробуйте снова.', 'error')
   } finally {
     submitting.value = false
   }

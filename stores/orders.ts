@@ -1,46 +1,51 @@
 import { defineStore } from 'pinia'
+import type { Order, OrderStatus } from '~/types/order'
 
-export interface OrderItem {
-  id: number
-  productId: number
-  title: string
-  thumbnail: string | null
-  price: number
-  qty: number
+const STATUS_LABELS: Record<OrderStatus, string> = {
+  pending:    'Ожидает подтверждения',
+  confirmed:  'Подтверждён',
+  processing: 'Обрабатывается',
+  shipped:    'В пути',
+  delivered:  'Доставлен',
+  cancelled:  'Отменён',
 }
 
-export interface Order {
-  id: number
-  number: string
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled'
-  total: number
-  createdAt: string
-  items: OrderItem[]
-}
-
-const STATUS_LABELS: Record<Order['status'], string> = {
-  pending: 'Ожидает подтверждения',
-  confirmed: 'Подтверждён',
-  shipped: 'В пути',
-  delivered: 'Доставлен',
-  cancelled: 'Отменён',
+const STATUS_COLOR: Record<OrderStatus, string> = {
+  pending:    'warning',
+  confirmed:  'primary',
+  processing: 'primary',
+  shipped:    'info',
+  delivered:  'success',
+  cancelled:  'danger',
 }
 
 export const useOrdersStore = defineStore('orders', () => {
-  const orders = ref<Order[]>([])
+  const { authFetch } = useAuthFetch()
+
+  const orders  = ref<Order[]>([])
   const loading = ref(false)
+  const meta    = ref({ page: 1, limit: 20, total: 0, totalPages: 1 })
 
-  // TODO: replace with real API call when /api/orders is ready
-  async function fetchOrders() {
+  async function fetchOrders(page = 1) {
     loading.value = true
-    await new Promise(r => setTimeout(r, 600))
-    orders.value = []
-    loading.value = false
+    try {
+      const res = await authFetch<{ data: Order[]; meta: typeof meta.value }>('/api/orders', {
+        params: { page, limit: 20 },
+      })
+      orders.value = res.data
+      meta.value   = res.meta
+    } finally {
+      loading.value = false
+    }
   }
 
-  function getStatusLabel(status: Order['status']) {
-    return STATUS_LABELS[status]
+  function getStatusLabel(status: OrderStatus) { return STATUS_LABELS[status] ?? status }
+  function getStatusColor(status: OrderStatus) { return STATUS_COLOR[status] ?? 'primary' }
+
+  function formatMoney(value: string, currency = 'UAH') {
+    const num = parseFloat(value)
+    return isNaN(num) ? value : num.toLocaleString('uk-UA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + currency
   }
 
-  return { orders, loading, fetchOrders, getStatusLabel }
+  return { orders, loading, meta, fetchOrders, getStatusLabel, getStatusColor, formatMoney }
 })
