@@ -137,7 +137,7 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
         title="Рекомендуем"
         :slides="recommendations"
         :space-between="16"
-        :breakpoints="{ 0: { slidesPerView: 2 }, 640: { slidesPerView: 3 }, 1024: { slidesPerView: 4 } }"
+        :breakpoints="{ 0: { slidesPerView: 2 }, 640: { slidesPerView: 3 }, 1024: { slidesPerView: 4 }, 1280: { slidesPerView: 5 } }"
       >
         <template #default="slotProps">
           <TheProductCard v-if="slotProps?.slide" :product="(slotProps.slide as any)" />
