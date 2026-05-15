@@ -84,10 +84,7 @@ function handleFavClick(product: Product) {
   flex: 1 1 0;
   border-radius: $radius-xl;
   background: $color-white;
-  box-shadow:
-    -6px 0 16px -6px rgb(0 0 0 / 8%),
-    6px 0 16px -6px rgb(0 0 0 / 8%),
-    0 8px 20px -4px rgb(0 0 0 / 10%);
+  box-shadow: $shadow-card;
   overflow: hidden;
   cursor: pointer;
   transition: box-shadow $transition-base, transform $transition-base;
@@ -95,10 +92,7 @@ function handleFavClick(product: Product) {
   color: inherit;
 
   &:hover:not(&--loading) {
-    box-shadow:
-      -6px 0 24px -6px rgb(0 0 0 / 12%),
-      6px 0 24px -6px rgb(0 0 0 / 12%),
-      0 14px 28px -4px rgb(0 0 0 / 16%);
+    box-shadow: $shadow-card-hover;
     transform: translateY(-3px);
   }
 

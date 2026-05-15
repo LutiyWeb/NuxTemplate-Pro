@@ -38,20 +38,14 @@ withDefaults(defineProps<Props>(), { loading: false, imageRight: false })
   grid-template-columns: 280px 1fr;
   border-radius: $radius-xl;
   background: $color-white;
-  box-shadow:
-    -6px 0 16px -6px rgb(0 0 0 / 6%),
-    6px 0 16px -6px rgb(0 0 0 / 6%),
-    0 8px 20px -4px rgb(0 0 0 / 8%);
+  box-shadow: $shadow-card;
   overflow: hidden;
   width: 100%;
   cursor: pointer;
   transition: box-shadow $transition-base, transform $transition-base;
 
   &:hover {
-    box-shadow:
-      -6px 0 24px -6px rgb(0 0 0 / 10%),
-      6px 0 24px -6px rgb(0 0 0 / 10%),
-      0 14px 28px -4px rgb(0 0 0 / 14%);
+    box-shadow: $shadow-card-hover;
     transform: translateY(-2px);
   }
 

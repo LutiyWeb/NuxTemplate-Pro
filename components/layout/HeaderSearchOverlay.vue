@@ -5,8 +5,7 @@ import {
   Camera, Watch, Gamepad2, Home, Package, Cpu, Tv,
 } from 'lucide-vue-next'
 import { Swiper, SwiperSlide } from 'swiper/vue'
-import { Navigation } from 'swiper/modules'
-import 'swiper/css/navigation'
+import type { Swiper as SwiperType } from 'swiper'
 import type { Component } from 'vue'
 import type { Product } from '~/types/product'
 
@@ -183,7 +182,26 @@ watch(() => props.open, async (val) => {
   }
 })
 
-onBeforeUnmount(() => clearTimeout(debounceTimer))
+// ─── Trending slider nav ──────────────────────────────────────────────────────
+const trendingSwiper   = ref<SwiperType | null>(null)
+const trendingBegin    = ref(true)
+const trendingEnd      = ref(false)
+
+function onTrendingSwiper(swiper: SwiperType) {
+  trendingSwiper.value = swiper
+  trendingBegin.value  = swiper.isBeginning
+  trendingEnd.value    = swiper.isEnd
+}
+function onTrendingChange() {
+  if (!trendingSwiper.value) return
+  trendingBegin.value = trendingSwiper.value.isBeginning
+  trendingEnd.value   = trendingSwiper.value.isEnd
+}
+
+onBeforeUnmount(() => {
+  clearTimeout(debounceTimer)
+  trendingSwiper.value = null
+})
 </script>
 
 <template>
@@ -262,15 +280,19 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
               <section v-if="trendingProducts.length" class="search-modal__section search-modal__section--last search-modal__section--trending">
                 <div class="search-modal__section-head">
                   <span class="search-modal__section-title"><TrendingUp :size="13" />Trending Now</span>
+                  <div class="search-modal__trending-controls">
+                    <AppArrow direction="left"  :disabled="trendingBegin" @click="trendingSwiper?.slidePrev()" />
+                    <AppArrow direction="right" :disabled="trendingEnd"   @click="trendingSwiper?.slideNext()" />
+                  </div>
                 </div>
                 <ClientOnly>
                   <Swiper
-                    :modules="[Navigation]"
-                    navigation
                     :slides-per-view="2"
                     :space-between="10"
                     :breakpoints="{ 480: { slidesPerView: 3 }, 768: { slidesPerView: 4 }, 1024: { slidesPerView: 5 } }"
                     class="search-modal__trending"
+                    @swiper="onTrendingSwiper"
+                    @slide-change="onTrendingChange"
                   >
                     <SwiperSlide v-for="p in trendingProducts" :key="p.id">
                       <NuxtLink :to="`/product/${p.id}`" class="search-modal__trend-card" @click="closeModal">
@@ -399,7 +421,7 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
 // ─── Box ───────────────────────────────────────────────────────────────────────
 .search-modal__box {
   width: 100%;
-  max-width: 720px;
+  max-width: 864px;
   background: $color-white;
   border-radius: $radius-xl;
   box-shadow: 0 24px 64px -12px rgb(0 0 0 / 28%), 0 4px 16px rgb(0 0 0 / 10%);
@@ -562,26 +584,13 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
 }
 
 // ─── Trending Swiper ──────────────────────────────────────────────────────────
+.search-modal__trending-controls {
+  display: flex;
+  gap: 6px;
+}
+
 .search-modal__trending {
   overflow: hidden;
-
-  --swiper-navigation-color: #{$color-gray-500};
-  --swiper-navigation-size: 16px;
-
-  .swiper-button-prev,
-  .swiper-button-next {
-    width: 28px;
-    height: 28px;
-    background: $color-white;
-    border: 1px solid $color-gray-200;
-    border-radius: $radius-full;
-    box-shadow: 0 2px 6px rgb(0 0 0 / 8%);
-    top: 30%;
-
-    &::after { font-size: 10px; font-weight: 700; }
-    &:hover { background: $color-gray-50; }
-    &.swiper-button-disabled { opacity: 0.3; }
-  }
 }
 
 .search-modal__trend-card {
@@ -694,15 +703,12 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
   text-decoration: none;
   color: inherit;
   cursor: pointer;
-  transition: background $transition-fast;
-  box-shadow:
-    -3px 0 8px -3px rgb(0 0 0 / 5%),
-    3px 0 8px -3px rgb(0 0 0 / 5%),
-    0 4px 10px -3px rgb(0 0 0 / 7%);
+  transition: background $transition-fast, box-shadow $transition-fast;
+  box-shadow: $shadow-card;
   background: $color-white;
 
   &:hover,
-  &--focused { background: $color-gray-50; }
+  &--focused { background: $color-gray-50; box-shadow: $shadow-card-hover; }
 }
 
 .search-modal__product-img {
