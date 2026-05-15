@@ -135,12 +135,12 @@ onBeforeUnmount(() => {
   }
 
   :deep(.swiper-wrapper) {
-    align-items: stretch;
+    align-items: stretch !important;
   }
 
   :deep(.swiper-slide) {
     display: flex;
-    height: auto;
+    height: auto !important;
   }
 
   :deep(.swiper-pagination-bullet) {
