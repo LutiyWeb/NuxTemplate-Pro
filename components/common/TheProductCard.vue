@@ -11,23 +11,17 @@ const cartStore = useCartStore()
 const favoritesStore = useFavoritesStore()
 const authStore = useAuthStore()
 const uiStore = useUiStore()
-
-const toastVisible = ref(false)
-let toastTimer: ReturnType<typeof setTimeout> | null = null
+const toastStore = useToastStore()
 
 function handleCartClick(product: Product) {
   cartStore.add(product)
-  toastVisible.value = true
-  if (toastTimer) clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => { toastVisible.value = false }, 2000)
+  toastStore.add('Товар добавлен в корзину', 'success')
 }
 
 function handleFavClick(product: Product) {
   if (!authStore.isLoggedIn) { uiStore.authModalOpen = true; return }
   favoritesStore.toggle(product.id)
 }
-
-onUnmounted(() => { if (toastTimer) clearTimeout(toastTimer) })
 </script>
 
 <template>
@@ -70,7 +64,6 @@ onUnmounted(() => { if (toastTimer) clearTimeout(toastTimer) })
     </button>
 
     <div v-if="!loading && product" class="product-card__overlay">
-      <p v-if="toastVisible" class="product-card__toast">Товар добавлен в корзину</p>
       <div class="product-card__actions">
         <span class="product-card__cta">Подробнее</span>
         <button class="product-card__cart-btn" type="button" @click.prevent="handleCartClick(product)">
@@ -245,16 +238,6 @@ onUnmounted(() => { if (toastTimer) clearTimeout(toastTimer) })
     transition: background $transition-fast, color $transition-fast;
 
     &:hover { background: $color-primary; color: $color-white; border-color: $color-primary; }
-  }
-
-  &__toast {
-    background: $color-gray-900;
-    color: $color-white;
-    border-radius: $radius-md;
-    font-size: $font-size-xs;
-    text-align: center;
-    padding: 6px 10px;
-    margin: 0;
   }
 
   // Shimmer elements

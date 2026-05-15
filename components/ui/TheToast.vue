@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { CheckCircle, XCircle, Info, X } from 'lucide-vue-next'
+import { CheckCircle2, XCircle, AlertTriangle, X } from 'lucide-vue-next'
 
 const toastStore = useToastStore()
 
-const ICONS = { success: CheckCircle, error: XCircle, info: Info }
+const ICONS = {
+  success: CheckCircle2,
+  error: XCircle,
+  warning: AlertTriangle,
+}
 </script>
 
 <template>
@@ -42,32 +46,50 @@ const ICONS = { success: CheckCircle, error: XCircle, info: Info }
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 16px;
+  padding: 14px 16px;
   border-radius: $radius-lg;
   background: $color-white;
-  box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+  box-shadow: 0 4px 20px rgb(0 0 0 / 12%);
   border: 1px solid $color-gray-100;
+  border-left: 4px solid transparent;
   pointer-events: all;
-  min-width: 280px;
-  max-width: 360px;
+  min-width: 300px;
+  max-width: 380px;
 
-  &--success &__icon { color: $color-success; }
-  &--error   &__icon { color: $color-danger; }
-  &--info    &__icon { color: $color-primary; }
+  &--success {
+    border-left-color: $color-success;
+    .toast__icon { color: $color-success; }
+  }
 
-  &__msg { flex: 1; font-size: $font-size-sm; color: $color-gray-800; }
+  &--error {
+    border-left-color: $color-danger;
+    .toast__icon { color: $color-danger; }
+  }
+
+  &--warning {
+    border-left-color: $color-warning;
+    .toast__icon { color: $color-warning; }
+  }
+
+  &__msg {
+    flex: 1;
+    font-size: $font-size-sm;
+    color: $color-gray-800;
+    line-height: $line-height-relaxed;
+  }
 
   &__close {
     color: $color-gray-400;
     cursor: pointer;
     display: flex;
     flex-shrink: 0;
+    transition: color $transition-fast;
     &:hover { color: $color-gray-700; }
   }
 }
 
-.toast-enter-active { transition: all 0.25s ease; }
+.toast-enter-active { transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
 .toast-leave-active { transition: all 0.2s ease; }
-.toast-enter-from   { opacity: 0; transform: translateX(40px); }
-.toast-leave-to     { opacity: 0; transform: translateX(40px); }
+.toast-enter-from   { opacity: 0; transform: translateX(48px); }
+.toast-leave-to     { opacity: 0; transform: translateX(48px); }
 </style>

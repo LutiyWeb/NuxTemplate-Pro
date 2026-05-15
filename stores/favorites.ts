@@ -33,7 +33,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${authStore.token}` },
           })
-          toastStore.add('Товар удалён из избранного', 'info')
+          toastStore.add('Товар удалён из избранного', 'warning')
         }
       } catch {
         // Rollback on error
@@ -42,7 +42,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
         toastStore.add('Не удалось обновить избранное', 'error')
       }
     } else {
-      if (adding) toastStore.add('Войдите, чтобы сохранить в избранное', 'info')
+      if (adding) toastStore.add('Войдите, чтобы сохранить в избранное', 'warning')
     }
   }
 
