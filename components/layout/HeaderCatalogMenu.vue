@@ -3,12 +3,17 @@ defineProps<{ open: boolean }>()
 defineEmits<{ close: [] }>()
 
 const categoriesStore = useCategoriesStore()
+const activeId = ref<number | null>(null)
+
+function activate(id: number) {
+  activeId.value = id
+}
 </script>
 
 <template>
   <Transition name="catalog-menu">
     <div v-if="open" class="catalog-menu" @click.self="$emit('close')">
-      <div class="catalog-menu__inner container">
+      <div class="catalog-menu__inner container" @mouseleave="activeId = null">
         <div
           v-for="cat in categoriesStore.categories"
           :key="cat.id"
@@ -16,11 +21,12 @@ const categoriesStore = useCategoriesStore()
         >
           <NuxtLink
             :to="`/catalog?categorySlug=${cat.slug}`"
-            class="catalog-menu__parent"
+            :class="['catalog-menu__parent', { 'catalog-menu__parent--active': activeId === cat.id }]"
+            @mouseenter="activate(cat.id)"
             @click="$emit('close')"
           >{{ cat.name }}</NuxtLink>
 
-          <div class="catalog-menu__subs">
+          <div v-show="activeId === cat.id" class="catalog-menu__subs">
             <NuxtLink
               v-for="sub in cat.subcategories"
               :key="sub.id"
@@ -54,15 +60,6 @@ const categoriesStore = useCategoriesStore()
     position: relative;
     display: flex;
     align-items: flex-start;
-
-    &:hover .catalog-menu__subs {
-      display: flex;
-    }
-
-    &:hover .catalog-menu__parent {
-      color: $color-primary;
-      background: $color-gray-50;
-    }
   }
 
   &__parent {
@@ -75,7 +72,11 @@ const categoriesStore = useCategoriesStore()
     border-radius: $radius-md;
     transition: color $transition-fast, background $transition-fast;
 
-    &:hover { color: $color-primary; }
+    &:hover,
+    &--active {
+      color: $color-primary;
+      background: $color-gray-50;
+    }
   }
 
   &__subs {
