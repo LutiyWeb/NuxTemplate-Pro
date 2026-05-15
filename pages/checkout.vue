@@ -122,7 +122,7 @@ async function submit() {
         }
 
     const res = await authFetch<{ data: { id: number } }>('/api/orders', { method: 'POST', body })
-    cartStore.clear()
+    await cartStore.clear()
     navigateTo(`/order/${res.data.id}`)
   } catch (err: unknown) {
     const msg = (err as { data?: { error?: { message?: string } } })?.data?.error?.message

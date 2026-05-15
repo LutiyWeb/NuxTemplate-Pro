@@ -13,7 +13,9 @@ const emit = defineEmits<{
   updateQty: [number, number]
 }>()
 
-const cartStore = useCartStore()
+function formatPrice(p: number) {
+  return p.toLocaleString('uk-UA') + ' ₴'
+}
 </script>
 
 <template>
@@ -37,7 +39,7 @@ const cartStore = useCartStore()
       <NuxtLink :to="`/product/${item.product.id}`" class="cart-item__title">
         {{ item.product.title }}
       </NuxtLink>
-      <span class="cart-item__price">${{ item.product.price }}</span>
+      <span class="cart-item__price">{{ formatPrice(item.product.price) }}</span>
     </div>
 
     <div class="cart-item__qty">
