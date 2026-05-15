@@ -406,6 +406,7 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
   border-radius: $radius-xl;
   box-shadow: 0 24px 64px -12px rgb(0 0 0 / 28%), 0 4px 16px rgb(0 0 0 / 10%);
   overflow: hidden;
+  min-height: 500px;
   max-height: calc(100vh - 96px);
   display: flex;
   flex-direction: column;
@@ -454,6 +455,7 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
 // ─── Body ─────────────────────────────────────────────────────────────────────
 .search-modal__body {
   overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
 }
 
@@ -560,9 +562,7 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
 
 // ─── Trending Swiper ──────────────────────────────────────────────────────────
 .search-modal__trending {
-  overflow: visible;
-  margin-inline: -20px;
-  padding-inline: 20px;
+  overflow: hidden;
 }
 
 .search-modal__trend-card {
@@ -579,6 +579,10 @@ onBeforeUnmount(() => clearTimeout(debounceTimer))
   border-radius: $radius-lg;
   background: $color-gray-100;
   overflow: hidden;
+  box-shadow:
+    -3px 0 8px -3px rgb(0 0 0 / 8%),
+    3px 0 8px -3px rgb(0 0 0 / 8%),
+    0 4px 12px -3px rgb(0 0 0 / 10%);
 
   img { width: 100%; height: 100%; object-fit: cover; }
 }
