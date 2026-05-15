@@ -80,7 +80,7 @@ function activate(id: number) {
   }
 
   &__subs {
-    display: none;
+    display: flex;
     position: absolute;
     left: 220px;
     top: 0;

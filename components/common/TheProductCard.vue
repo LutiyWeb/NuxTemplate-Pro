@@ -109,7 +109,7 @@ onUnmounted(() => { if (toastTimer) clearTimeout(toastTimer) })
   }
 
   &__media {
-    aspect-ratio: 3 / 2;
+    aspect-ratio: 15 / 7;
     background: $color-gray-100;
     display: flex;
     align-items: center;
