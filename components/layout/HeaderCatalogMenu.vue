@@ -3,10 +3,23 @@ defineProps<{ open: boolean }>()
 defineEmits<{ close: [] }>()
 
 const categoriesStore = useCategoriesStore()
-const activeId = ref<number | null>(null)
+const activeId      = ref<number | null>(null)
+const isOverflowing = ref(false)
+
+const rowEls:  Record<number, HTMLElement> = {}
+const subsEls: Record<number, HTMLElement> = {}
 
 function activate(id: number) {
   activeId.value = id
+
+  const rowEl  = rowEls[id]
+  const subsEl = subsEls[id]
+  if (!rowEl || !subsEl) { isOverflowing.value = false; return }
+
+  const rowRect   = rowEl.getBoundingClientRect()
+  const subsHeight = subsEl.offsetHeight
+
+  isOverflowing.value = window.innerHeight - rowRect.top < subsHeight
 }
 </script>
 
@@ -17,6 +30,7 @@ function activate(id: number) {
         <div
           v-for="cat in categoriesStore.categories"
           :key="cat.id"
+          :ref="el => { if (el) rowEls[cat.id] = el as HTMLElement }"
           class="catalog-menu__row"
         >
           <NuxtLink
@@ -26,7 +40,15 @@ function activate(id: number) {
             @click="$emit('close')"
           >{{ cat.name }}</NuxtLink>
 
-          <div v-show="activeId === cat.id" class="catalog-menu__subs">
+          <div
+            v-if="cat.subcategories?.length"
+            :ref="el => { if (el) subsEls[cat.id] = el as HTMLElement }"
+            :class="[
+              'catalog-menu__subs',
+              { 'catalog-menu__subs--active': activeId === cat.id },
+              { 'catalog-menu__subs--flip':   activeId === cat.id && isOverflowing },
+            ]"
+          >
             <NuxtLink
               v-for="sub in cat.subcategories"
               :key="sub.id"
@@ -81,13 +103,31 @@ function activate(id: number) {
 
   &__subs {
     display: flex;
+    flex-direction: column;
     position: absolute;
     left: 220px;
     top: 0;
-    flex-direction: column;
     padding: 0 16px;
     min-width: 240px;
     border-left: 1px solid $color-gray-100;
+
+    // скрыто по умолчанию — но остаётся в DOM для измерения высоты
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity $transition-fast;
+
+    &--active {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    // если не помещается снизу — растём вверх
+    &--flip {
+      top: auto;
+      bottom: 0;
+    }
   }
 
   &__sub {
