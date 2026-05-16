@@ -27,6 +27,9 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [svgLoader()],
+    server: {
+      hmr: { port: 24678 },
+    },
     css: {
       preprocessorOptions: {
         scss: {
@@ -50,6 +53,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
+      isDev: process.env.NODE_ENV !== 'production',
     },
   },
 

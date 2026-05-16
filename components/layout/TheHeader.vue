@@ -58,6 +58,10 @@ watch(() => route.path, () => {
         <button class="the-header__search-btn" type="button" @click="toggleSearch">
           <Search :size="16" /> Поиск
         </button>
+
+        <NuxtLink v-if="$config.public.isDev" to="/ui" class="the-header__dev-link">
+          Dev: UI Kit
+        </NuxtLink>
       </div>
 
       <!-- Actions -->
@@ -157,6 +161,21 @@ watch(() => route.path, () => {
     transition: background $transition-fast;
 
     &:hover { background: $color-gray-100; }
+  }
+
+  &__dev-link {
+    font-size: 11px;
+    font-weight: $font-weight-semibold;
+    color: $color-white;
+    background: $color-primary;
+    padding: 4px 10px;
+    border-radius: $radius-sm;
+    text-decoration: none;
+    opacity: 0.75;
+    letter-spacing: 0.02em;
+    transition: opacity $transition-fast;
+
+    &:hover { opacity: 1; }
   }
 
   &__actions {
