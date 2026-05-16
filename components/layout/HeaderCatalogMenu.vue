@@ -6,20 +6,25 @@ const categoriesStore = useCategoriesStore()
 const activeId      = ref<number | null>(null)
 const isOverflowing = ref(false)
 
-const rowEls:  Record<number, HTMLElement> = {}
-const subsEls: Record<number, HTMLElement> = {}
+const rowEls: Record<number, HTMLElement> = {}
+
+// padding-top + padding-bottom + line-height ≈ 9 + 9 + 14*1.5 = 39px
+const SUB_ROW_HEIGHT = 39
 
 function activate(id: number) {
   activeId.value = id
 
-  const rowEl  = rowEls[id]
-  const subsEl = subsEls[id]
-  if (!rowEl || !subsEl) { isOverflowing.value = false; return }
+  const rowEl = rowEls[id]
+  if (!rowEl) { isOverflowing.value = false; return }
 
-  const rowRect   = rowEl.getBoundingClientRect()
-  const subsHeight = subsEl.offsetHeight
+  const cat = categoriesStore.categories.find(c => c.id === id)
+  const subCount = cat?.subcategories?.length ?? 0
 
-  isOverflowing.value = window.innerHeight - rowRect.top < subsHeight
+  const rowRect        = rowEl.getBoundingClientRect()
+  const estimatedHeight = subCount * SUB_ROW_HEIGHT
+
+  // +8px буфер чтобы не обрезалась последняя строка
+  isOverflowing.value = window.innerHeight - rowRect.top < estimatedHeight + 8
 }
 </script>
 
@@ -42,7 +47,6 @@ function activate(id: number) {
 
           <div
             v-if="cat.subcategories?.length"
-            :ref="el => { if (el) subsEls[cat.id] = el as HTMLElement }"
             :class="[
               'catalog-menu__subs',
               { 'catalog-menu__subs--active': activeId === cat.id },
