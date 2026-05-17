@@ -5,7 +5,11 @@ import type { Product } from '~/types/product'
 const { authFetch } = useAuthFetch()
 const favoritesStore = useFavoritesStore()
 
-interface FavoriteEntry { id: number; productId: number; product: Product }
+interface FavoriteEntry {
+  id: number
+  productId: number
+  product: Product
+}
 
 const favorites = ref<FavoriteEntry[]>([])
 const loading = ref(true)
@@ -17,7 +21,7 @@ async function load() {
   try {
     const res = await authFetch<{ data: FavoriteEntry[] }>('/api/favorites')
     favorites.value = res.data
-    favoritesStore.ids = favorites.value.map(f => f.productId)
+    favoritesStore.ids = favorites.value.map((f) => f.productId)
   } catch {
     error.value = true
   } finally {
@@ -28,8 +32,8 @@ async function load() {
 async function remove(productId: number) {
   try {
     await authFetch(`/api/favorites/${productId}`, { method: 'DELETE' })
-    favorites.value = favorites.value.filter(f => f.productId !== productId)
-    favoritesStore.ids = favorites.value.map(f => f.productId)
+    favorites.value = favorites.value.filter((f) => f.productId !== productId)
+    favoritesStore.ids = favorites.value.map((f) => f.productId)
   } catch {}
 }
 
@@ -53,19 +57,33 @@ onMounted(load)
       <Heart :size="48" class="cab-fav__empty-icon" />
       <p class="cab-fav__empty-title">Список избранного пуст</p>
       <p class="cab-fav__empty-desc">Добавляйте товары в избранное, чтобы не потерять их</p>
-      <AppButton variant="primary" size="md" @click="navigateTo('/catalog')">Перейти в каталог</AppButton>
+      <AppButton variant="primary" size="md" @click="navigateTo('/catalog')"
+        >Перейти в каталог</AppButton
+      >
     </div>
 
     <div v-else class="cab-fav__grid">
       <div v-for="fav in favorites" :key="fav.id" class="cab-fav__card">
         <NuxtLink :to="`/product/${fav.productId}`" class="cab-fav__img-wrap">
-          <img v-if="fav.product.thumbnail" :src="fav.product.thumbnail" :alt="fav.product.title" class="cab-fav__img" />
+          <img
+            v-if="fav.product.thumbnail"
+            :src="fav.product.thumbnail"
+            :alt="fav.product.title"
+            class="cab-fav__img"
+          />
         </NuxtLink>
         <div class="cab-fav__body">
-          <NuxtLink :to="`/product/${fav.productId}`" class="cab-fav__name">{{ fav.product.title }}</NuxtLink>
+          <NuxtLink :to="`/product/${fav.productId}`" class="cab-fav__name">{{
+            fav.product.title
+          }}</NuxtLink>
           <div class="cab-fav__footer">
             <span class="cab-fav__price">${{ fav.product.price }}</span>
-            <button class="cab-fav__remove" type="button" title="Убрать из избранного" @click="remove(fav.productId)">
+            <button
+              class="cab-fav__remove"
+              type="button"
+              title="Убрать из избранного"
+              @click="remove(fav.productId)"
+            >
               <Heart :size="16" fill="currentColor" />
             </button>
           </div>
@@ -93,8 +111,12 @@ onMounted(load)
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
-    @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
-    @media (max-width: 480px) { grid-template-columns: 1fr; }
+    @media (max-width: 900px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
   }
 
   &__card {
@@ -102,14 +124,33 @@ onMounted(load)
     border-radius: $radius-xl;
     overflow: hidden;
     transition: box-shadow $transition-fast;
-    &:hover { box-shadow: 0 4px 16px rgb(0 0 0 / 8%); }
+    &:hover {
+      box-shadow: 0 4px 16px rgb(0 0 0 / 8%);
+    }
   }
 
-  &__img-wrap { display: block; aspect-ratio: 4/3; overflow: hidden; background: $color-gray-50; }
-  &__img { width: 100%; height: 100%; object-fit: cover; transition: transform $transition-base; }
-  &__card:hover &__img { transform: scale(1.04); }
+  &__img-wrap {
+    display: block;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    background: $color-gray-50;
+  }
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform $transition-base;
+  }
+  &__card:hover &__img {
+    transform: scale(1.04);
+  }
 
-  &__body { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  &__body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
   &__name {
     font-size: $font-size-sm;
@@ -119,18 +160,29 @@ onMounted(load)
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    &:hover { color: $color-primary; }
+    &:hover {
+      color: $color-primary;
+    }
   }
 
-  &__footer { display: flex; align-items: center; justify-content: space-between; }
-  &__price { font-weight: $font-weight-bold; font-size: $font-size-sm; }
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &__price {
+    font-weight: $font-weight-bold;
+    font-size: $font-size-sm;
+  }
 
   &__remove {
     color: $color-danger;
     cursor: pointer;
     opacity: 0.6;
     transition: opacity $transition-fast;
-    &:hover { opacity: 1; }
+    &:hover {
+      opacity: 1;
+    }
   }
 
   &__empty {
@@ -142,8 +194,17 @@ onMounted(load)
     text-align: center;
   }
 
-  &__empty-icon { color: $color-gray-200; }
-  &__empty-title { font-size: $font-size-lg; font-weight: $font-weight-semibold; color: $color-gray-700; }
-  &__empty-desc { font-size: $font-size-sm; color: $color-gray-400; }
+  &__empty-icon {
+    color: $color-gray-200;
+  }
+  &__empty-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-700;
+  }
+  &__empty-desc {
+    font-size: $font-size-sm;
+    color: $color-gray-400;
+  }
 }
 </style>

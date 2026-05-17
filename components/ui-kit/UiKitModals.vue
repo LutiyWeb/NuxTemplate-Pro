@@ -22,7 +22,6 @@ const CATALOG_CODE = `<!-- Открыть меню каталога -->
 
 <template>
   <div class="uikit-modals">
-
     <UiKitSection
       title="Auth Modal"
       description="Модалка входа/регистрации. Управляется через uiStore.authModalOpen"
@@ -75,18 +74,33 @@ const CATALOG_CODE = `<!-- Открыть меню каталога -->
     </UiKitSection>
 
     <UiKitSection title="UiStore API" description="Централизованное управление всеми оверлеями">
-      <UiKitPropsTable :rows="[
-        { name: 'authModalOpen', type: 'boolean', default: 'false', description: 'Auth Modal открыта' },
-        { name: 'catalogOpen', type: 'boolean', default: 'false', description: 'Каталог открыт' },
-        { name: 'searchOpen', type: 'boolean', default: 'false', description: 'Поиск открыт' },
-        { name: 'sidebarOpen', type: 'boolean', default: 'false', description: 'Мобильный сайдбар открыт' },
-        { name: 'closeAll()', type: 'function', description: 'Закрыть все оверлеи' },
-      ]" />
+      <UiKitPropsTable
+        :rows="[
+          {
+            name: 'authModalOpen',
+            type: 'boolean',
+            default: 'false',
+            description: 'Auth Modal открыта',
+          },
+          { name: 'catalogOpen', type: 'boolean', default: 'false', description: 'Каталог открыт' },
+          { name: 'searchOpen', type: 'boolean', default: 'false', description: 'Поиск открыт' },
+          {
+            name: 'sidebarOpen',
+            type: 'boolean',
+            default: 'false',
+            description: 'Мобильный сайдбар открыт',
+          },
+          { name: 'closeAll()', type: 'function', description: 'Закрыть все оверлеи' },
+        ]"
+      />
     </UiKitSection>
-
   </div>
 </template>
 
 <style lang="scss">
-.uikit-modals { display: flex; flex-direction: column; gap: 40px; }
+.uikit-modals {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
 </style>

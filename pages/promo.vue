@@ -37,7 +37,7 @@ const rows = computed(() => {
     <div class="container">
       <TheTitle tag="h1" size="l" class="promo-page__title">Акции и скидки</TheTitle>
 
-      <div class="promo-page__banners">
+      <div class="promo-page__banners grid-col-3">
         <PromoBannerCard
           v-for="(b, i) in PROMO_BANNERS"
           :key="i"
@@ -96,12 +96,7 @@ const rows = computed(() => {
   &__title { margin-bottom: 32px; }
 
   &__banners {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
     margin-bottom: 48px;
-
-    @media (max-width: 768px) { grid-template-columns: repeat(2, 1fr); }
   }
 
   &__skeleton {

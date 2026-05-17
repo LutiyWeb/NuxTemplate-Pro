@@ -1,14 +1,57 @@
 <script setup lang="ts">
 import {
-  ShoppingCart, Heart, User, Search, Menu, LayoutGrid, Package, Truck,
-  Star, ChevronRight, ChevronLeft, ChevronDown, ChevronUp,
-  X, Check, Plus, Minus, Trash2, Edit, Eye, EyeOff,
-  Home, Phone, MapPin, Mail, Lock, Unlock,
-  ArrowRight, ArrowLeft, ArrowUp, ArrowDown,
-  Smartphone, Laptop, Headphones, Gamepad2, Tablet, Watch, Tv, Camera,
-  CheckCircle2, XCircle, AlertTriangle, Info,
-  Loader2, RefreshCw, Settings, FileText,
-  ExternalLink, Upload, Download, Copy, Bookmark,
+  ShoppingCart,
+  Heart,
+  User,
+  Search,
+  Menu,
+  LayoutGrid,
+  Package,
+  Truck,
+  Star,
+  ChevronRight,
+  ChevronLeft,
+  ChevronDown,
+  ChevronUp,
+  X,
+  Check,
+  Plus,
+  Minus,
+  Trash2,
+  Edit,
+  Eye,
+  EyeOff,
+  Home,
+  Phone,
+  MapPin,
+  Mail,
+  Lock,
+  Unlock,
+  ArrowRight,
+  ArrowLeft,
+  ArrowUp,
+  ArrowDown,
+  Smartphone,
+  Laptop,
+  Headphones,
+  Gamepad2,
+  Tablet,
+  Watch,
+  Tv,
+  Camera,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  Info,
+  Loader2,
+  RefreshCw,
+  Settings,
+  FileText,
+  ExternalLink,
+  Upload,
+  Download,
+  Copy,
+  Bookmark,
 } from 'lucide-vue-next'
 
 const ICONS = [
@@ -70,7 +113,9 @@ const copied = ref('')
 async function copyName(name: string) {
   await navigator.clipboard.writeText(name)
   copied.value = name
-  setTimeout(() => { copied.value = '' }, 1200)
+  setTimeout(() => {
+    copied.value = ''
+  }, 1200)
 }
 
 const iconSize = ref(24)
@@ -88,8 +133,10 @@ const USAGE_CODE = `import { ShoppingCart, Heart } from 'lucide-vue-next'
 
 <template>
   <div class="uikit-icons">
-
-    <UiKitSection title="Галерея иконок" description="Нажми на иконку чтобы скопировать её название">
+    <UiKitSection
+      title="Галерея иконок"
+      description="Нажми на иконку чтобы скопировать её название"
+    >
       <template #preview>
         <div style="width: 100%; display: flex; flex-direction: column; gap: 16px">
           <div style="display: flex; align-items: center; gap: 12px">
@@ -114,16 +161,31 @@ const USAGE_CODE = `import { ShoppingCart, Heart } from 'lucide-vue-next'
       </template>
     </UiKitSection>
 
-    <UiKitSection title="AppIcon — обёртка" description="Flex-контейнер для иконок с фиксированным размером">
+    <UiKitSection
+      title="AppIcon — обёртка"
+      description="Flex-контейнер для иконок с фиксированным размером"
+    >
       <template #preview>
         <div style="display: flex; gap: 16px; align-items: center">
-          <AppIcon name="cart" :size="40" style="background: rgb(99 102 241 / 8%); border-radius: 8px; color: #6366f1">
+          <AppIcon
+            name="cart"
+            :size="40"
+            style="background: rgb(99 102 241 / 8%); border-radius: 8px; color: #6366f1"
+          >
             <ShoppingCart />
           </AppIcon>
-          <AppIcon name="heart" :size="40" style="background: rgb(239 68 68 / 8%); border-radius: 8px; color: #ef4444">
+          <AppIcon
+            name="heart"
+            :size="40"
+            style="background: rgb(239 68 68 / 8%); border-radius: 8px; color: #ef4444"
+          >
             <Heart />
           </AppIcon>
-          <AppIcon name="check" :size="40" style="background: rgb(34 197 94 / 8%); border-radius: 8px; color: #22c55e">
+          <AppIcon
+            name="check"
+            :size="40"
+            style="background: rgb(34 197 94 / 8%); border-radius: 8px; color: #22c55e"
+          >
             <CheckCircle2 />
           </AppIcon>
         </div>
@@ -132,13 +194,24 @@ const USAGE_CODE = `import { ShoppingCart, Heart } from 'lucide-vue-next'
         <UiKitCodeBlock :code="USAGE_CODE" />
       </template>
       <template #props>
-        <UiKitPropsTable :rows="[
-          { name: 'name', type: 'string', required: true, description: 'Идентификатор иконки (для семантики)' },
-          { name: 'size', type: 'number', default: '24', description: 'Размер контейнера в пикселях' },
-        ]" />
+        <UiKitPropsTable
+          :rows="[
+            {
+              name: 'name',
+              type: 'string',
+              required: true,
+              description: 'Идентификатор иконки (для семантики)',
+            },
+            {
+              name: 'size',
+              type: 'number',
+              default: '24',
+              description: 'Размер контейнера в пикселях',
+            },
+          ]"
+        />
       </template>
     </UiKitSection>
-
   </div>
 </template>
 
@@ -165,11 +238,22 @@ const USAGE_CODE = `import { ShoppingCart, Heart } from 'lucide-vue-next'
     border-radius: $radius-lg;
     cursor: pointer;
     color: $color-gray-700;
-    transition: background $transition-fast, border-color $transition-fast, color $transition-fast;
+    transition:
+      background $transition-fast,
+      border-color $transition-fast,
+      color $transition-fast;
 
-    &:hover { background: rgb(99 102 241 / 6%); border-color: $color-primary; color: $color-primary; }
+    &:hover {
+      background: rgb(99 102 241 / 6%);
+      border-color: $color-primary;
+      color: $color-primary;
+    }
 
-    &--copied { background: rgb(34 197 94 / 8%); border-color: $color-success; color: $color-success; }
+    &--copied {
+      background: rgb(34 197 94 / 8%);
+      border-color: $color-success;
+      color: $color-success;
+    }
   }
 
   &__name {

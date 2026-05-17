@@ -52,13 +52,31 @@ $shadow-card-hover: -6px 0 24px -6px rgb(0 0 0 / 12%),
 
 <template>
   <div class="uikit-cards">
-
-    <UiKitSection title="TheProductCard (вертикальная)" description="Карточка товара в сетке каталога и слайдерах">
+    <UiKitSection
+      title="TheProductCard (вертикальная)"
+      description="Карточка товара в сетке каталога и слайдерах"
+    >
       <template #preview>
         <div style="display: grid; grid-template-columns: repeat(3, 240px); gap: 16px">
           <TheProductCard :product="MOCK_PRODUCT" />
-          <TheProductCard :product="{ ...MOCK_PRODUCT, id: 9998, compareAtPrice: null, discountPercentage: null, rating: null, thumbnail: null }" />
-          <TheProductCard :product="{ ...MOCK_PRODUCT, id: 9997, title: 'Очень длинное название товара которое обрезается', thumbnail: 'https://picsum.photos/seed/kit2/400/400' }" />
+          <TheProductCard
+            :product="{
+              ...MOCK_PRODUCT,
+              id: 9998,
+              compareAtPrice: null,
+              discountPercentage: null,
+              rating: null,
+              thumbnail: null,
+            }"
+          />
+          <TheProductCard
+            :product="{
+              ...MOCK_PRODUCT,
+              id: 9997,
+              title: 'Очень длинное название товара которое обрезается',
+              thumbnail: 'https://picsum.photos/seed/kit2/400/400',
+            }"
+          />
         </div>
       </template>
       <template #code>
@@ -66,7 +84,10 @@ $shadow-card-hover: -6px 0 24px -6px rgb(0 0 0 / 12%),
       </template>
     </UiKitSection>
 
-    <UiKitSection title="TheCardHorizontal (горизонтальная)" description="Карточка для баннеров и промо-блоков">
+    <UiKitSection
+      title="TheCardHorizontal (горизонтальная)"
+      description="Карточка для баннеров и промо-блоков"
+    >
       <template #preview>
         <div style="width: 100%; display: flex; flex-direction: column; gap: 16px">
           <TheCardHorizontal
@@ -90,7 +111,10 @@ $shadow-card-hover: -6px 0 24px -6px rgb(0 0 0 / 12%),
       </template>
     </UiKitSection>
 
-    <UiKitSection title="Тени карточек" description="Универсальные SCSS-переменные для всех карточек проекта">
+    <UiKitSection
+      title="Тени карточек"
+      description="Универсальные SCSS-переменные для всех карточек проекта"
+    >
       <template #preview>
         <div style="display: flex; gap: 24px">
           <div class="uikit-cards__shadow-demo">
@@ -105,7 +129,6 @@ $shadow-card-hover: -6px 0 24px -6px rgb(0 0 0 / 12%),
         <UiKitCodeBlock :code="SHADOW_CODE" language="scss" />
       </template>
     </UiKitSection>
-
   </div>
 </template>
 
@@ -128,7 +151,9 @@ $shadow-card-hover: -6px 0 24px -6px rgb(0 0 0 / 12%),
     font-weight: $font-weight-medium;
     color: $color-gray-500;
 
-    &--hover { box-shadow: $shadow-card-hover; }
+    &--hover {
+      box-shadow: $shadow-card-hover;
+    }
   }
 }
 </style>

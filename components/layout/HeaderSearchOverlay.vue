@@ -1,8 +1,24 @@
 <script setup lang="ts">
 import {
-  Search, X, Clock, TrendingUp, ChevronRight, ShoppingCart,
-  LayoutGrid, Laptop, Smartphone, Headphones, Monitor, Tablet,
-  Camera, Watch, Gamepad2, Home, Package, Cpu, Tv,
+  Search,
+  X,
+  Clock,
+  TrendingUp,
+  ChevronRight,
+  ShoppingCart,
+  LayoutGrid,
+  Laptop,
+  Smartphone,
+  Headphones,
+  Monitor,
+  Tablet,
+  Camera,
+  Watch,
+  Gamepad2,
+  Home,
+  Package,
+  Cpu,
+  Tv,
 } from 'lucide-vue-next'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import type { Swiper as SwiperType } from 'swiper'
@@ -29,7 +45,9 @@ const debouncedQuery = ref('')
 let debounceTimer: ReturnType<typeof setTimeout>
 watch(query, (val) => {
   clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(() => { debouncedQuery.value = val.trim() }, 300)
+  debounceTimer = setTimeout(() => {
+    debouncedQuery.value = val.trim()
+  }, 300)
 })
 
 // ─── Search results ──────────────────────────────────────────────────────────
@@ -37,7 +55,10 @@ const searchResults = ref<Product[]>([])
 const isSearching = ref(false)
 
 watch(debouncedQuery, async (q) => {
-  if (!q) { searchResults.value = []; return }
+  if (!q) {
+    searchResults.value = []
+    return
+  }
   isSearching.value = true
   try {
     const res = await $fetch<{ data: Product[] }>(
@@ -55,17 +76,30 @@ const isActive = computed(() => debouncedQuery.value.length > 0)
 
 // ─── Category icons ───────────────────────────────────────────────────────────
 const ICONS: Record<string, Component> = {
-  smartphone: Smartphone, phone: Smartphone,
-  laptop: Laptop, notebook: Laptop,
+  smartphone: Smartphone,
+  phone: Smartphone,
+  laptop: Laptop,
+  notebook: Laptop,
   tablet: Tablet,
-  audio: Headphones, headphone: Headphones, speaker: Headphones,
-  monitor: Monitor, display: Monitor, office: Monitor,
-  camera: Camera, photo: Camera,
-  watch: Watch, wearable: Watch,
-  game: Gamepad2, gaming: Gamepad2,
-  home: Home, furniture: Home,
-  cpu: Cpu, pc: Cpu, computer: Cpu,
-  tv: Tv, television: Tv,
+  audio: Headphones,
+  headphone: Headphones,
+  speaker: Headphones,
+  monitor: Monitor,
+  display: Monitor,
+  office: Monitor,
+  camera: Camera,
+  photo: Camera,
+  watch: Watch,
+  wearable: Watch,
+  game: Gamepad2,
+  gaming: Gamepad2,
+  home: Home,
+  furniture: Home,
+  cpu: Cpu,
+  pc: Cpu,
+  computer: Cpu,
+  tv: Tv,
+  television: Tv,
 }
 function getCatIcon(slug: string): Component {
   const lower = slug.toLowerCase()
@@ -78,11 +112,11 @@ function getCatIcon(slug: string): Component {
 // ─── Suggestions (active state) ───────────────────────────────────────────────
 const historySuggestions = computed(() => {
   const q = debouncedQuery.value.toLowerCase()
-  return searchStore.history.filter(h => h.toLowerCase().includes(q)).slice(0, 3)
+  return searchStore.history.filter((h) => h.toLowerCase().includes(q)).slice(0, 3)
 })
 const categorySuggestions = computed(() => {
   const q = debouncedQuery.value.toLowerCase()
-  return categoriesStore.categories.filter(c => c.name.toLowerCase().includes(q)).slice(0, 4)
+  return categoriesStore.categories.filter((c) => c.name.toLowerCase().includes(q)).slice(0, 4)
 })
 
 // ─── Trending products (empty state) ─────────────────────────────────────────
@@ -101,27 +135,37 @@ const allNavItems = computed<NavItem[]>(() => {
   if (!isActive.value) return []
   return [
     { type: 'submit', value: debouncedQuery.value },
-    ...historySuggestions.value.map(v => ({ type: 'history' as const, value: v })),
-    ...categorySuggestions.value.map(c => ({ type: 'category' as const, value: c.slug })),
-    ...searchResults.value.map(p => ({ type: 'product' as const, value: p.id })),
+    ...historySuggestions.value.map((v) => ({ type: 'history' as const, value: v })),
+    ...categorySuggestions.value.map((c) => ({ type: 'category' as const, value: c.slug })),
+    ...searchResults.value.map((p) => ({ type: 'product' as const, value: p.id })),
   ]
 })
 
 const focusedIndex = ref(-1)
 const focusedItem = computed<NavItem | null>(() =>
-  focusedIndex.value >= 0 ? allNavItems.value[focusedIndex.value] ?? null : null,
+  focusedIndex.value >= 0 ? (allNavItems.value[focusedIndex.value] ?? null) : null,
 )
 
 function isFocused(item: NavItem): boolean {
-  return !!focusedItem.value
-    && focusedItem.value.type === item.type
-    && focusedItem.value.value === item.value
+  return (
+    !!focusedItem.value &&
+    focusedItem.value.type === item.type &&
+    focusedItem.value.value === item.value
+  )
 }
 
-watch(debouncedQuery, () => { focusedIndex.value = -1 })
+watch(debouncedQuery, () => {
+  focusedIndex.value = -1
+})
+
+const route = useRoute()
+watch(() => route.path, closeModal)
 
 function onKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape') { closeModal(); return }
+  if (e.key === 'Escape') {
+    closeModal()
+    return
+  }
   if (e.key === 'ArrowDown') {
     e.preventDefault()
     focusedIndex.value = Math.min(focusedIndex.value + 1, allNavItems.value.length - 1)
@@ -129,15 +173,26 @@ function onKeydown(e: KeyboardEvent) {
   if (e.key === 'ArrowUp') {
     e.preventDefault()
     if (focusedIndex.value > 0) focusedIndex.value--
-    else { focusedIndex.value = -1; inputRef.value?.focus() }
+    else {
+      focusedIndex.value = -1
+      inputRef.value?.focus()
+    }
   }
   if (e.key === 'Enter') {
     e.preventDefault()
     const item = focusedItem.value
-    if (!item) { submitSearch(); return }
+    if (!item) {
+      submitSearch()
+      return
+    }
     if (item.type === 'submit' || item.type === 'history') submitSearch(item.value)
-    else if (item.type === 'category') { router.push(`/catalog?categorySlug=${item.value}`); closeModal() }
-    else if (item.type === 'product') { router.push(`/product/${item.value}`); closeModal() }
+    else if (item.type === 'category') {
+      router.push(`/catalog?categorySlug=${item.value}`)
+      closeModal()
+    } else if (item.type === 'product') {
+      router.push(`/product/${item.value}`)
+      closeModal()
+    }
   }
 }
 
@@ -167,35 +222,38 @@ function dismiss() {
 }
 
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
-watch(() => props.open, async (val) => {
-  if (val) {
-    searchStore.init()
-    if (!productsStore.products.length) productsStore.fetchProducts({ limit: 40 })
-    if (!categoriesStore.categories.length) categoriesStore.fetchCategories()
-    await nextTick()
-    inputRef.value?.focus()
-    focusedIndex.value = -1
-  } else {
-    query.value = ''
-    debouncedQuery.value = ''
-    clearTimeout(debounceTimer)
-  }
-})
+watch(
+  () => props.open,
+  async (val) => {
+    if (val) {
+      searchStore.init()
+      if (!productsStore.products.length) productsStore.fetchProducts({ limit: 40 })
+      if (!categoriesStore.categories.length) categoriesStore.fetchCategories()
+      await nextTick()
+      inputRef.value?.focus()
+      focusedIndex.value = -1
+    } else {
+      query.value = ''
+      debouncedQuery.value = ''
+      clearTimeout(debounceTimer)
+    }
+  },
+)
 
 // ─── Trending slider nav ──────────────────────────────────────────────────────
-const trendingSwiper   = ref<SwiperType | null>(null)
-const trendingBegin    = ref(true)
-const trendingEnd      = ref(false)
+const trendingSwiper = ref<SwiperType | null>(null)
+const trendingBegin = ref(true)
+const trendingEnd = ref(false)
 
 function onTrendingSwiper(swiper: SwiperType) {
   trendingSwiper.value = swiper
-  trendingBegin.value  = swiper.isBeginning
-  trendingEnd.value    = swiper.isEnd
+  trendingBegin.value = swiper.isBeginning
+  trendingEnd.value = swiper.isEnd
 }
 function onTrendingChange() {
   if (!trendingSwiper.value) return
   trendingBegin.value = trendingSwiper.value.isBeginning
-  trendingEnd.value   = trendingSwiper.value.isEnd
+  trendingEnd.value = trendingSwiper.value.isEnd
 }
 
 onBeforeUnmount(() => {
@@ -209,7 +267,6 @@ onBeforeUnmount(() => {
     <Transition name="search-modal">
       <div v-if="open" class="search-modal" @click.self="closeModal">
         <div class="search-modal__box" @keydown="onKeydown">
-
           <!-- Header -->
           <div class="search-modal__header">
             <Search :size="20" class="search-modal__icon" />
@@ -221,7 +278,12 @@ onBeforeUnmount(() => {
               autocomplete="off"
               @keydown="onKeydown"
             />
-            <button class="search-modal__dismiss" type="button" :aria-label="query ? 'Очистить' : 'Закрыть'" @click="dismiss">
+            <button
+              class="search-modal__dismiss"
+              type="button"
+              :aria-label="query ? 'Очистить' : 'Закрыть'"
+              @click="dismiss"
+            >
               <X :size="18" />
             </button>
           </div>
@@ -230,15 +292,19 @@ onBeforeUnmount(() => {
 
           <!-- Body -->
           <div class="search-modal__body">
-
             <!-- ── EMPTY STATE ─────────────────────────────────────── -->
             <template v-if="!isActive">
-
               <!-- Recent searches -->
               <section v-if="searchStore.history.length" class="search-modal__section">
                 <div class="search-modal__section-head">
                   <span class="search-modal__section-title"><Clock :size="13" />Недавние</span>
-                  <button class="search-modal__section-action" type="button" @click="searchStore.clear()">Очистить</button>
+                  <button
+                    class="search-modal__section-action"
+                    type="button"
+                    @click="searchStore.clear()"
+                  >
+                    Очистить
+                  </button>
                 </div>
                 <div class="search-modal__history">
                   <button
@@ -250,7 +316,11 @@ onBeforeUnmount(() => {
                   >
                     <Clock :size="13" class="search-modal__history-clock" />
                     <span>{{ item }}</span>
-                    <button class="search-modal__history-remove" type="button" @click.stop="searchStore.remove(item)">
+                    <button
+                      class="search-modal__history-remove"
+                      type="button"
+                      @click.stop="searchStore.remove(item)"
+                    >
                       <X :size="11" />
                     </button>
                   </button>
@@ -260,69 +330,84 @@ onBeforeUnmount(() => {
               <!-- Top categories -->
               <section class="search-modal__section">
                 <div class="search-modal__section-head">
-                  <span class="search-modal__section-title"><LayoutGrid :size="13" />Категории</span>
-                </div>
-                <div class="search-modal__chips">
-                  <NuxtLink
-                    v-for="cat in categoriesStore.categories.slice(0, 8)"
-                    :key="cat.id"
-                    :to="`/catalog?categorySlug=${cat.slug}`"
-                    class="search-modal__chip"
-                    @click="closeModal"
+                  <span class="search-modal__section-title"
+                    ><LayoutGrid :size="13" />Категории</span
                   >
-                    <component :is="getCatIcon(cat.slug)" :size="15" />
-                    <span>{{ cat.name }}</span>
-                  </NuxtLink>
                 </div>
+                <CategoryRibbon />
               </section>
 
               <!-- Trending Now -->
-              <section v-if="trendingProducts.length" class="search-modal__section search-modal__section--last search-modal__section--trending">
+              <section
+                v-if="trendingProducts.length"
+                class="search-modal__section search-modal__section--last search-modal__section--trending"
+              >
                 <div class="search-modal__section-head">
-                  <span class="search-modal__section-title"><TrendingUp :size="13" />Trending Now</span>
+                  <span class="search-modal__section-title"
+                    ><TrendingUp :size="13" />Trending Now</span
+                  >
                   <div class="search-modal__trending-controls">
-                    <AppArrow direction="left"  :disabled="trendingBegin" @click="trendingSwiper?.slidePrev()" />
-                    <AppArrow direction="right" :disabled="trendingEnd"   @click="trendingSwiper?.slideNext()" />
+                    <AppArrow
+                      direction="left"
+                      :disabled="trendingBegin"
+                      @click="trendingSwiper?.slidePrev()"
+                    />
+                    <AppArrow
+                      direction="right"
+                      :disabled="trendingEnd"
+                      @click="trendingSwiper?.slideNext()"
+                    />
                   </div>
                 </div>
                 <ClientOnly>
                   <Swiper
                     :slides-per-view="2"
                     :space-between="10"
-                    :breakpoints="{ 480: { slidesPerView: 3 }, 768: { slidesPerView: 4 }, 1024: { slidesPerView: 5 } }"
+                    :breakpoints="{
+                      480: { slidesPerView: 3 },
+                      768: { slidesPerView: 4 },
+                    }"
                     class="search-modal__trending"
                     @swiper="onTrendingSwiper"
                     @slide-change="onTrendingChange"
                   >
-                    <SwiperSlide v-for="p in trendingProducts" :key="p.id">
-                      <NuxtLink :to="`/product/${p.id}`" class="search-modal__trend-card" @click="closeModal">
-                        <div class="search-modal__trend-img">
-                          <img v-if="p.thumbnail" :src="p.thumbnail" :alt="p.title" />
-                        </div>
-                        <p class="search-modal__trend-title">{{ p.title }}</p>
-                        <p class="search-modal__trend-price">${{ p.price }}</p>
-                      </NuxtLink>
+                    <SwiperSlide
+                      v-for="p in trendingProducts"
+                      :key="p.id"
+                      class="search-modal__trend-slide"
+                    >
+                      <div class="search-modal__trend-wrap" @click="closeModal">
+                        <TheProductCard :product="p" />
+                      </div>
                     </SwiperSlide>
                   </Swiper>
                 </ClientOnly>
               </section>
-
             </template>
 
             <!-- ── ACTIVE STATE ────────────────────────────────────── -->
             <template v-else>
               <div class="search-modal__results">
-
                 <!-- Left: suggestions -->
                 <div class="search-modal__suggestions">
                   <!-- Submit query -->
                   <button
-                    :class="['search-modal__suggestion', { 'search-modal__suggestion--focused': isFocused({ type: 'submit', value: debouncedQuery }) }]"
+                    :class="[
+                      'search-modal__suggestion',
+                      {
+                        'search-modal__suggestion--focused': isFocused({
+                          type: 'submit',
+                          value: debouncedQuery,
+                        }),
+                      },
+                    ]"
                     type="button"
                     @click="submitSearch()"
                   >
                     <Search :size="14" />
-                    <span>Найти <strong>{{ debouncedQuery }}</strong></span>
+                    <span
+                      >Найти <strong>{{ debouncedQuery }}</strong></span
+                    >
                   </button>
 
                   <!-- History matches -->
@@ -331,7 +416,15 @@ onBeforeUnmount(() => {
                     <button
                       v-for="item in historySuggestions"
                       :key="item"
-                      :class="['search-modal__suggestion', { 'search-modal__suggestion--focused': isFocused({ type: 'history', value: item }) }]"
+                      :class="[
+                        'search-modal__suggestion',
+                        {
+                          'search-modal__suggestion--focused': isFocused({
+                            type: 'history',
+                            value: item,
+                          }),
+                        },
+                      ]"
                       type="button"
                       @click="submitSearch(item)"
                     >
@@ -346,7 +439,15 @@ onBeforeUnmount(() => {
                     <NuxtLink
                       v-for="cat in categorySuggestions"
                       :key="cat.id"
-                      :class="['search-modal__suggestion', { 'search-modal__suggestion--focused': isFocused({ type: 'category', value: cat.slug }) }]"
+                      :class="[
+                        'search-modal__suggestion',
+                        {
+                          'search-modal__suggestion--focused': isFocused({
+                            type: 'category',
+                            value: cat.slug,
+                          }),
+                        },
+                      ]"
                       :to="`/catalog?categorySlug=${cat.slug}`"
                       @click="closeModal"
                     >
@@ -369,7 +470,15 @@ onBeforeUnmount(() => {
                     <NuxtLink
                       v-for="p in searchResults"
                       :key="p.id"
-                      :class="['search-modal__product-card', { 'search-modal__product-card--focused': isFocused({ type: 'product', value: p.id }) }]"
+                      :class="[
+                        'search-modal__product-card',
+                        {
+                          'search-modal__product-card--focused': isFocused({
+                            type: 'product',
+                            value: p.id,
+                          }),
+                        },
+                      ]"
                       :to="`/product/${p.id}`"
                       @click="closeModal"
                     >
@@ -395,10 +504,8 @@ onBeforeUnmount(() => {
                   <!-- No results -->
                   <p v-else class="search-modal__no-results">Ничего не найдено</p>
                 </div>
-
               </div>
             </template>
-
           </div>
         </div>
       </div>
@@ -424,7 +531,9 @@ onBeforeUnmount(() => {
   max-width: 864px;
   background: $color-white;
   border-radius: $radius-xl;
-  box-shadow: 0 24px 64px -12px rgb(0 0 0 / 28%), 0 4px 16px rgb(0 0 0 / 10%);
+  box-shadow:
+    0 24px 64px -12px rgb(0 0 0 / 28%),
+    0 4px 16px rgb(0 0 0 / 10%);
   overflow: hidden;
   min-height: 500px;
   max-height: calc(100vh - 96px);
@@ -441,7 +550,10 @@ onBeforeUnmount(() => {
   flex-shrink: 0;
 }
 
-.search-modal__icon { color: $color-gray-400; flex-shrink: 0; }
+.search-modal__icon {
+  color: $color-gray-400;
+  flex-shrink: 0;
+}
 
 .search-modal__input {
   flex: 1;
@@ -453,7 +565,9 @@ onBeforeUnmount(() => {
   background: transparent;
   min-width: 0;
 
-  &::placeholder { color: $color-gray-400; }
+  &::placeholder {
+    color: $color-gray-400;
+  }
 }
 
 .search-modal__dismiss {
@@ -467,10 +581,17 @@ onBeforeUnmount(() => {
   padding: 4px;
   border-radius: $radius-md;
 
-  &:hover { color: $color-gray-700; background: $color-gray-100; }
+  &:hover {
+    color: $color-gray-700;
+    background: $color-gray-100;
+  }
 }
 
-.search-modal__divider { height: 1px; background: $color-gray-100; flex-shrink: 0; }
+.search-modal__divider {
+  height: 1px;
+  background: $color-gray-100;
+  flex-shrink: 0;
+}
 
 // ─── Body ─────────────────────────────────────────────────────────────────────
 .search-modal__body {
@@ -485,8 +606,13 @@ onBeforeUnmount(() => {
 .search-modal__section {
   padding: 16px 20px 0;
 
-  &--last     { padding-bottom: 16px; }
-  &--trending { margin-top: auto; border-top: 1px solid $color-gray-100; }
+  &--last {
+    padding-bottom: 16px;
+  }
+  &--trending {
+    margin-top: auto;
+    border-top: 1px solid $color-gray-100;
+  }
 }
 
 .search-modal__section-head {
@@ -512,7 +638,9 @@ onBeforeUnmount(() => {
   color: $color-primary;
   cursor: pointer;
   transition: opacity $transition-fast;
-  &:hover { opacity: 0.75; }
+  &:hover {
+    opacity: 0.75;
+  }
 }
 
 // ─── Recent history ───────────────────────────────────────────────────────────
@@ -535,10 +663,15 @@ onBeforeUnmount(() => {
   cursor: pointer;
   transition: background $transition-fast;
 
-  &:hover { background: $color-gray-200; }
+  &:hover {
+    background: $color-gray-200;
+  }
 }
 
-.search-modal__history-clock { color: $color-gray-400; flex-shrink: 0; }
+.search-modal__history-clock {
+  color: $color-gray-400;
+  flex-shrink: 0;
+}
 
 .search-modal__history-remove {
   display: flex;
@@ -549,37 +682,13 @@ onBeforeUnmount(() => {
   border-radius: $radius-full;
   color: $color-gray-400;
   flex-shrink: 0;
-  transition: color $transition-fast, background $transition-fast;
-
-  &:hover { color: $color-danger; background: rgb(239 68 68 / 10%); }
-}
-
-// ─── Category chips ───────────────────────────────────────────────────────────
-.search-modal__chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-
-.search-modal__chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  border-radius: $radius-full;
-  border: 1px solid $color-gray-200;
-  font-size: $font-size-sm;
-  color: $color-gray-700;
-  text-decoration: none;
-  transition: border-color $transition-fast, color $transition-fast, background $transition-fast;
-
-  svg { color: $color-primary; flex-shrink: 0; }
+  transition:
+    color $transition-fast,
+    background $transition-fast;
 
   &:hover {
-    border-color: $color-primary;
-    color: $color-primary;
-    background: rgb(99 102 241 / 4%);
+    color: $color-danger;
+    background: rgb(239 68 68 / 10%);
   }
 }
 
@@ -593,45 +702,13 @@ onBeforeUnmount(() => {
   overflow: hidden;
 }
 
-.search-modal__trend-card {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-}
-
-.search-modal__trend-img {
-  aspect-ratio: 4 / 3;
-  border-radius: $radius-lg;
-  background: $color-gray-100;
-  overflow: hidden;
-  box-shadow:
-    -3px 0 8px -3px rgb(0 0 0 / 8%),
-    3px 0 8px -3px rgb(0 0 0 / 8%),
-    0 4px 12px -3px rgb(0 0 0 / 10%);
-
-  img { width: 100%; height: 100%; object-fit: cover; }
-}
-
-.search-modal__trend-title {
-  font-size: $font-size-xs;
-  color: $color-gray-700;
-  font-weight: $font-weight-medium;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin: 0;
-  line-height: 1.4;
-}
-
-.search-modal__trend-price {
-  font-size: $font-size-xs;
-  font-weight: $font-weight-bold;
-  color: $color-primary;
-  margin: 0;
+.search-modal__trend-wrap {
+  --pc-title-size: 12px;
+  --pc-desc-size: 11px;
+  --pc-price-size: 13px;
+  --pc-rating-size: 11px;
+  --pc-body-padding: 10px;
+  --pc-body-gap: 4px;
 }
 
 // ─── Active state: two-column layout ─────────────────────────────────────────
@@ -640,7 +717,9 @@ onBeforeUnmount(() => {
   grid-template-columns: 220px 1fr;
   min-height: 240px;
 
-  @media (max-width: 600px) { grid-template-columns: 1fr; }
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 // ─── Left: suggestions ────────────────────────────────────────────────────────
@@ -650,7 +729,10 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
 
-  @media (max-width: 600px) { border-right: none; border-bottom: 1px solid $color-gray-100; }
+  @media (max-width: 600px) {
+    border-right: none;
+    border-bottom: 1px solid $color-gray-100;
+  }
 }
 
 .search-modal__suggestions-label {
@@ -672,19 +754,37 @@ onBeforeUnmount(() => {
   color: $color-gray-700;
   text-decoration: none;
   cursor: pointer;
-  transition: background $transition-fast, color $transition-fast;
+  transition:
+    background $transition-fast,
+    color $transition-fast;
   text-align: left;
   line-height: 1.3;
 
-  svg { color: $color-gray-400; flex-shrink: 0; }
+  svg {
+    color: $color-gray-400;
+    flex-shrink: 0;
+  }
 
-  strong { font-weight: $font-weight-semibold; color: $color-gray-900; }
+  strong {
+    font-weight: $font-weight-semibold;
+    color: $color-gray-900;
+  }
 
   &:hover,
-  &--focused { background: $color-gray-50; color: $color-primary; svg { color: $color-primary; } }
+  &--focused {
+    background: $color-gray-50;
+    color: $color-primary;
+    svg {
+      color: $color-primary;
+    }
+  }
 }
 
-.search-modal__suggestion-arrow { color: $color-gray-300; margin-left: auto; flex-shrink: 0; }
+.search-modal__suggestion-arrow {
+  color: $color-gray-300;
+  margin-left: auto;
+  flex-shrink: 0;
+}
 
 // ─── Right: product mini-cards ────────────────────────────────────────────────
 .search-modal__products {
@@ -703,12 +803,17 @@ onBeforeUnmount(() => {
   text-decoration: none;
   color: inherit;
   cursor: pointer;
-  transition: background $transition-fast, box-shadow $transition-fast;
+  transition:
+    background $transition-fast,
+    box-shadow $transition-fast;
   box-shadow: $shadow-card;
   background: $color-white;
 
   &:hover,
-  &--focused { background: $color-gray-50; box-shadow: $shadow-card-hover; }
+  &--focused {
+    background: $color-gray-50;
+    box-shadow: $shadow-card-hover;
+  }
 }
 
 .search-modal__product-img {
@@ -719,7 +824,11 @@ onBeforeUnmount(() => {
   overflow: hidden;
   flex-shrink: 0;
 
-  img { width: 100%; height: 100%; object-fit: cover; }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .search-modal__product-info {
@@ -765,9 +874,14 @@ onBeforeUnmount(() => {
   flex-shrink: 0;
   cursor: pointer;
   color: $color-gray-600;
-  transition: background $transition-fast, color $transition-fast;
+  transition:
+    background $transition-fast,
+    color $transition-fast;
 
-  &:hover { background: $color-primary; color: $color-white; }
+  &:hover {
+    background: $color-primary;
+    color: $color-white;
+  }
 }
 
 .search-modal__product-skeleton {
@@ -789,20 +903,29 @@ onBeforeUnmount(() => {
   transition: opacity 0.2s ease;
 
   .search-modal__box {
-    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+    transition:
+      transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.2s ease;
   }
 }
 
 .search-modal-leave-active {
   transition: opacity 0.15s ease;
 
-  .search-modal__box { transition: transform 0.15s ease, opacity 0.15s ease; }
+  .search-modal__box {
+    transition:
+      transform 0.15s ease,
+      opacity 0.15s ease;
+  }
 }
 
 .search-modal-enter-from,
 .search-modal-leave-to {
   opacity: 0;
 
-  .search-modal__box { transform: translateY(-14px); opacity: 0; }
+  .search-modal__box {
+    transform: translateY(-14px);
+    opacity: 0;
+  }
 }
 </style>

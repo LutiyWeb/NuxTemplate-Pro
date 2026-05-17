@@ -42,45 +42,57 @@ const productBreakpoints = {
 }
 
 const PROMO_BANNERS = [
-  { gradient: 'linear-gradient(135deg, rgb(79 70 229) 0%, rgb(55 48 163) 100%)', title: 'до -40%', subtitle: 'на смартфоны и планшеты' },
-  { gradient: 'linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%)', title: 'до -35%', subtitle: 'на ноутбуки и технику' },
-  { gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)', title: 'до -25%', subtitle: 'на аудио и аксессуары' },
+  {
+    gradient: 'linear-gradient(135deg, rgb(79 70 229) 0%, rgb(55 48 163) 100%)',
+    title: 'до -40%',
+    subtitle: 'на смартфоны и планшеты',
+  },
+  {
+    gradient: 'linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%)',
+    title: 'до -35%',
+    subtitle: 'на ноутбуки и технику',
+  },
+  {
+    gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)',
+    title: 'до -25%',
+    subtitle: 'на аудио и аксессуары',
+  },
 ]
 </script>
 
 <template>
   <div class="home">
     <!-- Hero -->
-    <section class="home__section">
+    <section class="py-13">
       <div class="container">
-        <TheSlider
-          :slides="heroSlides"
-          :loop="true"
-          :autoplay="true"
-          :autoplay-delay="4000"
-        >
+        <AppSlider :slides="heroSlides" :loop="true" :autoplay="true" :autoplay-delay="4000">
           <template #default="slotProps">
-            <NuxtLink v-if="slotProps?.slide" :to="`/catalog?categorySlug=${(slotProps.slide as any).slug}`" class="hero-slide" :style="{ background: (slotProps.slide as any).bg }">
+            <NuxtLink
+              v-if="slotProps?.slide"
+              :to="`/catalog?categorySlug=${(slotProps.slide as any).slug}`"
+              class="hero-slide"
+              :style="{ background: (slotProps.slide as any).bg }"
+            >
               <h1 class="hero-slide__title">{{ (slotProps.slide as any).name }}</h1>
               <p class="hero-slide__sub">Смотрите лучшие товары в этой категории</p>
               <span class="hero-slide__cta">Перейти в каталог</span>
             </NuxtLink>
           </template>
-        </TheSlider>
+        </AppSlider>
       </div>
     </section>
 
     <!-- Category Ribbon -->
-    <section class="home__section">
+    <section class="py-13">
       <div class="container">
         <CategoryRibbon />
       </div>
     </section>
 
     <!-- Promo banners -->
-    <section class="home__section">
+    <section class="py-13">
       <div class="container">
-        <div class="home__promo-grid">
+        <div class="grid-col-3">
           <PromoBannerCard
             v-for="(b, i) in PROMO_BANNERS"
             :key="i"
@@ -93,9 +105,9 @@ const PROMO_BANNERS = [
     </section>
 
     <!-- Popular templates -->
-    <section class="home__section">
+    <section class="py-13">
       <div class="container">
-        <TheSlider
+        <AppSlider
           :slides="POPULAR_CARDS"
           :space-between="CARD_GAP"
           title="Популярные шаблоны"
@@ -113,17 +125,17 @@ const PROMO_BANNERS = [
               :image-right="slotProps.slide.imageRight as boolean"
             />
           </template>
-        </TheSlider>
+        </AppSlider>
       </div>
     </section>
 
     <!-- All products -->
-    <section class="home__section">
+    <section class="py-13">
       <div class="container">
         <div v-if="store.loading" class="home__skeleton-row">
           <TheProductCard v-for="(_, i) in skeletons" :key="i" :loading="true" />
         </div>
-        <TheSlider
+        <AppSlider
           v-else
           :slides="featuredProducts"
           :space-between="CARD_GAP"
@@ -134,31 +146,35 @@ const PROMO_BANNERS = [
           :link-count="store.meta.total"
         >
           <template #default="slotProps">
-            <TheProductCard v-if="slotProps?.slide" :product="(slotProps.slide as any)" />
+            <TheProductCard v-if="slotProps?.slide" :product="slotProps.slide as any" />
           </template>
-        </TheSlider>
+        </AppSlider>
       </div>
     </section>
 
     <!-- Banner primary -->
-    <section class="home__section">
+    <section class="py-13">
       <div class="container">
         <TheBanner variant="primary">
           <template #eyebrow>Special Offer</template>
-          <TheTitle size="l" tag="h2" style="color: inherit">Получи все Pro-шаблоны по одной цене</TheTitle>
+          <TheTitle size="l" tag="h2" style="color: inherit"
+            >Получи все Pro-шаблоны по одной цене</TheTitle
+          >
           <p>Доступ ко всем премиум-шаблонам и будущим обновлениям по единой лицензии.</p>
           <template #actions>
             <AppButton variant="secondary" size="lg">Смотреть цены</AppButton>
-            <AppButton variant="outline" size="lg" style="border-color: white; color: white">Узнать больше</AppButton>
+            <AppButton variant="outline" size="lg" style="border-color: white; color: white"
+              >Узнать больше</AppButton
+            >
           </template>
         </TheBanner>
       </div>
     </section>
 
     <!-- Articles -->
-    <section class="home__section">
+    <section class="py-13">
       <div class="container">
-        <TheSlider
+        <AppSlider
           :slides="ARTICLES_CARDS"
           :space-between="CARD_GAP"
           title="Статьи и гайды"
@@ -176,17 +192,17 @@ const PROMO_BANNERS = [
               :image-right="slotProps.slide.imageRight as boolean"
             />
           </template>
-        </TheSlider>
+        </AppSlider>
       </div>
     </section>
 
     <!-- New products -->
-    <section class="home__section">
+    <section class="py-13">
       <div class="container">
         <div v-if="store.loading" class="home__skeleton-row">
           <TheProductCard v-for="(_, i) in skeletonsSmall" :key="i" :loading="true" />
         </div>
-        <TheSlider
+        <AppSlider
           v-else
           :slides="newProducts"
           :space-between="CARD_GAP"
@@ -194,14 +210,14 @@ const PROMO_BANNERS = [
           title="Новинки"
         >
           <template #default="slotProps">
-            <TheProductCard v-if="slotProps?.slide" :product="(slotProps.slide as any)" />
+            <TheProductCard v-if="slotProps?.slide" :product="slotProps.slide as any" />
           </template>
-        </TheSlider>
+        </AppSlider>
       </div>
     </section>
 
     <!-- Banner dark -->
-    <section class="home__section">
+    <section class="py-13">
       <div class="container">
         <TheBanner variant="dark">
           <template #eyebrow>Open Source</template>
@@ -209,7 +225,9 @@ const PROMO_BANNERS = [
           <p>Вноси правки, предлагай компоненты и делись проектами.</p>
           <template #actions>
             <AppButton variant="secondary" size="lg">GitHub</AppButton>
-            <AppButton variant="outline" size="lg" style="border-color: white; color: white">Документация</AppButton>
+            <AppButton variant="outline" size="lg" style="border-color: white; color: white"
+              >Документация</AppButton
+            >
           </template>
         </TheBanner>
       </div>
@@ -219,30 +237,27 @@ const PROMO_BANNERS = [
 
 <style lang="scss">
 .home {
+  --swiper-navigation-top-offset: calc(50% - 20px);
+
   padding-block: 13px;
   display: flex;
   flex-direction: column;
   gap: 0;
-
-  &__section { padding-block: 13px; }
-
-  &__promo-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-
-    @media (max-width: 768px) { grid-template-columns: repeat(2, 1fr); }
-    @media (max-width: 480px) { grid-template-columns: 1fr; }
-  }
 
   &__skeleton-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 12px;
 
-    @media (max-width: 1280px) { grid-template-columns: repeat(4, 1fr); }
-    @media (max-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
-    @media (max-width: 768px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 1280px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 }
 
@@ -259,10 +274,21 @@ const PROMO_BANNERS = [
   color: $color-white;
   text-decoration: none;
 
-  @media (max-width: 768px) { min-height: 360px; padding: 40px 24px; }
+  @media (max-width: 768px) {
+    min-height: 360px;
+    padding: 40px 24px;
+  }
 
-  &__title { font-size: $font-size-4xl; font-weight: $font-weight-bold; margin: 0; }
-  &__sub { font-size: $font-size-lg; opacity: 0.85; margin: 0; }
+  &__title {
+    font-size: $font-size-4xl;
+    font-weight: $font-weight-bold;
+    margin: 0;
+  }
+  &__sub {
+    font-size: $font-size-lg;
+    opacity: 0.85;
+    margin: 0;
+  }
   &__cta {
     display: inline-flex;
     padding: 12px 24px;

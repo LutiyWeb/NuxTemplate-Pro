@@ -25,7 +25,11 @@ defineProps<{ title: string; description?: string }>()
   flex-direction: column;
   gap: 16px;
 
-  &__header { display: flex; flex-direction: column; gap: 4px; }
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
   &__title {
     font-size: $font-size-lg;

@@ -13,17 +13,17 @@ interface Address {
   isDefault: boolean
 }
 
-const addresses  = ref<Address[]>([])
-const loading    = ref(true)
-const showForm   = ref(false)
+const addresses = ref<Address[]>([])
+const loading = ref(true)
+const showForm = ref(false)
 const submitting = ref(false)
 
 const addressSchema = z.object({
-  city:       z.string().min(1, 'Введите город').max(128),
-  street:     z.string().min(1, 'Введите улицу').max(128),
-  house:      z.string().min(1, 'Введите дом').max(32),
-  apartment:  z.string().max(32).optional(),
-  isDefault:  z.boolean().optional(),
+  city: z.string().min(1, 'Введите город').max(128),
+  street: z.string().min(1, 'Введите улицу').max(128),
+  house: z.string().min(1, 'Введите дом').max(32),
+  apartment: z.string().max(32).optional(),
+  isDefault: z.boolean().optional(),
 })
 
 const form = reactive({ city: '', street: '', house: '', apartment: '', isDefault: false })
@@ -43,7 +43,7 @@ async function submit() {
   const result = addressSchema.safeParse(form)
   if (!result.success) {
     errors.value = Object.fromEntries(
-      Object.entries(result.error.flatten().fieldErrors).map(([k, v]) => [k, v?.[0] ?? ''])
+      Object.entries(result.error.flatten().fieldErrors).map(([k, v]) => [k, v?.[0] ?? '']),
     )
     return
   }
@@ -51,7 +51,11 @@ async function submit() {
   submitting.value = true
   try {
     await authFetch('/api/addresses', { method: 'POST', body: result.data })
-    form.city = ''; form.street = ''; form.house = ''; form.apartment = ''; form.isDefault = false
+    form.city = ''
+    form.street = ''
+    form.house = ''
+    form.apartment = ''
+    form.isDefault = false
     showForm.value = false
     await load()
   } finally {
@@ -66,7 +70,7 @@ async function setDefault(id: number) {
 
 async function deleteAddress(id: number) {
   await authFetch(`/api/addresses/${id}`, { method: 'DELETE' })
-  addresses.value = addresses.value.filter(a => a.id !== id)
+  addresses.value = addresses.value.filter((a) => a.id !== id)
 }
 
 onMounted(load)
@@ -88,19 +92,34 @@ onMounted(load)
         <div class="cab-addr__grid">
           <div class="cab-addr__field">
             <label class="cab-addr__label">Город *</label>
-            <input v-model="form.city" class="cab-addr__input" :class="{ 'cab-addr__input--error': errors.city }" placeholder="Киев" />
+            <input
+              v-model="form.city"
+              class="cab-addr__input"
+              :class="{ 'cab-addr__input--error': errors.city }"
+              placeholder="Киев"
+            />
             <span v-if="errors.city" class="cab-addr__error">{{ errors.city }}</span>
           </div>
 
           <div class="cab-addr__field">
             <label class="cab-addr__label">Улица *</label>
-            <input v-model="form.street" class="cab-addr__input" :class="{ 'cab-addr__input--error': errors.street }" placeholder="ул. Крещатик" />
+            <input
+              v-model="form.street"
+              class="cab-addr__input"
+              :class="{ 'cab-addr__input--error': errors.street }"
+              placeholder="ул. Крещатик"
+            />
             <span v-if="errors.street" class="cab-addr__error">{{ errors.street }}</span>
           </div>
 
           <div class="cab-addr__field">
             <label class="cab-addr__label">Дом *</label>
-            <input v-model="form.house" class="cab-addr__input" :class="{ 'cab-addr__input--error': errors.house }" placeholder="10" />
+            <input
+              v-model="form.house"
+              class="cab-addr__input"
+              :class="{ 'cab-addr__input--error': errors.house }"
+              placeholder="10"
+            />
             <span v-if="errors.house" class="cab-addr__error">{{ errors.house }}</span>
           </div>
 
@@ -144,10 +163,19 @@ onMounted(load)
           <span v-if="addr.isDefault" class="cab-addr__badge">Основной</span>
         </div>
         <div class="cab-addr__item-actions">
-          <button v-if="!addr.isDefault" class="cab-addr__action-btn" title="Сделать основным" @click="setDefault(addr.id)">
+          <button
+            v-if="!addr.isDefault"
+            class="cab-addr__action-btn"
+            title="Сделать основным"
+            @click="setDefault(addr.id)"
+          >
             <Star :size="15" />
           </button>
-          <button class="cab-addr__action-btn cab-addr__action-btn--danger" title="Удалить" @click="deleteAddress(addr.id)">
+          <button
+            class="cab-addr__action-btn cab-addr__action-btn--danger"
+            title="Удалить"
+            @click="deleteAddress(addr.id)"
+          >
             <Trash2 :size="15" />
           </button>
         </div>
@@ -170,7 +198,11 @@ onMounted(load)
     border-bottom: 1px solid $color-gray-100;
   }
 
-  &__title { font-size: $font-size-lg; font-weight: $font-weight-semibold; color: $color-gray-900; }
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-900;
+  }
 
   &__form {
     background: $color-gray-50;
@@ -186,11 +218,21 @@ onMounted(load)
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-    @media (max-width: 640px) { grid-template-columns: 1fr; }
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
   }
 
-  &__field { display: flex; flex-direction: column; gap: 6px; }
-  &__label { font-size: $font-size-sm; font-weight: $font-weight-medium; color: $color-gray-700; }
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-gray-700;
+  }
 
   &__input {
     height: 40px;
@@ -203,11 +245,18 @@ onMounted(load)
     color: $color-gray-900;
     outline: none;
     transition: border-color $transition-fast;
-    &:focus { border-color: $color-primary; }
-    &--error { border-color: $color-danger; }
+    &:focus {
+      border-color: $color-primary;
+    }
+    &--error {
+      border-color: $color-danger;
+    }
   }
 
-  &__error { font-size: $font-size-xs; color: $color-danger; }
+  &__error {
+    font-size: $font-size-xs;
+    color: $color-danger;
+  }
 
   &__checkbox {
     display: flex;
@@ -218,7 +267,11 @@ onMounted(load)
     cursor: pointer;
   }
 
-  &__list { display: flex; flex-direction: column; gap: 8px; }
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
   &__item {
     display: flex;
@@ -230,10 +283,22 @@ onMounted(load)
     background: $color-white;
   }
 
-  &__item-icon { color: $color-gray-400; flex-shrink: 0; }
+  &__item-icon {
+    color: $color-gray-400;
+    flex-shrink: 0;
+  }
 
-  &__item-body { flex: 1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  &__item-text { font-size: $font-size-sm; color: $color-gray-700; }
+  &__item-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  &__item-text {
+    font-size: $font-size-sm;
+    color: $color-gray-700;
+  }
 
   &__badge {
     font-size: $font-size-xs;
@@ -244,7 +309,11 @@ onMounted(load)
     border-radius: $radius-full;
   }
 
-  &__item-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  &__item-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
 
   &__action-btn {
     width: 30px;
@@ -255,9 +324,17 @@ onMounted(load)
     justify-content: center;
     color: $color-gray-400;
     cursor: pointer;
-    transition: background $transition-fast, color $transition-fast;
-    &:hover { background: $color-gray-100; color: $color-gray-700; }
-    &--danger:hover { background: rgb(239 68 68 / 8%); color: $color-danger; }
+    transition:
+      background $transition-fast,
+      color $transition-fast;
+    &:hover {
+      background: $color-gray-100;
+      color: $color-gray-700;
+    }
+    &--danger:hover {
+      background: rgb(239 68 68 / 8%);
+      color: $color-danger;
+    }
   }
 
   &__empty {
@@ -271,9 +348,20 @@ onMounted(load)
     text-align: center;
   }
 
-  &__empty-icon { color: $color-gray-200; }
+  &__empty-icon {
+    color: $color-gray-200;
+  }
 }
 
-.slide-down-enter-active, .slide-down-leave-active { transition: opacity 0.2s, transform 0.2s; }
-.slide-down-enter-from, .slide-down-leave-to { opacity: 0; transform: translateY(-8px); }
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+.slide-down-enter-from,
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
 </style>

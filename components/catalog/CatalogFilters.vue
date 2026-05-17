@@ -13,7 +13,13 @@ const categoriesStore = useCategoriesStore()
 
 const local = reactive({ ...props.modelValue })
 
-watch(() => props.modelValue, (val) => { Object.assign(local, val) }, { deep: true })
+watch(
+  () => props.modelValue,
+  (val) => {
+    Object.assign(local, val)
+  },
+  { deep: true },
+)
 
 function emitChange() {
   emit('update:modelValue', { ...local })
@@ -36,11 +42,7 @@ function toggleCategory(slug: string) {
 
     <div class="catalog-filters__section">
       <span class="catalog-filters__label">Категории</span>
-      <label
-        v-for="cat in categoriesStore.categories"
-        :key="cat.id"
-        class="catalog-filters__check"
-      >
+      <label v-for="cat in categoriesStore.categories" :key="cat.id" class="catalog-filters__check">
         <input
           type="checkbox"
           :value="cat.slug"
@@ -83,7 +85,9 @@ function toggleCategory(slug: string) {
     transition: transform $transition-base;
     box-shadow: $shadow-xl;
 
-    &--open { transform: translateX(0); }
+    &--open {
+      transform: translateX(0);
+    }
   }
 
   &__head {
@@ -91,10 +95,15 @@ function toggleCategory(slug: string) {
     align-items: center;
     justify-content: space-between;
 
-    @media (min-width: 1025px) { display: none; }
+    @media (min-width: 1025px) {
+      display: none;
+    }
   }
 
-  &__title { font-size: $font-size-lg; font-weight: $font-weight-semibold; }
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+  }
 
   &__close {
     width: 32px;
@@ -107,9 +116,17 @@ function toggleCategory(slug: string) {
     justify-content: center;
   }
 
-  &__section { display: flex; flex-direction: column; gap: 8px; }
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
-  &__label { font-size: $font-size-sm; font-weight: $font-weight-semibold; color: $color-gray-700; }
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-700;
+  }
 
   &__check {
     display: flex;
@@ -120,6 +137,14 @@ function toggleCategory(slug: string) {
     cursor: pointer;
   }
 
-  &__price { display: flex; gap: 8px; }
+  &__price {
+    display: flex;
+    gap: 8px;
+
+    > * {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+  }
 }
 </style>

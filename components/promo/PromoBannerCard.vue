@@ -31,7 +31,9 @@ withDefaults(defineProps<Props>(), { tag: 'Акция' })
   transition: transform $transition-base;
   text-decoration: none;
 
-  &:hover { transform: translateY(-2px); }
+  &:hover {
+    transform: translateY(-2px);
+  }
 
   &__tag {
     display: inline-block;

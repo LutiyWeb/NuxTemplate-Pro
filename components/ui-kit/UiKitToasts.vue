@@ -27,8 +27,10 @@ interface Toast {
 
 <template>
   <div class="uikit-toasts">
-
-    <UiKitSection title="Виды тостов" description="Три типа уведомлений: успех, ошибка, предупреждение">
+    <UiKitSection
+      title="Виды тостов"
+      description="Три типа уведомлений: успех, ошибка, предупреждение"
+    >
       <template #preview>
         <div style="display: flex; flex-wrap: wrap; gap: 12px">
           <AppButton
@@ -58,7 +60,9 @@ interface Toast {
 
     <UiKitSection title="Конструктор тоста" description="Создай своё сообщение">
       <template #preview>
-        <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 480px">
+        <div
+          style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 480px"
+        >
           <AppInputText v-model="customMessage" label="Текст сообщения" />
           <div style="display: flex; gap: 8px">
             <label
@@ -86,14 +90,19 @@ interface Toast {
     </UiKitSection>
 
     <UiKitSection title="API тостов">
-      <UiKitPropsTable :rows="[
-        { name: 'add(message, type)', type: 'function', description: 'Показать тост. Исчезает через 3.5 сек' },
-        { name: 'remove(id)', type: 'function', description: 'Удалить тост по id' },
-        { name: 'toasts', type: 'Toast[]', description: 'Текущий список тостов' },
-      ]" />
+      <UiKitPropsTable
+        :rows="[
+          {
+            name: 'add(message, type)',
+            type: 'function',
+            description: 'Показать тост. Исчезает через 3.5 сек',
+          },
+          { name: 'remove(id)', type: 'function', description: 'Удалить тост по id' },
+          { name: 'toasts', type: 'Toast[]', description: 'Текущий список тостов' },
+        ]"
+      />
       <UiKitCodeBlock :code="STORE_CODE" language="ts" />
     </UiKitSection>
-
   </div>
 </template>
 
@@ -111,7 +120,10 @@ interface Toast {
     color: $color-gray-700;
     cursor: pointer;
 
-    input { accent-color: $color-primary; cursor: pointer; }
+    input {
+      accent-color: $color-primary;
+      cursor: pointer;
+    }
   }
 }
 </style>

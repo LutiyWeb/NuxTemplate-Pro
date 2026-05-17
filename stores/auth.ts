@@ -1,7 +1,13 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-interface User { id: number; firstName: string; lastName: string; email: string; phone?: string }
+interface User {
+  id: number
+  firstName: string
+  lastName: string
+  email: string
+  phone?: string
+}
 
 export const useAuthStore = defineStore('auth', () => {
   const config = useRuntimeConfig()
@@ -49,7 +55,13 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(data: { firstName: string; lastName: string; email: string; password: string; phone?: string }) {
+  async function register(data: {
+    firstName: string
+    lastName: string
+    email: string
+    password: string
+    phone?: string
+  }) {
     loading.value = true
     error.value = null
     try {
@@ -65,7 +77,9 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function logout() { _clear() }
+  function logout() {
+    _clear()
+  }
 
   async function deleteAccount() {
     loading.value = true

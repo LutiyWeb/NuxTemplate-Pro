@@ -27,8 +27,13 @@ defineProps<{ rows: PropRow[] }>()
             <code class="uk-props__name">{{ row.name }}</code>
             <span v-if="row.required" class="uk-props__required">*</span>
           </td>
-          <td><code class="uk-props__type">{{ row.type }}</code></td>
-          <td><code v-if="row.default" class="uk-props__default">{{ row.default }}</code><span v-else class="uk-props__none">—</span></td>
+          <td>
+            <code class="uk-props__type">{{ row.type }}</code>
+          </td>
+          <td>
+            <code v-if="row.default" class="uk-props__default">{{ row.default }}</code
+            ><span v-else class="uk-props__none">—</span>
+          </td>
           <td class="uk-props__desc">{{ row.description }}</td>
         </tr>
       </tbody>
@@ -65,17 +70,44 @@ defineProps<{ rows: PropRow[] }>()
       color: $color-gray-700;
       vertical-align: middle;
 
-      &:last-child { border-bottom: none; }
+      &:last-child {
+        border-bottom: none;
+      }
     }
 
-    tr:last-child td { border-bottom: none; }
+    tr:last-child td {
+      border-bottom: none;
+    }
   }
 
-  &__name  { color: $color-primary; font-family: monospace; }
-  &__type  { color: #0891b2; font-family: monospace; background: rgb(6 182 212 / 8%); padding: 1px 5px; border-radius: 4px; }
-  &__default { color: $color-gray-600; font-family: monospace; background: $color-gray-100; padding: 1px 5px; border-radius: 4px; }
-  &__none  { color: $color-gray-300; }
-  &__required { color: $color-danger; margin-left: 2px; font-weight: bold; }
-  &__desc  { color: $color-gray-600; }
+  &__name {
+    color: $color-primary;
+    font-family: monospace;
+  }
+  &__type {
+    color: #0891b2;
+    font-family: monospace;
+    background: rgb(6 182 212 / 8%);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  &__default {
+    color: $color-gray-600;
+    font-family: monospace;
+    background: $color-gray-100;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  &__none {
+    color: $color-gray-300;
+  }
+  &__required {
+    color: $color-danger;
+    margin-left: 2px;
+    font-weight: bold;
+  }
+  &__desc {
+    color: $color-gray-600;
+  }
 }
 </style>

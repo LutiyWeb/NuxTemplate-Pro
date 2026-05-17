@@ -19,8 +19,14 @@ withDefaults(defineProps<Props>(), { tag: 'h2', size: 'm' })
   color: $color-gray-900;
   line-height: $line-height-tight;
 
-  &--s { font-size: $title-size-s; }
-  &--m { font-size: $title-size-m; }
-  &--l { font-size: $title-size-l; }
+  &--s {
+    font-size: $title-size-s;
+  }
+  &--m {
+    font-size: $title-size-m;
+  }
+  &--l {
+    font-size: $title-size-l;
+  }
 }
 </style>

@@ -27,11 +27,13 @@ function toggleSearch() {
   if (uiStore.searchOpen) uiStore.catalogOpen = false
 }
 
-watch(() => route.path, () => {
-  uiStore.catalogOpen = false
-  uiStore.searchOpen  = false
-})
-
+watch(
+  () => route.path,
+  () => {
+    uiStore.catalogOpen = false
+    uiStore.searchOpen = false
+  },
+)
 </script>
 
 <template>
@@ -48,7 +50,10 @@ watch(() => route.path, () => {
       <!-- Desktop nav -->
       <div class="the-header__nav">
         <button
-          :class="['the-header__catalog-btn', { 'the-header__catalog-btn--active': uiStore.catalogOpen }]"
+          :class="[
+            'the-header__catalog-btn',
+            { 'the-header__catalog-btn--active': uiStore.catalogOpen },
+          ]"
           type="button"
           @click="toggleCatalog"
         >
@@ -73,9 +78,19 @@ watch(() => route.path, () => {
           </span>
         </button>
 
-        <button class="the-header__action-btn" type="button" @click="authStore.isLoggedIn ? router.push('/cabinet?section=favorites') : uiStore.authModalOpen = true">
+        <button
+          class="the-header__action-btn"
+          type="button"
+          @click="
+            authStore.isLoggedIn
+              ? router.push('/cabinet?section=favorites')
+              : (uiStore.authModalOpen = true)
+          "
+        >
           <Heart :size="20" />
-          <span v-if="favoritesStore.count" class="the-header__badge">{{ favoritesStore.count }}</span>
+          <span v-if="favoritesStore.count" class="the-header__badge">{{
+            favoritesStore.count
+          }}</span>
         </button>
 
         <button class="the-header__action-btn" type="button" @click="handleCart">
@@ -116,7 +131,9 @@ watch(() => route.path, () => {
     border: none;
     padding: 4px;
 
-    @media (max-width: 768px) { display: flex; }
+    @media (max-width: 768px) {
+      display: flex;
+    }
   }
 
   &__logo {
@@ -132,7 +149,9 @@ watch(() => route.path, () => {
     gap: 8px;
     flex: 1;
 
-    @media (max-width: 768px) { display: none; }
+    @media (max-width: 768px) {
+      display: none;
+    }
   }
 
   &__catalog-btn {
@@ -144,9 +163,15 @@ watch(() => route.path, () => {
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     cursor: pointer;
-    transition: background $transition-fast, color $transition-fast;
+    transition:
+      background $transition-fast,
+      color $transition-fast;
 
-    &:hover, &--active { background: $color-gray-100; color: $color-primary; }
+    &:hover,
+    &--active {
+      background: $color-gray-100;
+      color: $color-primary;
+    }
   }
 
   &__search-btn {
@@ -160,7 +185,9 @@ watch(() => route.path, () => {
     cursor: pointer;
     transition: background $transition-fast;
 
-    &:hover { background: $color-gray-100; }
+    &:hover {
+      background: $color-gray-100;
+    }
   }
 
   &__dev-link {
@@ -175,7 +202,9 @@ watch(() => route.path, () => {
     letter-spacing: 0.02em;
     transition: opacity $transition-fast;
 
-    &:hover { opacity: 1; }
+    &:hover {
+      opacity: 1;
+    }
   }
 
   &__actions {
@@ -196,7 +225,9 @@ watch(() => route.path, () => {
     cursor: pointer;
     transition: background $transition-fast;
 
-    &:hover { background: $color-gray-100; }
+    &:hover {
+      background: $color-gray-100;
+    }
   }
 
   &__action-name {
@@ -222,5 +253,4 @@ watch(() => route.path, () => {
     padding: 0 4px;
   }
 }
-
 </style>

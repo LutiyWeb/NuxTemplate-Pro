@@ -98,7 +98,7 @@ async function submit() {
   errors.value = {}
   const result = schema.safeParse(form)
   if (!result.success) {
-    result.error.errors.forEach(e => {
+    result.error.issues.forEach(e => {
       const key = e.path[0] as keyof typeof form
       if (!errors.value[key]) errors.value[key] = e.message
     })

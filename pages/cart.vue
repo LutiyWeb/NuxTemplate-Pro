@@ -133,7 +133,7 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
 
     <!-- Recommendations -->
     <div v-if="recommendations.length" class="cart-page__recs">
-      <TheSlider
+      <AppSlider
         title="Рекомендуем"
         :slides="recommendations"
         :space-between="16"
@@ -142,7 +142,7 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
         <template #default="slotProps">
           <TheProductCard v-if="slotProps?.slide" :product="(slotProps.slide as any)" />
         </template>
-      </TheSlider>
+      </AppSlider>
     </div>
   </div>
 </template>

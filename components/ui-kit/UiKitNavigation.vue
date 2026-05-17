@@ -27,7 +27,7 @@ const MOCK_PRODUCTS: Product[] = Array.from({ length: 6 }, (_, i) => ({
 const RIBBON_CODE = `<!-- CategoryRibbon читает данные из categoriesStore автоматически -->
 <CategoryRibbon />`
 
-const SLIDER_CODE = `<TheSlider
+const SLIDER_CODE = `<AppSlider
   title="Рекомендуем"
   :slides="products"
   :space-between="16"
@@ -41,7 +41,7 @@ const SLIDER_CODE = `<TheSlider
   <template #default="{ slide }">
     <TheProductCard :product="slide" />
   </template>
-</TheSlider>`
+</AppSlider>`
 
 const ARROW_CODE = `<!-- AppArrow — универсальная стрелка для всех слайдеров -->
 <AppArrow direction="prev" @click="swiper.slidePrev()" />
@@ -54,8 +54,10 @@ const ARROW_CODE = `<!-- AppArrow — универсальная стрелка 
 
 <template>
   <div class="uikit-nav">
-
-    <UiKitSection title="CategoryRibbon" description="Горизонтальная лента категорий с иконками и стрелками прокрутки">
+    <UiKitSection
+      title="CategoryRibbon"
+      description="Горизонтальная лента категорий с иконками и стрелками прокрутки"
+    >
       <template #preview>
         <div style="width: 100%; overflow: hidden">
           <CategoryRibbon />
@@ -66,19 +68,26 @@ const ARROW_CODE = `<!-- AppArrow — универсальная стрелка 
       </template>
     </UiKitSection>
 
-    <UiKitSection title="TheSlider" description="Swiper.js слайдер с товарами, адаптивными брейкпоинтами и стрелками">
+    <UiKitSection
+      title="AppSlider"
+      description="Swiper.js слайдер с товарами, адаптивными брейкпоинтами и стрелками"
+    >
       <template #preview>
         <div style="width: 100%; overflow: hidden">
-          <TheSlider
+          <AppSlider
             title="Пример слайдера"
             :slides="MOCK_PRODUCTS"
             :space-between="16"
-            :breakpoints="{ 0: { slidesPerView: 2 }, 640: { slidesPerView: 3 }, 1024: { slidesPerView: 4 } }"
+            :breakpoints="{
+              0: { slidesPerView: 2 },
+              640: { slidesPerView: 3 },
+              1024: { slidesPerView: 4 },
+            }"
           >
             <template #default="slotProps">
-              <TheProductCard v-if="slotProps?.slide" :product="(slotProps.slide as any)" />
+              <TheProductCard v-if="slotProps?.slide" :product="slotProps.slide as any" />
             </template>
-          </TheSlider>
+          </AppSlider>
         </div>
       </template>
       <template #code>
@@ -86,7 +95,10 @@ const ARROW_CODE = `<!-- AppArrow — универсальная стрелка 
       </template>
     </UiKitSection>
 
-    <UiKitSection title="AppArrow" description="Универсальный компонент стрелок — используется во всех слайдерах">
+    <UiKitSection
+      title="AppArrow"
+      description="Универсальный компонент стрелок — используется во всех слайдерах"
+    >
       <template #preview>
         <div style="display: flex; gap: 12px; align-items: center">
           <AppArrow direction="prev" />
@@ -103,16 +115,31 @@ const ARROW_CODE = `<!-- AppArrow — универсальная стрелка 
         <UiKitCodeBlock :code="ARROW_CODE" />
       </template>
       <template #props>
-        <UiKitPropsTable :rows="[
-          { name: 'direction', type: `'prev' | 'next'`, required: true, description: 'Направление стрелки' },
-          { name: 'disabled', type: 'boolean', default: 'false', description: 'Заблокировать стрелку' },
-        ]" />
+        <UiKitPropsTable
+          :rows="[
+            {
+              name: 'direction',
+              type: `'prev' | 'next'`,
+              required: true,
+              description: 'Направление стрелки',
+            },
+            {
+              name: 'disabled',
+              type: 'boolean',
+              default: 'false',
+              description: 'Заблокировать стрелку',
+            },
+          ]"
+        />
       </template>
     </UiKitSection>
-
   </div>
 </template>
 
 <style lang="scss">
-.uikit-nav { display: flex; flex-direction: column; gap: 40px; }
+.uikit-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
 </style>

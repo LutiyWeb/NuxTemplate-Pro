@@ -35,10 +35,14 @@ withDefaults(defineProps<Props>(), { loading: false })
   background: $color-white;
   box-shadow: $shadow-md;
   overflow: hidden;
-  transition: box-shadow $transition-base, transform $transition-base;
+  transition:
+    box-shadow $transition-base,
+    transform $transition-base;
 
   &:hover {
-    box-shadow: 0 16px 20px -4px rgb(0 0 0 / 0.1), 0 6px 8px -5px rgb(0 0 0 / 0.1);
+    box-shadow:
+      0 16px 20px -4px rgb(0 0 0 / 0.1),
+      0 6px 8px -5px rgb(0 0 0 / 0.1);
     transform: translateY(-2px);
   }
 
@@ -48,7 +52,11 @@ withDefaults(defineProps<Props>(), { loading: false })
     background: $color-gray-100;
     overflow: hidden;
 
-    img { width: 100%; height: 100%; object-fit: cover; }
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 
   &__badge {
@@ -89,9 +97,19 @@ withDefaults(defineProps<Props>(), { loading: false })
     @include mixins.shimmer;
     border-radius: $radius-md;
 
-    &--image { width: 100%; aspect-ratio: 4/3; border-radius: 0; }
-    &--title { width: 75%; height: 20px; }
-    &--desc { width: 100%; height: 32px; }
+    &--image {
+      width: 100%;
+      aspect-ratio: 4/3;
+      border-radius: 0;
+    }
+    &--title {
+      width: 75%;
+      height: 20px;
+    }
+    &--desc {
+      width: 100%;
+      height: 32px;
+    }
   }
 }
 </style>

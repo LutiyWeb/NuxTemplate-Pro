@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import type { Product } from '~/types/product'
 
 export interface CartEntry {
-  id: number | null   // backend CartItem.id; null для гостей
+  id: number | null // backend CartItem.id; null для гостей
   product: Product
   qty: number
 }
@@ -10,11 +10,11 @@ export interface CartEntry {
 const LS_KEY = 'nexus:cart'
 
 export const useCartStore = defineStore('cart', () => {
-  const authStore  = useAuthStore()
+  const authStore = useAuthStore()
   const { authFetch } = useAuthFetch()
   const toastStore = useToastStore()
 
-  const items   = ref<CartEntry[]>([])
+  const items = ref<CartEntry[]>([])
   const loading = ref(false)
 
   const count = computed(() => items.value.reduce((s, e) => s + e.qty, 0))
@@ -41,7 +41,7 @@ export const useCartStore = defineStore('cart', () => {
 
   // ── Применить ответ бэкенда ──────────────────────────────────────────────
   function _apply(backendItems: any[]) {
-    items.value = backendItems.map(i => ({
+    items.value = backendItems.map((i) => ({
       id: i.id,
       product: i.product,
       qty: i.quantity,
@@ -54,8 +54,10 @@ export const useCartStore = defineStore('cart', () => {
     try {
       const res = await authFetch<{ data: any }>('/api/cart')
       _apply(res.data.items)
-    } catch {}
-    finally { loading.value = false }
+    } catch {
+    } finally {
+      loading.value = false
+    }
   }
 
   // ── Мигрировать гостевую корзину в бэкенд после входа ────────────────────
@@ -94,7 +96,7 @@ export const useCartStore = defineStore('cart', () => {
         )
       }
     } else {
-      const existing = items.value.find(e => e.product.id === product.id)
+      const existing = items.value.find((e) => e.product.id === product.id)
       if (existing) existing.qty += qty
       else items.value.push({ id: null, product, qty })
       _saveLocal()
@@ -103,30 +105,35 @@ export const useCartStore = defineStore('cart', () => {
 
   // ── remove ───────────────────────────────────────────────────────────────
   async function remove(productId: number) {
-    const entry = items.value.find(e => e.product.id === productId)
+    const entry = items.value.find((e) => e.product.id === productId)
     if (!entry) return
 
     if (authStore.isLoggedIn && entry.id !== null) {
       try {
-        const res = await authFetch<{ data: any }>(`/api/cart/items/${entry.id}`, { method: 'DELETE' })
+        const res = await authFetch<{ data: any }>(`/api/cart/items/${entry.id}`, {
+          method: 'DELETE',
+        })
         _apply(res.data.items)
       } catch {
         toastStore.add('Не удалось удалить товар', 'error')
       }
     } else {
-      items.value = items.value.filter(e => e.product.id !== productId)
+      items.value = items.value.filter((e) => e.product.id !== productId)
       _saveLocal()
     }
   }
 
   // ── updateQty ─────────────────────────────────────────────────────────────
   async function updateQty(productId: number, delta: number) {
-    const entry = items.value.find(e => e.product.id === productId)
+    const entry = items.value.find((e) => e.product.id === productId)
     if (!entry) return
     const next = entry.qty + delta
 
     if (authStore.isLoggedIn && entry.id !== null) {
-      if (next <= 0) { await remove(productId); return }
+      if (next <= 0) {
+        await remove(productId)
+        return
+      }
       try {
         const res = await authFetch<{ data: any }>(`/api/cart/items/${entry.id}`, {
           method: 'PATCH',
@@ -143,7 +150,7 @@ export const useCartStore = defineStore('cart', () => {
         )
       }
     } else {
-      if (next <= 0) items.value = items.value.filter(e => e.product.id !== productId)
+      if (next <= 0) items.value = items.value.filter((e) => e.product.id !== productId)
       else entry.qty = next
       _saveLocal()
     }
@@ -174,14 +181,17 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   // При изменении состояния авторизации
-  watch(() => authStore.isLoggedIn, async (loggedIn) => {
-    if (loggedIn) {
-      await _syncAfterLogin()
-    } else {
-      items.value = []
-      _clearLocal()
-    }
-  })
+  watch(
+    () => authStore.isLoggedIn,
+    async (loggedIn) => {
+      if (loggedIn) {
+        await _syncAfterLogin()
+      } else {
+        items.value = []
+        _clearLocal()
+      }
+    },
+  )
 
   return { items, loading, count, total, add, remove, updateQty, clear, fetchCart }
 })

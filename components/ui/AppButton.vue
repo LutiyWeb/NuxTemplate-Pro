@@ -37,14 +37,31 @@ const props = withDefaults(defineProps<Props>(), {
   cursor: pointer;
   border: none;
   font-family: $font-family-base;
-  transition: background $transition-fast, color $transition-fast, border-color $transition-fast, box-shadow $transition-fast, transform $transition-fast;
+  transition:
+    background $transition-fast,
+    color $transition-fast,
+    border-color $transition-fast,
+    box-shadow $transition-fast,
+    transform $transition-fast;
 
-  &:disabled { opacity: 0.55; cursor: not-allowed; }
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
 
   // Sizes
-  &--sm { padding: 6px 12px; font-size: $font-size-sm; }
-  &--md { padding: 10px 20px; font-size: 15px; }
-  &--lg { padding: 12px 24px; font-size: $font-size-base; }
+  &--sm {
+    padding: 6px 12px;
+    font-size: $font-size-sm;
+  }
+  &--md {
+    padding: 10px 20px;
+    font-size: 15px;
+  }
+  &--lg {
+    padding: 12px 24px;
+    font-size: $font-size-base;
+  }
 
   // Variants
   &--primary {
@@ -113,6 +130,8 @@ const props = withDefaults(defineProps<Props>(), {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

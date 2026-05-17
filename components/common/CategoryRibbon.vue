@@ -1,5 +1,17 @@
 <script setup lang="ts">
-import { Smartphone, Laptop, Headphones, Gamepad2, Tablet, Watch, Tv, Home, Camera, Briefcase, Package } from 'lucide-vue-next'
+import {
+  Smartphone,
+  Laptop,
+  Headphones,
+  Gamepad2,
+  Tablet,
+  Watch,
+  Tv,
+  Home,
+  Camera,
+  Briefcase,
+  Package,
+} from 'lucide-vue-next'
 import type { Component } from 'vue'
 
 const categoriesStore = useCategoriesStore()
@@ -32,8 +44,12 @@ function updateArrows() {
   canScrollRight.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 1
 }
 
-function scrollLeft() { scrollEl.value?.scrollBy({ left: -200, behavior: 'smooth' }) }
-function scrollRight() { scrollEl.value?.scrollBy({ left: 200, behavior: 'smooth' }) }
+function scrollLeft() {
+  scrollEl.value?.scrollBy({ left: -200, behavior: 'smooth' })
+}
+function scrollRight() {
+  scrollEl.value?.scrollBy({ left: 200, behavior: 'smooth' })
+}
 
 onMounted(() => {
   updateArrows()
@@ -48,7 +64,12 @@ onUnmounted(() => {
 
 <template>
   <div class="category-ribbon">
-    <AppArrow v-show="canScrollLeft" direction="left" class="category-ribbon__arrow category-ribbon__arrow--left" @click="scrollLeft" />
+    <AppArrow
+      v-show="canScrollLeft"
+      direction="left"
+      class="category-ribbon__arrow category-ribbon__arrow--left"
+      @click="scrollLeft"
+    />
 
     <div ref="scrollEl" class="category-ribbon__track">
       <template v-if="categoriesStore.loading">
@@ -65,7 +86,12 @@ onUnmounted(() => {
       </NuxtLink>
     </div>
 
-    <AppArrow v-show="canScrollRight" direction="right" class="category-ribbon__arrow category-ribbon__arrow--right" @click="scrollRight" />
+    <AppArrow
+      v-show="canScrollRight"
+      direction="right"
+      class="category-ribbon__arrow category-ribbon__arrow--right"
+      @click="scrollRight"
+    />
   </div>
 </template>
 
@@ -85,7 +111,9 @@ onUnmounted(() => {
     height: 100%;
     width: 100%;
 
-    &::-webkit-scrollbar { display: none; }
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   &__item {
@@ -99,14 +127,24 @@ onUnmounted(() => {
     font-weight: $font-weight-medium;
     color: $color-gray-700;
     border-radius: $radius-md;
-    transition: background $transition-fast, color $transition-fast;
+    transition:
+      background $transition-fast,
+      color $transition-fast;
     flex-shrink: 0;
 
-    &:hover { background: $color-gray-100; color: $color-primary; }
+    &:hover {
+      background: $color-gray-100;
+      color: $color-primary;
+    }
   }
 
-  &__icon { display: flex; flex-shrink: 0; }
-  &__label { font-size: $font-size-sm; }
+  &__icon {
+    display: flex;
+    flex-shrink: 0;
+  }
+  &__label {
+    font-size: $font-size-sm;
+  }
 
   &__arrow {
     position: absolute;
@@ -117,11 +155,17 @@ onUnmounted(() => {
     opacity: 0;
     transition: opacity $transition-fast;
 
-    &--left { left: 0; }
-    &--right { right: 0; }
+    &--left {
+      left: 0;
+    }
+    &--right {
+      right: 0;
+    }
   }
 
-  &:hover &__arrow { opacity: 1; }
+  &:hover &__arrow {
+    opacity: 1;
+  }
 
   &__skeleton {
     @include mixins.shimmer;

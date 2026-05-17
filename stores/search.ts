@@ -17,12 +17,12 @@ export const useSearchStore = defineStore('search', () => {
   function push(query: string) {
     const q = query.trim()
     if (!q) return
-    history.value = [q, ...history.value.filter(h => h !== q)].slice(0, MAX_ITEMS)
+    history.value = [q, ...history.value.filter((h) => h !== q)].slice(0, MAX_ITEMS)
     persist()
   }
 
   function remove(query: string) {
-    history.value = history.value.filter(h => h !== query)
+    history.value = history.value.filter((h) => h !== query)
     persist()
   }
 

@@ -4,7 +4,11 @@ import type { Review } from '~/types/review'
 defineProps<{ review: Review }>()
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
+  return new Date(iso).toLocaleDateString('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
 }
 </script>
 
@@ -74,7 +78,9 @@ function formatDate(iso: string) {
     color: $color-gray-400;
   }
 
-  &__stars { flex-shrink: 0; }
+  &__stars {
+    flex-shrink: 0;
+  }
 
   &__text {
     font-size: $font-size-sm;

@@ -6,7 +6,9 @@ const copied = ref(false)
 async function copy(code: string) {
   await navigator.clipboard.writeText(code)
   copied.value = true
-  setTimeout(() => { copied.value = false }, 1500)
+  setTimeout(() => {
+    copied.value = false
+  }, 1500)
 }
 </script>
 
@@ -55,9 +57,14 @@ async function copy(code: string) {
     border-radius: $radius-sm;
     padding: 3px 10px;
     cursor: pointer;
-    transition: background $transition-fast, color $transition-fast;
+    transition:
+      background $transition-fast,
+      color $transition-fast;
 
-    &:hover { background: rgb(255 255 255 / 16%); color: $color-white; }
+    &:hover {
+      background: rgb(255 255 255 / 16%);
+      color: $color-white;
+    }
   }
 
   &__pre {

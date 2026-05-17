@@ -17,12 +17,12 @@ async function loadPage(page: number) {
 }
 
 const STATUS_CLASS: Record<OrderStatus, string> = {
-  pending:    'warning',
-  confirmed:  'primary',
+  pending: 'warning',
+  confirmed: 'primary',
   processing: 'primary',
-  shipped:    'info',
-  delivered:  'success',
-  cancelled:  'danger',
+  shipped: 'info',
+  delivered: 'success',
+  cancelled: 'danger',
 }
 </script>
 
@@ -44,29 +44,42 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
       <Package :size="48" class="cab-orders__empty-icon" />
       <p class="cab-orders__empty-title">Заказов пока нет</p>
       <p class="cab-orders__empty-desc">Ваши заказы появятся здесь после первой покупки</p>
-      <AppButton variant="primary" size="md" @click="navigateTo('/catalog')">Перейти в каталог</AppButton>
+      <AppButton variant="primary" size="md" @click="navigateTo('/catalog')"
+        >Перейти в каталог</AppButton
+      >
     </div>
 
     <!-- List -->
     <div v-else class="cab-orders__list">
       <div v-for="order in ordersStore.orders" :key="order.id" class="cab-orders__item">
-
         <!-- Row header -->
         <div class="cab-orders__row" @click="toggleExpand(order.id)">
           <div class="cab-orders__meta">
             <span class="cab-orders__number">{{ order.orderNumber }}</span>
-            <span class="cab-orders__date">{{ new Date(order.createdAt).toLocaleDateString('ru-RU') }}</span>
+            <span class="cab-orders__date">{{
+              new Date(order.createdAt).toLocaleDateString('ru-RU')
+            }}</span>
           </div>
 
-          <span :class="['cab-orders__status', `cab-orders__status--${STATUS_CLASS[order.status as OrderStatus]}`]">
+          <span
+            :class="[
+              'cab-orders__status',
+              `cab-orders__status--${STATUS_CLASS[order.status as OrderStatus]}`,
+            ]"
+          >
             {{ ordersStore.getStatusLabel(order.status as OrderStatus) }}
           </span>
 
-          <span class="cab-orders__total">{{ ordersStore.formatMoney(order.totalPrice, order.currency) }}</span>
+          <span class="cab-orders__total">{{
+            ordersStore.formatMoney(order.totalPrice, order.currency)
+          }}</span>
 
           <ChevronDown
             :size="16"
-            :class="['cab-orders__chevron', { 'cab-orders__chevron--open': expandedId === order.id }]"
+            :class="[
+              'cab-orders__chevron',
+              { 'cab-orders__chevron--open': expandedId === order.id },
+            ]"
           />
         </div>
 
@@ -76,12 +89,17 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
             <div v-for="item in order.items" :key="item.id" class="cab-orders__product">
               <div class="cab-orders__product-info">
                 <span class="cab-orders__product-title">{{ item.productTitle }}</span>
-                <span v-if="item.variant" class="cab-orders__product-variant">{{ (item.variant as any).title }}</span>
+                <span v-if="item.variant" class="cab-orders__product-variant">{{
+                  (item.variant as any).title
+                }}</span>
                 <span class="cab-orders__product-qty">
-                  {{ item.quantity }} шт. × {{ ordersStore.formatMoney(item.unitPrice, order.currency) }}
+                  {{ item.quantity }} шт. ×
+                  {{ ordersStore.formatMoney(item.unitPrice, order.currency) }}
                 </span>
               </div>
-              <span class="cab-orders__product-price">{{ ordersStore.formatMoney(item.totalPrice, order.currency) }}</span>
+              <span class="cab-orders__product-price">{{
+                ordersStore.formatMoney(item.totalPrice, order.currency)
+              }}</span>
             </div>
 
             <div class="cab-orders__details-footer">
@@ -99,7 +117,10 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
       <button
         v-for="page in ordersStore.meta.totalPages"
         :key="page"
-        :class="['cab-orders__page-btn', { 'cab-orders__page-btn--active': page === ordersStore.meta.page }]"
+        :class="[
+          'cab-orders__page-btn',
+          { 'cab-orders__page-btn--active': page === ordersStore.meta.page },
+        ]"
         @click="loadPage(page)"
       >
         {{ page }}
@@ -131,9 +152,18 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
     text-align: center;
   }
 
-  &__empty-icon { color: $color-gray-200; }
-  &__empty-title { font-size: $font-size-lg; font-weight: $font-weight-semibold; color: $color-gray-700; }
-  &__empty-desc { font-size: $font-size-sm; color: $color-gray-400; }
+  &__empty-icon {
+    color: $color-gray-200;
+  }
+  &__empty-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-700;
+  }
+  &__empty-desc {
+    font-size: $font-size-sm;
+    color: $color-gray-400;
+  }
 
   &__skeleton {
     display: flex;
@@ -144,7 +174,11 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
     border-radius: $radius-lg;
   }
 
-  &__list { display: flex; flex-direction: column; gap: 8px; }
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
   &__item {
     border: 1px solid $color-gray-100;
@@ -159,12 +193,27 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
     padding: 14px 16px;
     cursor: pointer;
     transition: background $transition-fast;
-    &:hover { background: $color-gray-50; }
+    &:hover {
+      background: $color-gray-50;
+    }
   }
 
-  &__meta { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-  &__number { font-size: $font-size-sm; font-weight: $font-weight-semibold; color: $color-gray-900; }
-  &__date { font-size: $font-size-xs; color: $color-gray-400; }
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+  }
+  &__number {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-900;
+  }
+  &__date {
+    font-size: $font-size-xs;
+    color: $color-gray-400;
+  }
 
   &__status {
     font-size: $font-size-xs;
@@ -174,11 +223,26 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
     white-space: nowrap;
     flex-shrink: 0;
 
-    &--primary   { background: rgb(99 102 241 / 10%); color: $color-primary; }
-    &--warning   { background: rgb(234 179 8 / 12%);  color: $color-warning; }
-    &--success   { background: rgb(34 197 94 / 10%);  color: $color-success; }
-    &--danger    { background: rgb(239 68 68 / 10%);  color: $color-danger; }
-    &--info      { background: rgb(6 182 212 / 10%);  color: #0891b2; }
+    &--primary {
+      background: rgb(99 102 241 / 10%);
+      color: $color-primary;
+    }
+    &--warning {
+      background: rgb(234 179 8 / 12%);
+      color: $color-warning;
+    }
+    &--success {
+      background: rgb(34 197 94 / 10%);
+      color: $color-success;
+    }
+    &--danger {
+      background: rgb(239 68 68 / 10%);
+      color: $color-danger;
+    }
+    &--info {
+      background: rgb(6 182 212 / 10%);
+      color: #0891b2;
+    }
   }
 
   &__total {
@@ -194,7 +258,9 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
     flex-shrink: 0;
     transition: transform $transition-fast;
 
-    &--open { transform: rotate(180deg); }
+    &--open {
+      transform: rotate(180deg);
+    }
   }
 
   // Expand transition
@@ -223,7 +289,9 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
     gap: 12px;
     padding: 6px 0;
 
-    &:not(:last-child) { border-bottom: 1px solid $color-gray-100; }
+    &:not(:last-child) {
+      border-bottom: 1px solid $color-gray-100;
+    }
   }
 
   &__product-info {
@@ -240,8 +308,14 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
     font-weight: $font-weight-medium;
   }
 
-  &__product-variant { font-size: $font-size-xs; color: $color-gray-500; }
-  &__product-qty { font-size: $font-size-xs; color: $color-gray-400; }
+  &__product-variant {
+    font-size: $font-size-xs;
+    color: $color-gray-500;
+  }
+  &__product-qty {
+    font-size: $font-size-xs;
+    color: $color-gray-400;
+  }
 
   &__product-price {
     font-size: $font-size-sm;
@@ -266,7 +340,9 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
     font-weight: $font-weight-medium;
     color: $color-primary;
     text-decoration: none;
-    &:hover { text-decoration: underline; }
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   // Pagination
@@ -284,10 +360,16 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
     font-size: $font-size-sm;
     color: $color-gray-700;
     cursor: pointer;
-    transition: background $transition-fast, border-color $transition-fast, color $transition-fast;
+    transition:
+      background $transition-fast,
+      border-color $transition-fast,
+      color $transition-fast;
     background: $color-white;
 
-    &:hover { border-color: $color-primary; color: $color-primary; }
+    &:hover {
+      border-color: $color-primary;
+      color: $color-primary;
+    }
 
     &--active {
       background: $color-primary;

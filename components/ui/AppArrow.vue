@@ -30,7 +30,10 @@ defineEmits<{ click: [] }>()
   justify-content: center;
   color: $color-gray-500;
   flex-shrink: 0;
-  transition: background $transition-fast, border-color $transition-fast, color $transition-fast;
+  transition:
+    background $transition-fast,
+    border-color $transition-fast,
+    color $transition-fast;
 
   &:not(:disabled):hover {
     background: $color-gray-900;
@@ -38,6 +41,9 @@ defineEmits<{ click: [] }>()
     color: $color-white;
   }
 
-  &:disabled { opacity: 0.3; cursor: not-allowed; }
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
 }
 </style>

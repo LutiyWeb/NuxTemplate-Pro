@@ -3,28 +3,14 @@ defineProps<{ open: boolean }>()
 defineEmits<{ close: [] }>()
 
 const categoriesStore = useCategoriesStore()
-const activeId      = ref<number | null>(null)
-const isOverflowing = ref(false)
+const activeId = ref<number | null>(null)
 
-const rowEls: Record<number, HTMLElement> = {}
+const activeCat = computed(
+  () => categoriesStore.categories.find((c) => c.id === activeId.value) ?? null,
+)
 
-// padding-top + padding-bottom + line-height ≈ 9 + 9 + 14*1.5 = 39px
-const SUB_ROW_HEIGHT = 39
-
-function activate(id: number) {
-  activeId.value = id
-
-  const rowEl = rowEls[id]
-  if (!rowEl) { isOverflowing.value = false; return }
-
-  const cat = categoriesStore.categories.find(c => c.id === id)
-  const subCount = cat?.subcategories?.length ?? 0
-
-  const rowRect        = rowEl.getBoundingClientRect()
-  const estimatedHeight = subCount * SUB_ROW_HEIGHT
-
-  // +8px буфер чтобы не обрезалась последняя строка
-  isOverflowing.value = window.innerHeight - rowRect.top < estimatedHeight + 8
+function isNew(cat: { slug?: string; name?: string }) {
+  return cat.slug?.includes('new') || cat.name?.toLowerCase().includes('новин')
 }
 </script>
 
@@ -32,36 +18,38 @@ function activate(id: number) {
   <Transition name="catalog-menu">
     <div v-if="open" class="catalog-menu" @click.self="$emit('close')">
       <div class="catalog-menu__inner container" @mouseleave="activeId = null">
-        <div
-          v-for="cat in categoriesStore.categories"
-          :key="cat.id"
-          :ref="el => { if (el) rowEls[cat.id] = el as HTMLElement }"
-          class="catalog-menu__row"
-        >
+        <!-- Левый столбец: список категорий -->
+        <div class="catalog-menu__cats">
           <NuxtLink
+            v-for="cat in categoriesStore.categories"
+            :key="cat.id"
             :to="`/catalog?categorySlug=${cat.slug}`"
-            :class="['catalog-menu__parent', { 'catalog-menu__parent--active': activeId === cat.id }]"
-            @mouseenter="activate(cat.id)"
-            @click="$emit('close')"
-          >{{ cat.name }}</NuxtLink>
-
-          <div
-            v-if="cat.subcategories?.length"
             :class="[
-              'catalog-menu__subs',
-              { 'catalog-menu__subs--active': activeId === cat.id },
-              { 'catalog-menu__subs--flip':   activeId === cat.id && isOverflowing },
+              'catalog-menu__parent',
+              { 'catalog-menu__parent--active': activeId === cat.id },
+              { 'catalog-menu__parent--new': isNew(cat) },
             ]"
+            @mouseenter="activeId = cat.id"
+            @click="$emit('close')"
           >
+            {{ cat.name }}
+            <span v-if="isNew(cat)" class="catalog-menu__new-badge">NEW</span>
+          </NuxtLink>
+        </div>
+
+        <!-- Правый столбец: подкатегории активной категории -->
+        <Transition name="catalog-subs">
+          <div v-if="activeCat?.subcategories?.length" class="catalog-menu__subs">
             <NuxtLink
-              v-for="sub in cat.subcategories"
+              v-for="sub in activeCat.subcategories"
               :key="sub.id"
               :to="`/catalog?categorySlug=${sub.slug}`"
               class="catalog-menu__sub"
               @click="$emit('close')"
-            >{{ sub.name }}</NuxtLink>
+              >{{ sub.name }}</NuxtLink
+            >
           </div>
-        </div>
+        </Transition>
       </div>
     </div>
   </Transition>
@@ -71,83 +59,106 @@ function activate(id: number) {
 .catalog-menu {
   position: absolute;
   top: 100%;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
+  z-index: $z-dropdown;
   background: $color-white;
   border-top: 1px solid $color-gray-100;
   box-shadow: $shadow-lg;
-  z-index: $z-dropdown;
 
   &__inner {
+    display: flex;
     padding-block: 8px;
+    min-height: 120px;
   }
 
-  &__row {
-    position: relative;
+  &__cats {
+    width: 220px;
+    flex-shrink: 0;
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
   }
 
   &__parent {
-    width: 220px;
-    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     padding: 9px 16px;
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
     color: $color-gray-800;
     border-radius: $radius-md;
-    transition: color $transition-fast, background $transition-fast;
+    transition:
+      color $transition-fast,
+      background $transition-fast;
 
     &:hover,
     &--active {
       color: $color-primary;
       background: $color-gray-50;
     }
+
+    &--new {
+      color: $color-primary;
+    }
+  }
+
+  &__new-badge {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 5px;
+    border-radius: $radius-sm;
+    background: $color-primary;
+    color: $color-white;
+    font-size: 9px;
+    font-weight: $font-weight-bold;
+    letter-spacing: 0.04em;
+    line-height: 1.6;
   }
 
   &__subs {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    position: absolute;
-    left: 220px;
-    top: 0;
     padding: 0 16px;
-    min-width: 240px;
     border-left: 1px solid $color-gray-100;
-
-    // скрыто по умолчанию — но остаётся в DOM для измерения высоты
-    visibility: hidden;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity $transition-fast;
-
-    &--active {
-      visibility: visible;
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    // если не помещается снизу — растём вверх
-    &--flip {
-      top: auto;
-      bottom: 0;
-    }
+    overflow-y: auto;
   }
 
   &__sub {
-    width: 100%;
     padding: 9px 12px;
     font-size: $font-size-sm;
     color: $color-gray-500;
     border-radius: $radius-md;
-    transition: color $transition-fast, background $transition-fast;
+    transition:
+      color $transition-fast,
+      background $transition-fast;
 
-    &:hover { color: $color-primary; background: $color-gray-50; }
+    &:hover {
+      color: $color-primary;
+      background: $color-gray-50;
+    }
   }
 }
 
 .catalog-menu-enter-active,
-.catalog-menu-leave-active { transition: opacity $transition-fast, transform $transition-fast; }
+.catalog-menu-leave-active {
+  transition:
+    opacity $transition-fast,
+    transform $transition-fast;
+}
 .catalog-menu-enter-from,
-.catalog-menu-leave-to { opacity: 0; transform: translateY(-8px); }
+.catalog-menu-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.catalog-subs-enter-active,
+.catalog-subs-leave-active {
+  transition: opacity $transition-fast;
+}
+.catalog-subs-enter-from,
+.catalog-subs-leave-to {
+  opacity: 0;
+}
 </style>

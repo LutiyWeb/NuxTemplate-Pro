@@ -2,48 +2,79 @@
 useHead({ title: 'Каталог — Nexus Commerce' })
 
 const route = useRoute()
+const router = useRouter()
 const productsStore = useProductsStore()
 const categoriesStore = useCategoriesStore()
-
-const currentPage = ref(1)
-const perPage = ref(20)
-const sortKey = ref('newest')
-const activeFilters = ref({ categories: [] as string[], priceMin: 0, priceMax: 999999 })
 const isMobileFiltersOpen = ref(false)
 
-const categorySlug = computed(() => route.query.categorySlug as string | undefined)
+// Нормализуем categories из URL (поддерживаем и ?categorySlug= для навигации из риббона)
+const selectedCategories = computed<string[]>(() => {
+  const cats = route.query.categories
+  const legacy = route.query.categorySlug as string | undefined
+  const arr: string[] = cats ? (Array.isArray(cats) ? [...cats as string[]] : [cats as string]) : []
+  if (legacy && !arr.includes(legacy)) arr.push(legacy)
+  return arr
+})
 
-watch([categorySlug, perPage], () => { currentPage.value = 1 })
+const currentPage = computed(() => Number(route.query.page ?? 1))
+const perPage = computed(() => Number(route.query.limit ?? 20))
+const sortKey = computed(() => (route.query.sortBy as string) ?? 'newest')
 
-watch([categorySlug, currentPage, perPage], () => {
-  productsStore.fetchProducts({
-    page: currentPage.value,
-    limit: perPage.value,
-    categorySlug: categorySlug.value,
-  })
-}, { immediate: true })
+const activeFilters = computed(() => ({
+  categories: selectedCategories.value,
+  priceMin: route.query.priceMin ? Number(route.query.priceMin) : 0,
+  priceMax: route.query.priceMax ? Number(route.query.priceMax) : 999999,
+}))
+
+watch(
+  () => route.query,
+  () => {
+    productsStore.fetchProducts({
+      page: currentPage.value,
+      limit: perPage.value,
+      categories: selectedCategories.value.length ? selectedCategories.value : undefined,
+      priceMin: activeFilters.value.priceMin > 0 ? activeFilters.value.priceMin : undefined,
+      priceMax: activeFilters.value.priceMax < 999999 ? activeFilters.value.priceMax : undefined,
+      sortBy: sortKey.value,
+    })
+  },
+  { immediate: true, deep: true },
+)
 
 onMounted(() => { categoriesStore.fetchCategories() })
 
-const displayedProducts = computed(() => {
-  let list = [...productsStore.products]
-  if (activeFilters.value.categories.length) {
-    list = list.filter((p) => p.categorySlug && activeFilters.value.categories.includes(p.categorySlug))
-  }
-  list = list.filter((p) => {
-    const price = p.price ?? 0
-    return price >= activeFilters.value.priceMin && price <= activeFilters.value.priceMax
-  })
-  if (sortKey.value === 'price_asc') list.sort((a, b) => (a.price ?? 0) - (b.price ?? 0))
-  if (sortKey.value === 'price_desc') list.sort((a, b) => (b.price ?? 0) - (a.price ?? 0))
-  if (sortKey.value === 'rating') list.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
-  return list
-})
+function onFiltersUpdate(filters: { categories: string[]; priceMin: number; priceMax: number }) {
+  const query: Record<string, string | string[]> = { ...route.query as Record<string, string> }
+  delete query.categorySlug
+  delete query.page
+  if (filters.categories.length) query.categories = filters.categories
+  else delete query.categories
+  if (filters.priceMin > 0) query.priceMin = String(filters.priceMin)
+  else delete query.priceMin
+  if (filters.priceMax < 999999) query.priceMax = String(filters.priceMax)
+  else delete query.priceMax
+  router.push({ query })
+}
+
+function onSortUpdate(sort: string) {
+  router.push({ query: { ...route.query, sortBy: sort, page: '1' } })
+}
+
+function onPerPageUpdate(limit: number) {
+  router.push({ query: { ...route.query, limit: String(limit), page: '1' } })
+}
+
+function onPageUpdate(page: number) {
+  router.push({ query: { ...route.query, page: String(page) } })
+}
 
 const pageTitle = computed(() => {
-  if (!categorySlug.value) return 'Каталог'
-  const cat = categoriesStore.categories.find((c) => c.slug === categorySlug.value)
-  return cat ? cat.name : 'Каталог'
+  if (!selectedCategories.value.length) return 'Каталог'
+  if (selectedCategories.value.length === 1) {
+    const cat = categoriesStore.categories.find((c) => c.slug === selectedCategories.value[0])
+    return cat ? cat.name : 'Каталог'
+  }
+  return 'Каталог'
 })
 </script>
 
@@ -60,24 +91,27 @@ const pageTitle = computed(() => {
 
     <div class="catalog-page__layout">
       <CatalogFilters
-        v-model="activeFilters"
+        :model-value="activeFilters"
         :is-open="isMobileFiltersOpen"
+        @update:model-value="onFiltersUpdate"
         @close="isMobileFiltersOpen = false"
       />
 
       <div class="catalog-page__main">
         <CatalogToolbar
-          v-model:sort="sortKey"
-          v-model:per-page="perPage"
+          :sort="sortKey"
+          :per-page="perPage"
+          @update:sort="onSortUpdate"
+          @update:per-page="onPerPageUpdate"
         />
 
         <div v-if="productsStore.loading" class="catalog-page__grid">
           <TheProductCard v-for="n in perPage" :key="n" :loading="true" />
         </div>
 
-        <div v-else-if="displayedProducts.length" class="catalog-page__grid">
+        <div v-else-if="productsStore.products.length" class="catalog-page__grid">
           <TheProductCard
-            v-for="product in displayedProducts"
+            v-for="product in productsStore.products"
             :key="product.id"
             :product="product"
           />
@@ -89,8 +123,9 @@ const pageTitle = computed(() => {
 
         <CatalogPagination
           v-if="productsStore.meta.totalPages > 1"
-          v-model:page="currentPage"
+          :page="currentPage"
           :total-pages="productsStore.meta.totalPages"
+          @update:page="onPageUpdate"
         />
       </div>
     </div>

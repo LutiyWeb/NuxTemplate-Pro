@@ -58,17 +58,23 @@ const ICONS = {
 
   &--success {
     border-left-color: $color-success;
-    .toast__icon { color: $color-success; }
+    .toast__icon {
+      color: $color-success;
+    }
   }
 
   &--error {
     border-left-color: $color-danger;
-    .toast__icon { color: $color-danger; }
+    .toast__icon {
+      color: $color-danger;
+    }
   }
 
   &--warning {
     border-left-color: $color-warning;
-    .toast__icon { color: $color-warning; }
+    .toast__icon {
+      color: $color-warning;
+    }
   }
 
   &__msg {
@@ -84,12 +90,24 @@ const ICONS = {
     display: flex;
     flex-shrink: 0;
     transition: color $transition-fast;
-    &:hover { color: $color-gray-700; }
+    &:hover {
+      color: $color-gray-700;
+    }
   }
 }
 
-.toast-enter-active { transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
-.toast-leave-active { transition: all 0.2s ease; }
-.toast-enter-from   { opacity: 0; transform: translateX(48px); }
-.toast-leave-to     { opacity: 0; transform: translateX(48px); }
+.toast-enter-active {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.toast-leave-active {
+  transition: all 0.2s ease;
+}
+.toast-enter-from {
+  opacity: 0;
+  transform: translateX(48px);
+}
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(48px);
+}
 </style>

@@ -2,7 +2,10 @@
 import type { Product } from '~/types/product'
 import { ShoppingCart, Heart } from 'lucide-vue-next'
 
-interface Props { product?: Product; loading?: boolean }
+interface Props {
+  product?: Product
+  loading?: boolean
+}
 withDefaults(defineProps<Props>(), { loading: false })
 
 const NuxtLink = resolveComponent('NuxtLink')
@@ -19,7 +22,10 @@ function handleCartClick(product: Product) {
 }
 
 function handleFavClick(product: Product) {
-  if (!authStore.isLoggedIn) { uiStore.authModalOpen = true; return }
+  if (!authStore.isLoggedIn) {
+    uiStore.authModalOpen = true
+    return
+  }
   favoritesStore.toggle(product.id)
 }
 </script>
@@ -32,7 +38,12 @@ function handleFavClick(product: Product) {
   >
     <div class="product-card__media">
       <div v-if="loading" class="product-card__shimmer product-card__shimmer--image" />
-      <img v-else-if="product?.thumbnail" :src="product.thumbnail" :alt="product.title" loading="lazy" />
+      <img
+        v-else-if="product?.thumbnail"
+        :src="product.thumbnail"
+        :alt="product.title"
+        loading="lazy"
+      />
     </div>
 
     <div class="product-card__body">
@@ -56,7 +67,10 @@ function handleFavClick(product: Product) {
     <!-- Fav button — always visible -->
     <button
       v-if="!loading && product"
-      :class="['product-card__fav-btn', { 'product-card__fav-btn--active': favoritesStore.has(product.id) }]"
+      :class="[
+        'product-card__fav-btn',
+        { 'product-card__fav-btn--active': favoritesStore.has(product.id) },
+      ]"
       type="button"
       @click.prevent="handleFavClick(product)"
     >
@@ -66,7 +80,11 @@ function handleFavClick(product: Product) {
     <div v-if="!loading && product" class="product-card__overlay">
       <div class="product-card__actions">
         <span class="product-card__cta">Подробнее</span>
-        <button class="product-card__cart-btn" type="button" @click.prevent="handleCartClick(product)">
+        <button
+          class="product-card__cart-btn"
+          type="button"
+          @click.prevent="handleCartClick(product)"
+        >
           <ShoppingCart :size="16" />
         </button>
       </div>
@@ -87,7 +105,9 @@ function handleFavClick(product: Product) {
   box-shadow: $shadow-card;
   overflow: hidden;
   cursor: pointer;
-  transition: box-shadow $transition-base, transform $transition-base;
+  transition:
+    box-shadow $transition-base,
+    transform $transition-base;
   text-decoration: none;
   color: inherit;
 
@@ -104,19 +124,23 @@ function handleFavClick(product: Product) {
     justify-content: center;
     overflow: hidden;
 
-    img { width: 100%; height: 100%; object-fit: cover; }
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 
   &__body {
     display: flex;
     flex-direction: column;
     flex: 1;
-    gap: 8px;
-    padding: 16px;
+    gap: var(--pc-body-gap, 8px);
+    padding: var(--pc-body-padding, 16px);
   }
 
   &__category {
-    font-size: $font-size-xs;
+    font-size: var(--pc-category-size, #{$font-size-xs});
     font-weight: $font-weight-semibold;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -128,14 +152,14 @@ function handleFavClick(product: Product) {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    font-size: $font-size-base;
+    font-size: var(--pc-title-size, #{$font-size-base});
     font-weight: $font-weight-semibold;
     color: $color-gray-900;
     margin: 0;
   }
 
   &__desc {
-    font-size: $font-size-sm;
+    font-size: var(--pc-desc-size, #{$font-size-sm});
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -153,13 +177,13 @@ function handleFavClick(product: Product) {
   }
 
   &__rating {
-    font-size: $font-size-sm;
+    font-size: var(--pc-rating-size, #{$font-size-sm});
     font-weight: $font-weight-medium;
     color: $color-warning;
   }
 
   &__price {
-    font-size: $font-size-base;
+    font-size: var(--pc-price-size, #{$font-size-base});
     font-weight: $font-weight-bold;
     color: $color-gray-900;
   }
@@ -179,11 +203,20 @@ function handleFavClick(product: Product) {
     cursor: pointer;
     color: $color-gray-400;
     z-index: 2;
-    transition: color $transition-fast, background $transition-fast, border-color $transition-fast;
+    transition:
+      color $transition-fast,
+      background $transition-fast,
+      border-color $transition-fast;
     box-shadow: 0 1px 4px rgb(0 0 0 / 8%);
 
-    &:hover { color: $color-danger; border-color: $color-danger; }
-    &--active { color: $color-danger; border-color: rgb(239 68 68 / 30%); }
+    &:hover {
+      color: $color-danger;
+      border-color: $color-danger;
+    }
+    &--active {
+      color: $color-danger;
+      border-color: rgb(239 68 68 / 30%);
+    }
   }
 
   &__overlay {
@@ -199,7 +232,9 @@ function handleFavClick(product: Product) {
     transition: transform $transition-base;
   }
 
-  &:hover &__overlay { transform: translateY(0); }
+  &:hover &__overlay {
+    transform: translateY(0);
+  }
 
   &__actions {
     display: flex;
@@ -217,6 +252,11 @@ function handleFavClick(product: Product) {
     text-align: center;
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
+    transition: background $transition-fast;
+
+    &:hover {
+      background: $color-primary-dark;
+    }
   }
 
   &__cart-btn {
@@ -230,9 +270,15 @@ function handleFavClick(product: Product) {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background $transition-fast, color $transition-fast;
+    transition:
+      background $transition-fast,
+      color $transition-fast;
 
-    &:hover { background: $color-primary; color: $color-white; border-color: $color-primary; }
+    &:hover {
+      background: $color-primary;
+      color: $color-white;
+      border-color: $color-primary;
+    }
   }
 
   // Shimmer elements
@@ -240,11 +286,27 @@ function handleFavClick(product: Product) {
     @include mixins.shimmer;
     border-radius: $radius-md;
 
-    &--image { width: 100%; height: 100%; border-radius: 0; }
-    &--badge { width: 80px; height: 12px; }
-    &--title { width: 85%; height: 16px; }
-    &--desc { width: 100%; height: 14px; }
-    &--footer { width: 100%; height: 16px; }
+    &--image {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+    }
+    &--badge {
+      width: 80px;
+      height: 12px;
+    }
+    &--title {
+      width: 85%;
+      height: 16px;
+    }
+    &--desc {
+      width: 100%;
+      height: 14px;
+    }
+    &--footer {
+      width: 100%;
+      height: 16px;
+    }
   }
 }
 </style>

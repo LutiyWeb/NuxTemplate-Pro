@@ -40,27 +40,58 @@
     gap: 48px;
     padding-block: 48px;
 
-    @media (max-width: 768px) { flex-direction: column; gap: 32px; }
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 32px;
+    }
   }
 
-  &__brand { flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+  &__brand {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
-  &__logo { font-size: $font-size-xl; font-weight: $font-weight-bold; color: $color-primary; }
+  &__logo {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-primary;
+  }
 
-  &__desc { font-size: $font-size-sm; color: $color-gray-400; margin: 0; max-width: 200px; }
+  &__desc {
+    font-size: $font-size-sm;
+    color: $color-gray-400;
+    margin: 0;
+    max-width: 200px;
+  }
 
-  &__cols { display: flex; gap: 48px; flex-wrap: wrap; }
+  &__cols {
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
 
-  &__col { display: flex; flex-direction: column; gap: 8px; }
+  &__col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
-  &__col-title { font-size: $font-size-sm; font-weight: $font-weight-semibold; color: $color-gray-300; }
+  &__col-title {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-300;
+  }
 
   &__link {
     font-size: $font-size-sm;
     color: $color-gray-400;
     transition: color $transition-fast;
 
-    &:hover { color: $color-white; }
+    &:hover {
+      color: $color-white;
+    }
   }
 
   &__bottom {
