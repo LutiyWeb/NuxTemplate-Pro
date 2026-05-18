@@ -8,7 +8,14 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
     'nuxt-primevue',
+    '@nuxt/image',
   ],
+
+  image: {
+    quality: 80,
+    format: ['webp', 'jpg'],
+    domains: ['images.unsplash.com'],
+  },
 
   primevue: {
     usePrimeVue: true,

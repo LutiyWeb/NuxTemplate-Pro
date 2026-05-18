@@ -14,7 +14,12 @@ withDefaults(defineProps<Props>(), { loading: false, imageRight: false })
   <div :class="['card-horizontal', { 'card-horizontal--image-right': imageRight }]">
     <div class="card-horizontal__image">
       <div v-if="loading" class="card-horizontal__shimmer card-horizontal__shimmer--image" />
-      <img v-else-if="image" :src="image" :alt="title" />
+      <AppImage
+        v-else-if="image"
+        :src="image"
+        :alt="title"
+        :sizes="{ mobile: { w: 640, h: 300 }, desktop: { w: 280, h: 200 } }"
+      />
       <div v-else class="card-horizontal__placeholder" />
     </div>
     <div class="card-horizontal__body">
@@ -63,12 +68,7 @@ withDefaults(defineProps<Props>(), { loading: false, imageRight: false })
     min-height: 200px;
     background: $color-gray-100;
     overflow: hidden;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    --ai-height: 100%;
   }
 
   &__placeholder {

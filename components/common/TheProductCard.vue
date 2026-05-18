@@ -38,11 +38,11 @@ function handleFavClick(product: Product) {
   >
     <div class="product-card__media">
       <div v-if="loading" class="product-card__shimmer product-card__shimmer--image" />
-      <img
+      <AppImage
         v-else-if="product?.thumbnail"
         :src="product.thumbnail"
         :alt="product.title"
-        loading="lazy"
+        :sizes="{ mobile: { w: 320, h: 150 }, desktop: { w: 480, h: 224 } }"
       />
     </div>
 
@@ -123,12 +123,7 @@ function handleFavClick(product: Product) {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    --ai-height: 100%;
   }
 
   &__body {
