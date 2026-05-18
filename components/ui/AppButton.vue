@@ -37,46 +37,86 @@ const props = withDefaults(defineProps<Props>(), {
   cursor: pointer;
   border: none;
   font-family: $font-family-base;
-  transition: background $transition-fast, color $transition-fast, border-color $transition-fast, box-shadow $transition-fast;
+  transition:
+    background $transition-fast,
+    color $transition-fast,
+    border-color $transition-fast,
+    box-shadow $transition-fast,
+    transform $transition-fast;
 
-  &:disabled { opacity: 0.55; cursor: not-allowed; }
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
 
   // Sizes
-  &--sm { padding: 6px 12px; font-size: $font-size-sm; }
-  &--md { padding: 10px 20px; font-size: 15px; }
-  &--lg { padding: 12px 24px; font-size: $font-size-base; }
+  &--sm {
+    padding: 6px 12px;
+    font-size: $font-size-sm;
+  }
+  &--md {
+    padding: 10px 20px;
+    font-size: 15px;
+  }
+  &--lg {
+    padding: 12px 24px;
+    font-size: $font-size-base;
+  }
 
   // Variants
   &--primary {
     background: $color-primary;
     color: $color-white;
-    &:not(:disabled):hover { background: $color-primary-dark; }
+    box-shadow: 0 1px 3px rgb(79 70 229 / 30%);
+    &:not(:disabled):hover {
+      background: $color-primary-dark;
+      box-shadow: 0 4px 12px rgb(79 70 229 / 35%);
+      transform: translateY(-1px);
+    }
   }
 
   &--secondary {
     background: $color-white;
     color: $color-primary;
-    border: 1px solid $color-white;
-    &:not(:disabled):hover { background: $color-gray-100; box-shadow: $shadow-sm; }
+    border: 1px solid $color-gray-200;
+    &:not(:disabled):hover {
+      background: $color-gray-50;
+      border-color: $color-primary;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
+      transform: translateY(-1px);
+    }
   }
 
   &--outline {
     background: transparent;
     color: $color-gray-700;
     border: 1px solid $color-gray-200;
-    &:not(:disabled):hover { border-color: $color-primary; color: $color-primary; background: rgb(79 70 229 / 4%); }
+    &:not(:disabled):hover {
+      border-color: $color-primary;
+      color: $color-primary;
+      background: rgb(79 70 229 / 6%);
+      transform: translateY(-1px);
+    }
   }
 
   &--ghost {
     background: transparent;
     color: $color-gray-600;
-    &:not(:disabled):hover { background: $color-gray-100; }
+    &:not(:disabled):hover {
+      background: $color-gray-100;
+      color: $color-gray-900;
+    }
   }
 
   &--danger {
     background: $color-danger;
     color: $color-white;
-    &:not(:disabled):hover { background: rgb(220 38 38); }
+    box-shadow: 0 1px 3px rgb(239 68 68 / 30%);
+    &:not(:disabled):hover {
+      background: rgb(220 38 38);
+      box-shadow: 0 4px 12px rgb(239 68 68 / 35%);
+      transform: translateY(-1px);
+    }
   }
 
   &__spinner {
@@ -90,6 +130,8 @@ const props = withDefaults(defineProps<Props>(), {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

@@ -22,7 +22,9 @@ const perPageOptions = [20, 40, 60]
       class="catalog-toolbar__select"
       @change="emit('update:sort', ($event.target as HTMLSelectElement).value)"
     >
-      <option v-for="opt in sortOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+      <option v-for="opt in sortOptions" :key="opt.value" :value="opt.value">
+        {{ opt.label }}
+      </option>
     </select>
 
     <select
@@ -53,7 +55,9 @@ const perPageOptions = [20, 40, 60]
     outline: none;
     transition: border-color $transition-fast;
 
-    &:focus { border-color: $color-primary; }
+    &:focus {
+      border-color: $color-primary;
+    }
   }
 }
 </style>

@@ -38,20 +38,16 @@ withDefaults(defineProps<Props>(), { loading: false, imageRight: false })
   grid-template-columns: 280px 1fr;
   border-radius: $radius-xl;
   background: $color-white;
-  box-shadow:
-    -6px 0 16px -6px rgb(0 0 0 / 6%),
-    6px 0 16px -6px rgb(0 0 0 / 6%),
-    0 8px 20px -4px rgb(0 0 0 / 8%);
+  box-shadow: $shadow-card;
   overflow: hidden;
   width: 100%;
   cursor: pointer;
-  transition: box-shadow $transition-base, transform $transition-base;
+  transition:
+    box-shadow $transition-base,
+    transform $transition-base;
 
   &:hover {
-    box-shadow:
-      -6px 0 24px -6px rgb(0 0 0 / 10%),
-      6px 0 24px -6px rgb(0 0 0 / 10%),
-      0 14px 28px -4px rgb(0 0 0 / 14%);
+    box-shadow: $shadow-card-hover;
     transform: translateY(-2px);
   }
 
@@ -59,18 +55,27 @@ withDefaults(defineProps<Props>(), { loading: false, imageRight: false })
     grid-template-columns: 1fr;
   }
 
-  &--image-right &__image { order: 2; }
-  &--image-right &__body { order: 1; }
+  &--image-right &__body {
+    order: 1;
+  }
 
   &__image {
     min-height: 200px;
     background: $color-gray-100;
     overflow: hidden;
 
-    img { width: 100%; height: 100%; object-fit: cover; }
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 
-  &__placeholder { width: 100%; height: 100%; background: $color-gray-100; }
+  &__placeholder {
+    width: 100%;
+    height: 100%;
+    background: $color-gray-100;
+  }
 
   &__body {
     display: flex;
@@ -111,10 +116,23 @@ withDefaults(defineProps<Props>(), { loading: false, imageRight: false })
     @include mixins.shimmer;
     border-radius: $radius-md;
 
-    &--image { width: 100%; height: 200px; border-radius: 0; }
-    &--badge { width: 60px; height: 20px; }
-    &--title { width: 70%; height: 24px; }
-    &--desc { width: 100%; height: 40px; }
+    &--image {
+      width: 100%;
+      height: 200px;
+      border-radius: 0;
+    }
+    &--badge {
+      width: 60px;
+      height: 20px;
+    }
+    &--title {
+      width: 70%;
+      height: 24px;
+    }
+    &--desc {
+      width: 100%;
+      height: 40px;
+    }
   }
 }
 </style>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { z } from 'zod'
 import { MessageSquare, X } from 'lucide-vue-next'
 import type { Review } from '~/types/review'
@@ -9,38 +9,38 @@ const authStore = useAuthStore()
 const uiStore = useUiStore()
 const toastStore = useToastStore()
 
-// ── Mock reviews (replace with API when /api/products/:id/reviews is ready) ──
+// в”Ђв”Ђ Mock reviews (replace with API when /api/products/:id/reviews is ready) в”Ђв”Ђ
 const MOCK_REVIEWS: Review[] = [
   {
     id: 1,
-    author: 'Алексей К.',
-    initials: 'АК',
+    author: 'РђР»РµРєСЃРµР№ Рљ.',
+    initials: 'РђРљ',
     rating: 5,
-    text: 'Отличный товар, полностью соответствует описанию. Доставка быстрая, упаковка надёжная. Однозначно рекомендую!',
+    text: 'РћС‚Р»РёС‡РЅС‹Р№ С‚РѕРІР°СЂ, РїРѕР»РЅРѕСЃС‚СЊСЋ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ РѕРїРёСЃР°РЅРёСЋ. Р”РѕСЃС‚Р°РІРєР° Р±С‹СЃС‚СЂР°СЏ, СѓРїР°РєРѕРІРєР° РЅР°РґС‘Р¶РЅР°СЏ. РћРґРЅРѕР·РЅР°С‡РЅРѕ СЂРµРєРѕРјРµРЅРґСѓСЋ!',
     createdAt: '2026-04-15T10:30:00Z',
   },
   {
     id: 2,
-    author: 'Марина С.',
-    initials: 'МС',
+    author: 'РњР°СЂРёРЅР° РЎ.',
+    initials: 'РњРЎ',
     rating: 4,
-    text: 'Хорошее соотношение цена/качество. Немного не дотягивает до ожиданий по мелочам, но в целом очень доволен покупкой.',
+    text: 'РҐРѕСЂРѕС€РµРµ СЃРѕРѕС‚РЅРѕС€РµРЅРёРµ С†РµРЅР°/РєР°С‡РµСЃС‚РІРѕ. РќРµРјРЅРѕРіРѕ РЅРµ РґРѕС‚СЏРіРёРІР°РµС‚ РґРѕ РѕР¶РёРґР°РЅРёР№ РїРѕ РјРµР»РѕС‡Р°Рј, РЅРѕ РІ С†РµР»РѕРј РѕС‡РµРЅСЊ РґРѕРІРѕР»РµРЅ РїРѕРєСѓРїРєРѕР№.',
     createdAt: '2026-04-02T14:20:00Z',
   },
   {
     id: 3,
-    author: 'Дмитрий В.',
-    initials: 'ДВ',
+    author: 'Р”РјРёС‚СЂРёР№ Р’.',
+    initials: 'Р”Р’',
     rating: 5,
-    text: 'Второй раз покупаю. Не разочаровался. Качество стабильное, всё работает как надо.',
+    text: 'Р’С‚РѕСЂРѕР№ СЂР°Р· РїРѕРєСѓРїР°СЋ. РќРµ СЂР°Р·РѕС‡Р°СЂРѕРІР°Р»СЃСЏ. РљР°С‡РµСЃС‚РІРѕ СЃС‚Р°Р±РёР»СЊРЅРѕРµ, РІСЃС‘ СЂР°Р±РѕС‚Р°РµС‚ РєР°Рє РЅР°РґРѕ.',
     createdAt: '2026-03-28T09:15:00Z',
   },
   {
     id: 4,
-    author: 'Ольга Н.',
-    initials: 'ОН',
+    author: 'РћР»СЊРіР° Рќ.',
+    initials: 'РћРќ',
     rating: 3,
-    text: 'В целом нормально, но были небольшие проблемы с упаковкой при доставке. Продавец быстро решил вопрос.',
+    text: 'Р’ С†РµР»РѕРј РЅРѕСЂРјР°Р»СЊРЅРѕ, РЅРѕ Р±С‹Р»Рё РЅРµР±РѕР»СЊС€РёРµ РїСЂРѕР±Р»РµРјС‹ СЃ СѓРїР°РєРѕРІРєРѕР№ РїСЂРё РґРѕСЃС‚Р°РІРєРµ. РџСЂРѕРґР°РІРµС† Р±С‹СЃС‚СЂРѕ СЂРµС€РёР» РІРѕРїСЂРѕСЃ.',
     createdAt: '2026-03-10T18:45:00Z',
   },
 ]
@@ -58,11 +58,13 @@ const avgRating = computed(() => {
 
 const ratingCounts = computed(() => {
   const counts = [0, 0, 0, 0, 0]
-  reviews.value.forEach(r => { if (r.rating >= 1 && r.rating <= 5) counts[r.rating - 1]++ })
+  reviews.value.forEach((r) => {
+    if (r.rating >= 1 && r.rating <= 5) counts[r.rating - 1]++
+  })
   return counts.reverse()
 })
 
-// ── Dialog ──────────────────────────────────────────────────────────────────
+// в”Ђв”Ђ Dialog в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 const dialogOpen = ref(false)
 
 function openDialog() {
@@ -76,26 +78,31 @@ function openDialog() {
   dialogOpen.value = true
 }
 
-// ── Form ─────────────────────────────────────────────────────────────────────
+// в”Ђв”Ђ Form в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 const formRating = ref(0)
 const formText = ref('')
 const formErrors = ref<{ rating?: string; text?: string }>({})
 const submitting = ref(false)
 
 const schema = z.object({
-  rating: z.number().int().min(1, 'Выберите оценку').max(5),
-  text: z.string().trim().min(10, 'Минимум 10 символов').max(1000, 'Максимум 1000 символов'),
+  rating: z.number().int().min(1, 'Р’С‹Р±РµСЂРёС‚Рµ РѕС†РµРЅРєСѓ').max(5),
+  text: z.string().trim().min(10, 'РњРёРЅРёРјСѓРј 10 СЃРёРјРІРѕР»РѕРІ').max(1000, 'РњР°РєСЃРёРјСѓРј 1000 СЃРёРјРІРѕР»РѕРІ'),
 })
 
 function initials(name: string) {
-  return name.split(' ').slice(0, 2).map(n => n[0] ?? '').join('').toUpperCase()
+  return name
+    .split(' ')
+    .slice(0, 2)
+    .map((n) => n[0] ?? '')
+    .join('')
+    .toUpperCase()
 }
 
 async function submit() {
   formErrors.value = {}
   const result = schema.safeParse({ rating: formRating.value, text: formText.value })
   if (!result.success) {
-    result.error.errors.forEach(e => {
+    result.error.issues.forEach((e) => {
       const key = e.path[0] as 'rating' | 'text'
       if (!formErrors.value[key]) formErrors.value[key] = e.message
     })
@@ -110,10 +117,10 @@ async function submit() {
     //   body: { rating: formRating.value, text: formText.value },
     // })
 
-    await new Promise(r => setTimeout(r, 500)) // simulate request
+    await new Promise((r) => setTimeout(r, 500)) // simulate request
 
     const user = authStore.user
-    const name = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'Аноним'
+    const name = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'РђРЅРѕРЅРёРј'
     const newReview: Review = {
       id: Date.now(),
       author: name,
@@ -125,9 +132,9 @@ async function submit() {
     reviews.value.unshift(newReview)
     visibleCount.value = Math.max(visibleCount.value, 1)
     dialogOpen.value = false
-    toastStore.add('Отзыв успешно добавлен!')
+    toastStore.add('РћС‚Р·С‹РІ СѓСЃРїРµС€РЅРѕ РґРѕР±Р°РІР»РµРЅ!')
   } catch {
-    toastStore.add('Не удалось отправить отзыв', 'error')
+    toastStore.add('РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РїСЂР°РІРёС‚СЊ РѕС‚Р·С‹РІ', 'error')
   } finally {
     submitting.value = false
   }
@@ -139,12 +146,12 @@ async function submit() {
     <!-- Header -->
     <div class="product-reviews__header">
       <div class="product-reviews__header-left">
-        <h2 class="product-reviews__title">Отзывы</h2>
+        <h2 class="product-reviews__title">РћС‚Р·С‹РІС‹</h2>
         <span class="product-reviews__count">{{ reviews.length }}</span>
       </div>
       <AppButton variant="primary" size="md" @click="openDialog">
         <MessageSquare :size="16" />
-        Написать отзыв
+        РќР°РїРёСЃР°С‚СЊ РѕС‚Р·С‹РІ
       </AppButton>
     </div>
 
@@ -153,11 +160,11 @@ async function submit() {
       <div class="product-reviews__avg">
         <span class="product-reviews__avg-num">{{ avgRating }}</span>
         <ReviewStars :rating="avgRating" :size="20" />
-        <span class="product-reviews__avg-sub">{{ reviews.length }} отзывов</span>
+        <span class="product-reviews__avg-sub">{{ reviews.length }} РѕС‚Р·С‹РІРѕРІ</span>
       </div>
       <div class="product-reviews__bars">
         <div v-for="(count, i) in ratingCounts" :key="i" class="product-reviews__bar-row">
-          <span class="product-reviews__bar-label">{{ 5 - i }} ★</span>
+          <span class="product-reviews__bar-label">{{ 5 - i }} в…</span>
           <div class="product-reviews__bar-track">
             <div
               class="product-reviews__bar-fill"
@@ -172,7 +179,7 @@ async function submit() {
     <!-- Empty -->
     <div v-else class="product-reviews__empty">
       <MessageSquare :size="40" class="product-reviews__empty-icon" />
-      <p>Отзывов пока нет. Будьте первым!</p>
+      <p>РћС‚Р·С‹РІРѕРІ РїРѕРєР° РЅРµС‚. Р‘СѓРґСЊС‚Рµ РїРµСЂРІС‹Рј!</p>
     </div>
 
     <!-- List -->
@@ -182,9 +189,7 @@ async function submit() {
 
     <!-- Load more -->
     <div v-if="hasMore" class="product-reviews__more">
-      <AppButton variant="outline" size="md" @click="visibleCount += 3">
-        Показать ещё
-      </AppButton>
+      <AppButton variant="outline" size="md" @click="visibleCount += 3"> РџРѕРєР°Р·Р°С‚СЊ РµС‰С‘ </AppButton>
     </div>
 
     <!-- Dialog -->
@@ -192,7 +197,7 @@ async function submit() {
       <div v-if="dialogOpen" class="review-dialog-overlay" @click.self="dialogOpen = false">
         <div class="review-dialog">
           <div class="review-dialog__head">
-            <h3 class="review-dialog__title">Написать отзыв</h3>
+            <h3 class="review-dialog__title">РќР°РїРёСЃР°С‚СЊ РѕС‚Р·С‹РІ</h3>
             <button class="review-dialog__close" type="button" @click="dialogOpen = false">
               <X :size="14" />
             </button>
@@ -201,37 +206,41 @@ async function submit() {
           <div class="review-dialog__body">
             <!-- Star picker -->
             <div class="review-dialog__field">
-              <label class="review-dialog__label">Оценка</label>
+              <label class="review-dialog__label">РћС†РµРЅРєР°</label>
               <ReviewStars
                 v-model:rating="formRating"
                 :rating="formRating"
                 :size="28"
                 interactive
               />
-              <span v-if="formErrors.rating" class="review-dialog__error">{{ formErrors.rating }}</span>
+              <span v-if="formErrors.rating" class="review-dialog__error">{{
+                formErrors.rating
+              }}</span>
             </div>
 
             <!-- Text -->
             <div class="review-dialog__field">
-              <label class="review-dialog__label">Ваш отзыв</label>
+              <label class="review-dialog__label">Р’Р°С€ РѕС‚Р·С‹РІ</label>
               <textarea
                 v-model="formText"
                 class="review-dialog__textarea"
                 :class="{ 'review-dialog__textarea--error': formErrors.text }"
-                placeholder="Расскажите о своём опыте использования товара..."
+                placeholder="Р Р°СЃСЃРєР°Р¶РёС‚Рµ Рѕ СЃРІРѕС‘Рј РѕРїС‹С‚Рµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ С‚РѕРІР°СЂР°..."
                 rows="5"
               />
               <div class="review-dialog__field-footer">
-                <span v-if="formErrors.text" class="review-dialog__error">{{ formErrors.text }}</span>
+                <span v-if="formErrors.text" class="review-dialog__error">{{
+                  formErrors.text
+                }}</span>
                 <span class="review-dialog__char-count">{{ formText.length }} / 1000</span>
               </div>
             </div>
           </div>
 
           <div class="review-dialog__footer">
-            <AppButton variant="outline" size="md" @click="dialogOpen = false">Отмена</AppButton>
+            <AppButton variant="outline" size="md" @click="dialogOpen = false">РћС‚РјРµРЅР°</AppButton>
             <AppButton variant="primary" size="md" :loading="submitting" @click="submit">
-              Отправить отзыв
+              РћС‚РїСЂР°РІРёС‚СЊ РѕС‚Р·С‹РІ
             </AppButton>
           </div>
         </div>
@@ -365,21 +374,28 @@ async function submit() {
     font-size: $font-size-sm;
   }
 
-  &__empty-icon { color: $color-gray-200; }
+  &__empty-icon {
+    color: $color-gray-200;
+  }
 
   // List
   &__list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
-    @media (max-width: 640px) { grid-template-columns: 1fr; }
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
   }
 
   // More button
-  &__more { display: flex; justify-content: center; }
+  &__more {
+    display: flex;
+    justify-content: center;
+  }
 }
 
-// ── Review Dialog ────────────────────────────────────────────────────────────
+// в”Ђв”Ђ Review Dialog в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 .review-dialog-overlay {
   position: fixed;
   inset: 0;
@@ -426,7 +442,9 @@ async function submit() {
     justify-content: center;
     cursor: pointer;
     transition: background $transition-fast;
-    &:hover { background: $color-gray-200; }
+    &:hover {
+      background: $color-gray-200;
+    }
   }
 
   &__body {
@@ -462,9 +480,15 @@ async function submit() {
     transition: border-color $transition-fast;
     background: $color-white;
 
-    &::placeholder { color: $color-gray-400; }
-    &:focus { border-color: $color-primary; }
-    &--error { border-color: $color-danger; }
+    &::placeholder {
+      color: $color-gray-400;
+    }
+    &:focus {
+      border-color: $color-primary;
+    }
+    &--error {
+      border-color: $color-danger;
+    }
   }
 
   &__field-footer {
@@ -495,7 +519,14 @@ async function submit() {
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
+

@@ -23,7 +23,7 @@ interface Props {
   linkCount?: number
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   slides: () => [] as SlideItem[],
   slidesPerView: 1,
   spaceBetween: 12,
@@ -36,7 +36,6 @@ const props = withDefaults(defineProps<Props>(), {
   linkTo: undefined,
   linkCount: undefined,
 })
-
 
 const swiperRef = ref<SwiperType | null>(null)
 const isBeginning = ref(true)
@@ -61,11 +60,11 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="the-slider">
-    <div v-if="title" class="the-slider__header">
-      <h2 class="the-slider__title">{{ title }}</h2>
-      <div class="the-slider__controls">
-        <NuxtLink v-if="linkTo && linkLabel" :to="linkTo" class="the-slider__link">
+  <div class="app-slider">
+    <div v-if="title" class="app-slider__header">
+      <h2 class="app-slider__title">{{ title }}</h2>
+      <div class="app-slider__controls">
+        <NuxtLink v-if="linkTo && linkLabel" :to="linkTo" class="app-slider__link">
           {{ linkLabel }}<template v-if="linkCount !== undefined"> ({{ linkCount }})</template>
         </NuxtLink>
         <AppArrow direction="left" :disabled="isBeginning" @click="swiperRef?.slidePrev()" />
@@ -83,7 +82,7 @@ onBeforeUnmount(() => {
         :loop="loop"
         :autoplay="autoplay ? { delay: autoplayDelay, disableOnInteraction: false } : false"
         :breakpoints="breakpoints"
-        class="the-slider__swiper"
+        class="app-slider__swiper"
         @swiper="onSwiper"
         @slide-change="onSlideChange"
       >
@@ -96,12 +95,12 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss">
-.the-slider {
+.app-slider {
   &__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
   }
 
   &__title {
@@ -123,55 +122,49 @@ onBeforeUnmount(() => {
     margin-right: 8px;
     transition: color $transition-fast;
 
-    &:hover { color: $color-primary-dark; }
+    &:hover {
+      color: $color-primary-dark;
+    }
   }
-
 
   &__swiper {
     overflow: hidden;
     border-radius: $radius-xl;
     padding-block-start: 12px;
     padding-block-end: 40px;
+    --swiper-navigation-color: #{$color-gray-500};
+    --swiper-navigation-size: 20px;
+
+    :deep(.swiper-button-prev),
+    :deep(.swiper-button-next) {
+      width: 20px;
+      height: 20px;
+      padding: 14px;
+      box-sizing: content-box;
+      transition: opacity $transition-fast;
+
+      &::after {
+        font-weight: 700;
+      }
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+
+    :deep(.swiper-wrapper) {
+      align-items: stretch;
+    }
+    :deep(.swiper-slide) {
+      display: flex;
+      height: auto;
+    }
+    :deep(.swiper-pagination-bullet) {
+      background: $color-gray-300;
+      opacity: 1;
+    }
+    :deep(.swiper-pagination-bullet-active) {
+      background: $color-primary;
+    }
   }
-
-  :deep(.swiper-wrapper) {
-    align-items: stretch;
-  }
-
-  :deep(.swiper-slide) {
-    display: flex;
-    height: auto;
-  }
-
-  :deep(.swiper-pagination-bullet) {
-    background: $color-gray-300;
-    opacity: 1;
-  }
-
-  :deep(.swiper-pagination-bullet-active) {
-    background: $color-primary;
-  }
-
-}
-
-.the-slider__swiper {
-  --swiper-navigation-color: #{$color-gray-500};
-  --swiper-navigation-size: 20px;
-}
-
-.the-slider__swiper .swiper-button-prev,
-.the-slider__swiper .swiper-button-next {
-  width: 20px;
-  height: 20px;
-  padding: 14px;
-  box-sizing: content-box;
-  transition: opacity $transition-fast;
-
-  &::after { font-weight: 700; }
-}
-
-.the-slider__swiper .swiper-button-prev:hover,
-.the-slider__swiper .swiper-button-next:hover {
-  opacity: 0.6;
 }
 </style>

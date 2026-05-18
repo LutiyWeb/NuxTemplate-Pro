@@ -13,7 +13,9 @@ const emit = defineEmits<{
   updateQty: [number, number]
 }>()
 
-const cartStore = useCartStore()
+function formatPrice(p: number) {
+  return p.toLocaleString('uk-UA') + ' ₴'
+}
 </script>
 
 <template>
@@ -37,7 +39,7 @@ const cartStore = useCartStore()
       <NuxtLink :to="`/product/${item.product.id}`" class="cart-item__title">
         {{ item.product.title }}
       </NuxtLink>
-      <span class="cart-item__price">${{ item.product.price }}</span>
+      <span class="cart-item__price">{{ formatPrice(item.product.price) }}</span>
     </div>
 
     <div class="cart-item__qty">
@@ -46,7 +48,9 @@ const cartStore = useCartStore()
       <button type="button" @click="emit('updateQty', item.product.id, 1)">+</button>
     </div>
 
-    <button class="cart-item__remove" type="button" @click="emit('remove', item.product.id)"><Trash2 :size="16" /></button>
+    <button class="cart-item__remove" type="button" @click="emit('remove', item.product.id)">
+      <Trash2 :size="16" />
+    </button>
   </div>
 </template>
 
@@ -58,7 +62,12 @@ const cartStore = useCartStore()
   padding: 12px 0;
   border-bottom: 1px solid $color-gray-100;
 
-  &__check { flex-shrink: 0; width: 16px; height: 16px; cursor: pointer; }
+  &__check {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
 
   &__img {
     width: 64px;
@@ -67,10 +76,18 @@ const cartStore = useCartStore()
     border-radius: $radius-md;
     flex-shrink: 0;
 
-    &--placeholder { background: $color-gray-100; }
+    &--placeholder {
+      background: $color-gray-100;
+    }
   }
 
-  &__info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  &__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
   &__title {
     font-size: $font-size-sm;
@@ -80,10 +97,16 @@ const cartStore = useCartStore()
     overflow: hidden;
     text-overflow: ellipsis;
 
-    &:hover { color: $color-primary; }
+    &:hover {
+      color: $color-primary;
+    }
   }
 
-  &__price { font-size: $font-size-sm; font-weight: $font-weight-bold; color: $color-gray-900; }
+  &__price {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    color: $color-gray-900;
+  }
 
   &__qty {
     display: flex;
@@ -103,10 +126,17 @@ const cartStore = useCartStore()
       justify-content: center;
       transition: background $transition-fast;
 
-      &:hover { background: $color-gray-200; }
+      &:hover {
+        background: $color-gray-200;
+      }
     }
 
-    span { font-size: $font-size-sm; font-weight: $font-weight-medium; min-width: 20px; text-align: center; }
+    span {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      min-width: 20px;
+      text-align: center;
+    }
   }
 
   &__remove {
@@ -122,7 +152,9 @@ const cartStore = useCartStore()
     justify-content: center;
     transition: background $transition-fast;
 
-    &:hover { background: rgb(239 68 68 / 10%); }
+    &:hover {
+      background: rgb(239 68 68 / 10%);
+    }
   }
 }
 </style>

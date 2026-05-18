@@ -15,7 +15,9 @@ const categoriesStore = useCategoriesStore()
         <div class="header-sidebar__panel">
           <div class="header-sidebar__head">
             <span class="header-sidebar__title">Каталог</span>
-            <button class="header-sidebar__close" type="button" @click="$emit('close')"><X :size="14" /></button>
+            <button class="header-sidebar__close" type="button" @click="$emit('close')">
+              <X :size="14" />
+            </button>
           </div>
 
           <nav class="header-sidebar__nav">
@@ -28,7 +30,8 @@ const categoriesStore = useCategoriesStore()
                 :to="`/catalog?categorySlug=${cat.slug}`"
                 class="header-sidebar__parent"
                 @click="$emit('close')"
-              >{{ cat.name }}</NuxtLink>
+                >{{ cat.name }}</NuxtLink
+              >
             </div>
           </nav>
 
@@ -73,7 +76,10 @@ const categoriesStore = useCategoriesStore()
     border-bottom: 1px solid $color-gray-100;
   }
 
-  &__title { font-size: $font-size-lg; font-weight: $font-weight-semibold; }
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+  }
 
   &__close {
     width: 32px;
@@ -86,10 +92,18 @@ const categoriesStore = useCategoriesStore()
     justify-content: center;
     transition: background $transition-fast;
 
-    &:hover { background: $color-gray-200; }
+    &:hover {
+      background: $color-gray-200;
+    }
   }
 
-  &__nav { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+  &__nav {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
   &__parent {
     display: block;
@@ -98,9 +112,14 @@ const categoriesStore = useCategoriesStore()
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     color: $color-gray-700;
-    transition: background $transition-fast, color $transition-fast;
+    transition:
+      background $transition-fast,
+      color $transition-fast;
 
-    &:hover { background: $color-gray-100; color: $color-primary; }
+    &:hover {
+      background: $color-gray-100;
+      color: $color-primary;
+    }
   }
 
   &__promo {
@@ -117,11 +136,20 @@ const categoriesStore = useCategoriesStore()
 }
 
 .sidebar-enter-active,
-.sidebar-leave-active { transition: opacity $transition-base; }
+.sidebar-leave-active {
+  transition: opacity $transition-base;
+
+  .header-sidebar__panel {
+    transition: transform $transition-base;
+  }
+}
+
 .sidebar-enter-from,
-.sidebar-leave-to { opacity: 0; }
-.sidebar-enter-active .header-sidebar__panel,
-.sidebar-leave-active .header-sidebar__panel { transition: transform $transition-base; }
-.sidebar-enter-from .header-sidebar__panel,
-.sidebar-leave-to .header-sidebar__panel { transform: translateX(-100%); }
+.sidebar-leave-to {
+  opacity: 0;
+
+  .header-sidebar__panel {
+    transform: translateX(-100%);
+  }
+}
 </style>

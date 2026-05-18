@@ -12,7 +12,7 @@ export const useCategoriesStore = defineStore('categories', () => {
     loading.value = true
     try {
       const res = await $fetch<{ data: Category[] }>(`${config.public.apiBase}/api/categories/`)
-      categories.value = res.data.map((cat) => ({
+      const mapped = res.data.map((cat) => ({
         ...cat,
         subcategories: [1, 2, 3].map((n) => ({
           id: cat.id * 100 + n,
@@ -20,6 +20,15 @@ export const useCategoriesStore = defineStore('categories', () => {
           slug: `${cat.slug}-${n}`,
         })),
       }))
+
+      const isNew = (c: { slug?: string; name?: string }) =>
+        c.slug?.includes('new') || c.name?.toLowerCase().includes('новин')
+
+      categories.value = mapped.sort((a, b) => {
+        if (isNew(a) && !isNew(b)) return -1
+        if (!isNew(a) && isNew(b)) return 1
+        return 0
+      })
       fetched = true
     } finally {
       loading.value = false

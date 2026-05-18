@@ -16,21 +16,35 @@ async function submit() {
   formError.value = ''
   try {
     if (mode.value === 'login') {
-      if (!email.value || !password.value) { formError.value = 'Заполните все поля'; return }
+      if (!email.value || !password.value) {
+        formError.value = 'Заполните все поля'
+        return
+      }
       await authStore.login(email.value, password.value)
     } else {
       if (!email.value || !password.value || !firstName.value || !lastName.value) {
-        formError.value = 'Заполните все поля'; return
+        formError.value = 'Заполните все поля'
+        return
       }
-      if (password.value.length < 8) { formError.value = 'Пароль минимум 8 символов'; return }
-      await authStore.register({ email: email.value, password: password.value, firstName: firstName.value, lastName: lastName.value })
+      if (password.value.length < 8) {
+        formError.value = 'Пароль минимум 8 символов'
+        return
+      }
+      await authStore.register({
+        email: email.value,
+        password: password.value,
+        firstName: firstName.value,
+        lastName: lastName.value,
+      })
     }
     emit('update:open', false)
     emit('success')
   } catch {}
 }
 
-function close() { emit('update:open', false) }
+function close() {
+  emit('update:open', false)
+}
 </script>
 
 <template>
@@ -44,12 +58,16 @@ function close() { emit('update:open', false) }
             :class="['auth-modal__tab', { 'auth-modal__tab--active': mode === 'login' }]"
             type="button"
             @click="mode = 'login'"
-          >Войти</button>
+          >
+            Войти
+          </button>
           <button
             :class="['auth-modal__tab', { 'auth-modal__tab--active': mode === 'register' }]"
             type="button"
             @click="mode = 'register'"
-          >Регистрация</button>
+          >
+            Регистрация
+          </button>
         </div>
 
         <form class="auth-modal__form" @submit.prevent="submit">
@@ -64,7 +82,13 @@ function close() { emit('update:open', false) }
             {{ formError || authStore.error }}
           </p>
 
-          <AppButton type="submit" variant="primary" size="md" :loading="authStore.loading" style="width: 100%">
+          <AppButton
+            type="submit"
+            variant="primary"
+            size="md"
+            :loading="authStore.loading"
+            style="width: 100%"
+          >
             {{ mode === 'login' ? 'Войти' : 'Зарегистрироваться' }}
           </AppButton>
         </form>
@@ -109,7 +133,9 @@ function close() { emit('update:open', false) }
     justify-content: center;
     transition: background $transition-fast;
 
-    &:hover { background: $color-gray-200; }
+    &:hover {
+      background: $color-gray-200;
+    }
   }
 
   &__tabs {
@@ -126,14 +152,18 @@ function close() { emit('update:open', false) }
     font-weight: $font-weight-medium;
     color: $color-gray-500;
     cursor: pointer;
-    transition: background $transition-fast, color $transition-fast;
+    transition:
+      background $transition-fast,
+      color $transition-fast;
 
     &--active {
       background: $color-primary;
       color: $color-white;
     }
 
-    &:not(&--active):hover { background: $color-gray-100; }
+    &:not(&--active):hover {
+      background: $color-gray-100;
+    }
   }
 
   &__form {
