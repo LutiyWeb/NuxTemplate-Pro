@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Product } from '~/types/product'
 import { ShoppingCart, Heart } from 'lucide-vue-next'
+import type { Product } from '~/types/product'
 
 interface Props {
   product?: Product
@@ -226,7 +226,7 @@ function handleFavClick(product: Product) {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    padding: 16px;
+    padding: var(--pc-body-padding, 16px);
     background: linear-gradient(to top, rgb(255 255 255 / 97%) 60%, transparent 100%);
     transform: translateY(100%);
     transition: transform $transition-base;

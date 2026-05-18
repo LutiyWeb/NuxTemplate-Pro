@@ -138,17 +138,18 @@ const categoriesStore = useCategoriesStore()
 .sidebar-enter-active,
 .sidebar-leave-active {
   transition: opacity $transition-base;
+
+  .header-sidebar__panel {
+    transition: transform $transition-base;
+  }
 }
+
 .sidebar-enter-from,
 .sidebar-leave-to {
   opacity: 0;
-}
-.sidebar-enter-active .header-sidebar__panel,
-.sidebar-leave-active .header-sidebar__panel {
-  transition: transform $transition-base;
-}
-.sidebar-enter-from .header-sidebar__panel,
-.sidebar-leave-to .header-sidebar__panel {
-  transform: translateX(-100%);
+
+  .header-sidebar__panel {
+    transform: translateX(-100%);
+  }
 }
 </style>

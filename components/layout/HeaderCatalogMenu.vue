@@ -16,8 +16,8 @@ function isNew(cat: { slug?: string; name?: string }) {
 
 <template>
   <Transition name="catalog-menu">
-    <div v-if="open" class="catalog-menu" @click.self="$emit('close')">
-      <div class="catalog-menu__inner container" @mouseleave="activeId = null">
+    <div v-if="open" class="catalog-menu container" @click.self="$emit('close')">
+      <div class="catalog-menu__inner" @mouseleave="activeId = null">
         <!-- Левый столбец: список категорий -->
         <div class="catalog-menu__cats">
           <NuxtLink

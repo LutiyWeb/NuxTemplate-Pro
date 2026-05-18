@@ -55,9 +55,6 @@ withDefaults(defineProps<Props>(), { loading: false, imageRight: false })
     grid-template-columns: 1fr;
   }
 
-  &--image-right &__image {
-    order: 2;
-  }
   &--image-right &__body {
     order: 1;
   }

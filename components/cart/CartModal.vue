@@ -319,17 +319,18 @@ function addSelectedToFavorites() {
 .cart-modal-enter-active,
 .cart-modal-leave-active {
   transition: opacity $transition-base;
+
+  .cart-modal__panel {
+    transition: transform $transition-base;
+  }
 }
+
 .cart-modal-enter-from,
 .cart-modal-leave-to {
   opacity: 0;
-}
-.cart-modal-enter-active .cart-modal__panel,
-.cart-modal-leave-active .cart-modal__panel {
-  transition: transform $transition-base;
-}
-.cart-modal-enter-from .cart-modal__panel,
-.cart-modal-leave-to .cart-modal__panel {
-  transform: translateX(100%);
+
+  .cart-modal__panel {
+    transform: translateX(100%);
+  }
 }
 </style>

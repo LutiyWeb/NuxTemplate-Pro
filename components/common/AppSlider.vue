@@ -132,47 +132,39 @@ onBeforeUnmount(() => {
     border-radius: $radius-xl;
     padding-block-start: 12px;
     padding-block-end: 40px;
+    --swiper-navigation-color: #{$color-gray-500};
+    --swiper-navigation-size: 20px;
+
+    :deep(.swiper-button-prev),
+    :deep(.swiper-button-next) {
+      width: 20px;
+      height: 20px;
+      padding: 14px;
+      box-sizing: content-box;
+      transition: opacity $transition-fast;
+
+      &::after {
+        font-weight: 700;
+      }
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+
+    :deep(.swiper-wrapper) {
+      align-items: stretch;
+    }
+    :deep(.swiper-slide) {
+      display: flex;
+      height: auto;
+    }
+    :deep(.swiper-pagination-bullet) {
+      background: $color-gray-300;
+      opacity: 1;
+    }
+    :deep(.swiper-pagination-bullet-active) {
+      background: $color-primary;
+    }
   }
-
-  :deep(.swiper-wrapper) {
-    align-items: stretch;
-  }
-
-  :deep(.swiper-slide) {
-    display: flex;
-    height: auto;
-  }
-
-  :deep(.swiper-pagination-bullet) {
-    background: $color-gray-300;
-    opacity: 1;
-  }
-
-  :deep(.swiper-pagination-bullet-active) {
-    background: $color-primary;
-  }
-}
-
-.app-slider__swiper {
-  --swiper-navigation-color: #{$color-gray-500};
-  --swiper-navigation-size: 20px;
-}
-
-.app-slider__swiper .swiper-button-prev,
-.app-slider__swiper .swiper-button-next {
-  width: 20px;
-  height: 20px;
-  padding: 14px;
-  box-sizing: content-box;
-  transition: opacity $transition-fast;
-
-  &::after {
-    font-weight: 700;
-  }
-}
-
-.app-slider__swiper .swiper-button-prev:hover,
-.app-slider__swiper .swiper-button-next:hover {
-  opacity: 0.6;
 }
 </style>

@@ -514,7 +514,6 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss">
-// ─── Positioning wrapper (backdrop provided by AppBackdrop in layout) ─────────
 .search-modal {
   position: fixed;
   inset: 0;
@@ -523,379 +522,378 @@ onBeforeUnmount(() => {
   align-items: flex-start;
   justify-content: center;
   padding: 72px 16px 24px;
-}
 
-// ─── Box ───────────────────────────────────────────────────────────────────────
-.search-modal__box {
-  width: 100%;
-  max-width: 864px;
-  background: $color-white;
-  border-radius: $radius-xl;
-  box-shadow:
-    0 24px 64px -12px rgb(0 0 0 / 28%),
-    0 4px 16px rgb(0 0 0 / 10%);
-  overflow: hidden;
-  min-height: 500px;
-  max-height: calc(100vh - 96px);
-  display: flex;
-  flex-direction: column;
-}
-
-// ─── Header ───────────────────────────────────────────────────────────────────
-.search-modal__header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
-  flex-shrink: 0;
-}
-
-.search-modal__icon {
-  color: $color-gray-400;
-  flex-shrink: 0;
-}
-
-.search-modal__input {
-  flex: 1;
-  font-size: $font-size-lg;
-  font-family: $font-family-base;
-  color: $color-gray-900;
-  border: none;
-  outline: none;
-  background: transparent;
-  min-width: 0;
-
-  &::placeholder {
-    color: $color-gray-400;
+  &__box {
+    width: 100%;
+    max-width: 864px;
+    background: $color-white;
+    border-radius: $radius-xl;
+    box-shadow:
+      0 24px 64px -12px rgb(0 0 0 / 28%),
+      0 4px 16px rgb(0 0 0 / 10%);
+    overflow: hidden;
+    min-height: 500px;
+    max-height: calc(100vh - 96px);
+    display: flex;
+    flex-direction: column;
   }
-}
 
-.search-modal__dismiss {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $color-gray-400;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: color $transition-fast;
-  padding: 4px;
-  border-radius: $radius-md;
-
-  &:hover {
-    color: $color-gray-700;
-    background: $color-gray-100;
+  // ─── Header ─────────────────────────────────────────────────────────────
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    flex-shrink: 0;
   }
-}
 
-.search-modal__divider {
-  height: 1px;
-  background: $color-gray-100;
-  flex-shrink: 0;
-}
-
-// ─── Body ─────────────────────────────────────────────────────────────────────
-.search-modal__body {
-  overflow-y: auto;
-  overflow-x: hidden;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-// ─── Sections ─────────────────────────────────────────────────────────────────
-.search-modal__section {
-  padding: 16px 20px 0;
-
-  &--last {
-    padding-bottom: 16px;
-  }
-  &--trending {
-    margin-top: auto;
-    border-top: 1px solid $color-gray-100;
-  }
-}
-
-.search-modal__section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.search-modal__section-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: $color-gray-400;
-}
-
-.search-modal__section-action {
-  font-size: $font-size-xs;
-  color: $color-primary;
-  cursor: pointer;
-  transition: opacity $transition-fast;
-  &:hover {
-    opacity: 0.75;
-  }
-}
-
-// ─── Recent history ───────────────────────────────────────────────────────────
-.search-modal__history {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 4px;
-}
-
-.search-modal__history-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 10px;
-  border-radius: $radius-full;
-  background: $color-gray-100;
-  font-size: $font-size-sm;
-  color: $color-gray-700;
-  cursor: pointer;
-  transition: background $transition-fast;
-
-  &:hover {
-    background: $color-gray-200;
-  }
-}
-
-.search-modal__history-clock {
-  color: $color-gray-400;
-  flex-shrink: 0;
-}
-
-.search-modal__history-remove {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: $radius-full;
-  color: $color-gray-400;
-  flex-shrink: 0;
-  transition:
-    color $transition-fast,
-    background $transition-fast;
-
-  &:hover {
-    color: $color-danger;
-    background: rgb(239 68 68 / 10%);
-  }
-}
-
-// ─── Trending Swiper ──────────────────────────────────────────────────────────
-.search-modal__trending-controls {
-  display: flex;
-  gap: 6px;
-}
-
-.search-modal__trending {
-  overflow: hidden;
-}
-
-.search-modal__trend-wrap {
-  --pc-title-size: 12px;
-  --pc-desc-size: 11px;
-  --pc-price-size: 13px;
-  --pc-rating-size: 11px;
-  --pc-body-padding: 10px;
-  --pc-body-gap: 4px;
-}
-
-// ─── Active state: two-column layout ─────────────────────────────────────────
-.search-modal__results {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  min-height: 240px;
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-// ─── Left: suggestions ────────────────────────────────────────────────────────
-.search-modal__suggestions {
-  border-right: 1px solid $color-gray-100;
-  padding: 8px 0;
-  display: flex;
-  flex-direction: column;
-
-  @media (max-width: 600px) {
-    border-right: none;
-    border-bottom: 1px solid $color-gray-100;
-  }
-}
-
-.search-modal__suggestions-label {
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: $color-gray-400;
-  padding: 8px 16px 4px;
-  margin: 0;
-}
-
-.search-modal__suggestion {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 16px;
-  font-size: $font-size-sm;
-  color: $color-gray-700;
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    background $transition-fast,
-    color $transition-fast;
-  text-align: left;
-  line-height: 1.3;
-
-  svg {
+  &__icon {
     color: $color-gray-400;
     flex-shrink: 0;
   }
 
-  strong {
-    font-weight: $font-weight-semibold;
+  &__input {
+    flex: 1;
+    font-size: $font-size-lg;
+    font-family: $font-family-base;
     color: $color-gray-900;
-  }
+    border: none;
+    outline: none;
+    background: transparent;
+    min-width: 0;
 
-  &:hover,
-  &--focused {
-    background: $color-gray-50;
-    color: $color-primary;
-    svg {
-      color: $color-primary;
+    &::placeholder {
+      color: $color-gray-400;
     }
   }
-}
 
-.search-modal__suggestion-arrow {
-  color: $color-gray-300;
-  margin-left: auto;
-  flex-shrink: 0;
-}
+  &__dismiss {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-gray-400;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: color $transition-fast;
+    padding: 4px;
+    border-radius: $radius-md;
 
-// ─── Right: product mini-cards ────────────────────────────────────────────────
-.search-modal__products {
-  padding: 10px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.search-modal__product-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 10px;
-  border-radius: $radius-lg;
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-  transition:
-    background $transition-fast,
-    box-shadow $transition-fast;
-  box-shadow: $shadow-card;
-  background: $color-white;
-
-  &:hover,
-  &--focused {
-    background: $color-gray-50;
-    box-shadow: $shadow-card-hover;
+    &:hover {
+      color: $color-gray-700;
+      background: $color-gray-100;
+    }
   }
-}
 
-.search-modal__product-img {
-  width: 56px;
-  height: 56px;
-  border-radius: $radius-md;
-  background: $color-gray-100;
-  overflow: hidden;
-  flex-shrink: 0;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  &__divider {
+    height: 1px;
+    background: $color-gray-100;
+    flex-shrink: 0;
   }
-}
 
-.search-modal__product-info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.search-modal__product-cat {
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: $color-primary;
-}
-
-.search-modal__product-title {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: $color-gray-900;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin: 0;
-}
-
-.search-modal__product-price {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
-  color: $color-gray-800;
-}
-
-.search-modal__product-add {
-  width: 34px;
-  height: 34px;
-  border-radius: $radius-md;
-  background: $color-gray-100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  cursor: pointer;
-  color: $color-gray-600;
-  transition:
-    background $transition-fast,
-    color $transition-fast;
-
-  &:hover {
-    background: $color-primary;
-    color: $color-white;
+  // ─── Body ───────────────────────────────────────────────────────────────
+  &__body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
-}
 
-.search-modal__product-skeleton {
-  height: 72px;
-  border-radius: $radius-lg;
-  @include mixins.shimmer;
-}
+  // ─── Sections ───────────────────────────────────────────────────────────
+  &__section {
+    padding: 16px 0 0;
 
-.search-modal__no-results {
-  color: $color-gray-400;
-  font-size: $font-size-sm;
-  padding: 24px 10px;
-  text-align: center;
-  margin: 0;
+    &--trending {
+      margin-top: auto;
+      border-top: 1px solid $color-gray-100;
+    }
+  }
+
+  &__section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  &__section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $color-gray-400;
+  }
+
+  &__section-action {
+    font-size: $font-size-xs;
+    color: $color-primary;
+    cursor: pointer;
+    transition: opacity $transition-fast;
+
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+
+  // ─── Recent history ─────────────────────────────────────────────────────
+  &__history {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  &__history-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: $radius-full;
+    background: $color-gray-100;
+    font-size: $font-size-sm;
+    color: $color-gray-700;
+    cursor: pointer;
+    transition: background $transition-fast;
+
+    &:hover {
+      background: $color-gray-200;
+    }
+  }
+
+  &__history-clock {
+    color: $color-gray-400;
+    flex-shrink: 0;
+  }
+
+  &__history-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: $radius-full;
+    color: $color-gray-400;
+    flex-shrink: 0;
+    transition:
+      color $transition-fast,
+      background $transition-fast;
+
+    &:hover {
+      color: $color-danger;
+      background: rgb(239 68 68 / 10%);
+    }
+  }
+
+  // ─── Trending ───────────────────────────────────────────────────────────
+  &__trending-controls {
+    display: flex;
+    gap: 6px;
+  }
+
+  &__trending {
+    overflow: hidden;
+    padding: 20px;
+  }
+
+  &__trend-wrap {
+    --pc-title-size: 12px;
+    --pc-desc-size: 11px;
+    --pc-price-size: 13px;
+    --pc-rating-size: 11px;
+    --pc-body-padding: 10px;
+    --pc-body-gap: 4px;
+  }
+
+  // ─── Active state: two-column layout ────────────────────────────────────
+  &__results {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 240px;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // ─── Left: suggestions ──────────────────────────────────────────────────
+  &__suggestions {
+    border-right: 1px solid $color-gray-100;
+    padding: 8px 0;
+    display: flex;
+    flex-direction: column;
+
+    @media (max-width: 600px) {
+      border-right: none;
+      border-bottom: 1px solid $color-gray-100;
+    }
+  }
+
+  &__suggestions-label {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $color-gray-400;
+    padding: 8px 16px 4px;
+    margin: 0;
+  }
+
+  &__suggestion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px;
+    font-size: $font-size-sm;
+    color: $color-gray-700;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background $transition-fast,
+      color $transition-fast;
+    text-align: left;
+    line-height: 1.3;
+
+    svg {
+      color: $color-gray-400;
+      flex-shrink: 0;
+    }
+
+    strong {
+      font-weight: $font-weight-semibold;
+      color: $color-gray-900;
+    }
+
+    &:hover,
+    &--focused {
+      background: $color-gray-50;
+      color: $color-primary;
+
+      svg {
+        color: $color-primary;
+      }
+    }
+  }
+
+  &__suggestion-arrow {
+    color: $color-gray-300;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  // ─── Right: product mini-cards ───────────────────────────────────────────
+  &__products {
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__product-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: $radius-lg;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition:
+      background $transition-fast,
+      box-shadow $transition-fast;
+    box-shadow: $shadow-card;
+    background: $color-white;
+
+    &:hover,
+    &--focused {
+      background: $color-gray-50;
+      box-shadow: $shadow-card-hover;
+    }
+  }
+
+  &__product-img {
+    width: 56px;
+    height: 56px;
+    border-radius: $radius-md;
+    background: $color-gray-100;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__product-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__product-cat {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $color-primary;
+  }
+
+  &__product-title {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-gray-900;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+  }
+
+  &__product-price {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    color: $color-gray-800;
+  }
+
+  &__product-add {
+    width: 34px;
+    height: 34px;
+    border-radius: $radius-md;
+    background: $color-gray-100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    color: $color-gray-600;
+    transition:
+      background $transition-fast,
+      color $transition-fast;
+
+    &:hover {
+      background: $color-primary;
+      color: $color-white;
+    }
+  }
+
+  &__product-skeleton {
+    height: 72px;
+    border-radius: $radius-lg;
+    @include mixins.shimmer;
+  }
+
+  &__no-results {
+    color: $color-gray-400;
+    font-size: $font-size-sm;
+    padding: 24px 10px;
+    text-align: center;
+    margin: 0;
+  }
 }
 
 // ─── Transitions ──────────────────────────────────────────────────────────────
