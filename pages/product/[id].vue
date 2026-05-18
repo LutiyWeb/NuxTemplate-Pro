@@ -121,7 +121,12 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
             class="pdp__main-swiper"
           >
             <SwiperSlide v-for="(img, i) in allImages" :key="i">
-              <img :src="img" :alt="product.title" class="pdp__main-img" />
+              <AppImage
+                :src="img"
+                :alt="product.title"
+                :lazy="i !== 0"
+                :sizes="{ mobile: { w: 600, h: 450 }, desktop: { w: 800, h: 600 } }"
+              />
             </SwiperSlide>
           </Swiper>
 
@@ -134,7 +139,12 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
             @swiper="thumbsSwiper = $event"
           >
             <SwiperSlide v-for="(img, i) in allImages" :key="i" class="pdp__thumb-slide">
-              <img :src="img" :alt="`thumb ${i}`" class="pdp__thumb-img" />
+              <AppImage
+                :src="img"
+                :alt="`thumb ${i}`"
+                img-class="pdp__thumb-img"
+                :sizes="{ mobile: { w: 72, h: 72 }, desktop: { w: 72, h: 72 } }"
+              />
             </SwiperSlide>
           </Swiper>
         </ClientOnly>
@@ -262,9 +272,8 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
     border-radius: $radius-xl;
     overflow: hidden;
     background: $color-gray-50;
+    --ai-ratio: 4/3;
   }
-
-  &__main-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
 
   &__thumbs { margin-top: 8px; }
   &__thumb-slide { width: 72px; }
@@ -277,7 +286,9 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
     border: 2px solid $color-gray-200;
     cursor: pointer;
     transition: border-color $transition-fast;
-    .swiper-slide-thumb-active & { border-color: $color-primary; }
+    .swiper-slide-thumb-active & {
+      border-color: $color-primary;
+    }
   }
 
   &__thumbs-skeleton {

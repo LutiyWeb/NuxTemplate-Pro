@@ -13,7 +13,12 @@ withDefaults(defineProps<Props>(), { loading: false })
   <div class="card-vertical">
     <div class="card-vertical__image">
       <div v-if="loading" class="card-vertical__shimmer card-vertical__shimmer--image" />
-      <img v-else-if="image" :src="image" :alt="title" />
+      <AppImage
+        v-else-if="image"
+        :src="image"
+        :alt="title"
+        :sizes="{ mobile: { w: 640, h: 480 }, desktop: { w: 400, h: 300 } }"
+      />
       <span v-if="!loading && badge" class="card-vertical__badge">{{ badge }}</span>
     </div>
     <div class="card-vertical__body">
@@ -51,12 +56,7 @@ withDefaults(defineProps<Props>(), { loading: false })
     aspect-ratio: 4 / 3;
     background: $color-gray-100;
     overflow: hidden;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    --ai-height: 100%;
   }
 
   &__badge {

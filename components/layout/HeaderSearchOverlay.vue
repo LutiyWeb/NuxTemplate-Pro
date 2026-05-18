@@ -296,7 +296,7 @@ onBeforeUnmount(() => {
             <template v-if="!isActive">
               <!-- Recent searches -->
               <section v-if="searchStore.history.length" class="search-modal__section">
-                <div class="search-modal__section-head">
+                <div class="search-modal__section-f">
                   <span class="search-modal__section-title"><Clock :size="13" />Недавние</span>
                   <button
                     class="search-modal__section-action"
@@ -307,12 +307,14 @@ onBeforeUnmount(() => {
                   </button>
                 </div>
                 <div class="search-modal__history">
-                  <button
+                  <div
                     v-for="item in searchStore.history"
                     :key="item"
                     class="search-modal__history-item"
-                    type="button"
+                    role="button"
+                    tabindex="0"
                     @click="submitSearch(item)"
+                    @keydown.enter="submitSearch(item)"
                   >
                     <Clock :size="13" class="search-modal__history-clock" />
                     <span>{{ item }}</span>
@@ -323,7 +325,7 @@ onBeforeUnmount(() => {
                     >
                       <X :size="11" />
                     </button>
-                  </button>
+                  </div>
                 </div>
               </section>
 
@@ -613,6 +615,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding-inline: 20px;
     margin-bottom: 10px;
   }
 
