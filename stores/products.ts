@@ -17,6 +17,7 @@ export const useProductsStore = defineStore('products', () => {
       limit?: number
       categorySlug?: string
       categories?: string[]
+      brands?: string[]
       priceMin?: number
       priceMax?: number
       sortBy?: string
@@ -29,6 +30,7 @@ export const useProductsStore = defineStore('products', () => {
       query.set('limit', String(params.limit ?? 20))
       if (params.categorySlug) query.set('categorySlug', params.categorySlug)
       params.categories?.forEach((s) => query.append('categories', s))
+      params.brands?.forEach((s) => query.append('brands', s))
       if (params.priceMin !== undefined) query.set('priceMin', String(params.priceMin))
       if (params.priceMax !== undefined) query.set('priceMax', String(params.priceMax))
       if (params.sortBy && params.sortBy !== 'newest') query.set('sortBy', params.sortBy)

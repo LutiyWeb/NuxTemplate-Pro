@@ -42,7 +42,7 @@ const perPageOptions = [20, 40, 60]
   display: flex;
   gap: 12px;
   align-items: center;
-  margin-bottom: 16px;
+  flex-shrink: 0;
 
   &__select {
     padding: 8px 12px;
