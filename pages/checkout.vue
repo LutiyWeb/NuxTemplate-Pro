@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { z } from 'zod'
+import { checkoutSchema, CHECKOUT_ERROR_MESSAGES } from '~/api/checkout'
+import type { Address } from '~/api/addresses'
 
 useSeoMeta({ title: 'Оформление заказа — Nexus Commerce' })
 
@@ -7,17 +8,6 @@ const cartStore = useCartStore()
 const authStore = useAuthStore()
 const toastStore = useToastStore()
 const { authFetch } = useAuthFetch()
-
-interface Address {
-  id: number
-  city: string
-  street: string
-  house: string
-  apartment: string | null
-  recipientName: string | null
-  phone: string | null
-  isDefault: boolean
-}
 
 // If cart is empty redirect to cart page
 if (process.client && !cartStore.items.length) navigateTo('/cart')
@@ -35,16 +25,6 @@ const form = reactive({
   house: '',
   apartment: '',
   notes: '',
-})
-
-const schema = z.object({
-  recipientName: z.string().trim().min(2, 'Введите имя получателя'),
-  phone: z.string().trim().min(10, 'Введите корректный номер телефона'),
-  city: z.string().trim().min(1, 'Введите город'),
-  street: z.string().trim().min(1, 'Введите улицу'),
-  house: z.string().trim().min(1, 'Введите номер дома'),
-  apartment: z.string().optional(),
-  notes: z.string().optional(),
 })
 
 const errors = ref<Partial<Record<keyof typeof form, string>>>({})
@@ -87,16 +67,9 @@ function selectAddress(addr: Address) {
   applyAddress(addr)
 }
 
-const ERROR_MESSAGES: Record<string, string> = {
-  ADDRESS_NOT_FOUND:      'Адрес не найден. Выберите другой.',
-  CART_EMPTY:             'Корзина пуста.',
-  CART_ITEM_UNAVAILABLE:  'Один из товаров больше недоступен.',
-  NOT_ENOUGH_STOCK:       'Недостаточно товара на складе.',
-}
-
 async function submit() {
   errors.value = {}
-  const result = schema.safeParse(form)
+  const result = checkoutSchema.safeParse(form)
   if (!result.success) {
     result.error.issues.forEach(e => {
       const key = e.path[0] as keyof typeof form
@@ -126,7 +99,7 @@ async function submit() {
     navigateTo(`/order/${res.data.id}`)
   } catch (err: unknown) {
     const msg = (err as { data?: { error?: { message?: string } } })?.data?.error?.message
-    toastStore.add(ERROR_MESSAGES[msg ?? ''] ?? 'Не удалось оформить заказ. Попробуйте снова.', 'error')
+    toastStore.add(CHECKOUT_ERROR_MESSAGES[msg ?? ''] ?? 'Не удалось оформить заказ. Попробуйте снова.', 'error')
   } finally {
     submitting.value = false
   }

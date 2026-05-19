@@ -1,30 +1,14 @@
 <script setup lang="ts">
-import { z } from 'zod'
 import { MapPin, Star, Trash2, Plus, X } from 'lucide-vue-next'
+import { addressSchema } from '~/api/addresses'
+import type { Address } from '~/api/addresses'
 
 const { authFetch } = useAuthFetch()
-
-interface Address {
-  id: number
-  city: string
-  street: string
-  house: string
-  apartment?: string
-  isDefault: boolean
-}
 
 const addresses = ref<Address[]>([])
 const loading = ref(true)
 const showForm = ref(false)
 const submitting = ref(false)
-
-const addressSchema = z.object({
-  city: z.string().min(1, 'Введите город').max(128),
-  street: z.string().min(1, 'Введите улицу').max(128),
-  house: z.string().min(1, 'Введите дом').max(32),
-  apartment: z.string().max(32).optional(),
-  isDefault: z.boolean().optional(),
-})
 
 const form = reactive({ city: '', street: '', house: '', apartment: '', isDefault: false })
 const errors = ref<Record<string, string>>({})

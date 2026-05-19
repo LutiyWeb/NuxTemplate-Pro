@@ -1,11 +1,8 @@
 import { defineStore } from 'pinia'
 import type { Product } from '~/types/product'
+import type { CartEntry } from '~/api/cart'
 
-export interface CartEntry {
-  id: number | null // backend CartItem.id; null для гостей
-  product: Product
-  qty: number
-}
+export type { CartEntry }
 
 const LS_KEY = 'nexus:cart'
 

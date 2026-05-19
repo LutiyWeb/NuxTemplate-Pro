@@ -1,11 +1,7 @@
 import { defineStore } from 'pinia'
+import type { Brand } from '~/api/brands'
 
-export interface Brand {
-  id: number
-  name: string
-  slug: string
-  count: number
-}
+export type { Brand }
 
 export const useBrandsStore = defineStore('brands', () => {
   const config = useRuntimeConfig()

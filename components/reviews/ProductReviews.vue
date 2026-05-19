@@ -1,6 +1,6 @@
 ﻿<script setup lang="ts">
-import { z } from 'zod'
 import { MessageSquare, X } from 'lucide-vue-next'
+import { reviewSchema } from '~/api/reviews'
 import type { Review } from '~/types/review'
 
 const props = defineProps<{ productId: number }>()
@@ -84,11 +84,6 @@ const formText = ref('')
 const formErrors = ref<{ rating?: string; text?: string }>({})
 const submitting = ref(false)
 
-const schema = z.object({
-  rating: z.number().int().min(1, 'Р’С‹Р±РµСЂРёС‚Рµ РѕС†РµРЅРєСѓ').max(5),
-  text: z.string().trim().min(10, 'РњРёРЅРёРјСѓРј 10 СЃРёРјРІРѕР»РѕРІ').max(1000, 'РњР°РєСЃРёРјСѓРј 1000 СЃРёРјРІРѕР»РѕРІ'),
-})
-
 function initials(name: string) {
   return name
     .split(' ')
@@ -100,7 +95,7 @@ function initials(name: string) {
 
 async function submit() {
   formErrors.value = {}
-  const result = schema.safeParse({ rating: formRating.value, text: formText.value })
+  const result = reviewSchema.safeParse({ rating: formRating.value, text: formText.value })
   if (!result.success) {
     result.error.issues.forEach((e) => {
       const key = e.path[0] as 'rating' | 'text'

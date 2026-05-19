@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import { z } from 'zod'
 import { vMaska } from 'maska/vue'
 import { Eye, EyeOff, Trash2 } from 'lucide-vue-next'
+import { profileSchema, passwordSchema } from '~/api/profile'
 
 const authStore = useAuthStore()
-
-// — Profile form —
-const profileSchema = z.object({
-  firstName: z.string().min(1, 'Введите имя').max(64),
-  lastName: z.string().min(1, 'Введите фамилию').max(64),
-  email: z.string().email('Неверный формат email').max(255),
-  phone: z.string().optional(),
-})
 
 const form = reactive({
   firstName: authStore.user?.firstName ?? '',
@@ -47,21 +39,13 @@ function saveProfile() {
 }
 
 // — Password form —
-const pwdSchema = z
-  .object({
-    current: z.string().min(1, 'Введите текущий пароль'),
-    next: z.string().min(8, 'Минимум 8 символов'),
-    confirm: z.string(),
-  })
-  .refine((d) => d.next === d.confirm, { message: 'Пароли не совпадают', path: ['confirm'] })
-
 const pwd = reactive({ current: '', next: '', confirm: '' })
 const pwdErrors = ref<Record<string, string>>({})
 const pwdSaved = ref(false)
 const showPwd = ref({ current: false, next: false, confirm: false })
 
 function changePassword() {
-  const result = pwdSchema.safeParse(pwd)
+  const result = passwordSchema.safeParse(pwd)
   if (!result.success) {
     pwdErrors.value = Object.fromEntries(
       Object.entries(result.error.flatten().fieldErrors).map(([k, v]) => [k, v?.[0] ?? '']),
