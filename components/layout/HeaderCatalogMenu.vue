@@ -120,6 +120,7 @@ function isNew(cat: { slug?: string; name?: string }) {
     flex: 1;
     display: flex;
     flex-direction: column;
+    max-width: 220px;
     padding: 0 16px;
     border-left: 1px solid $color-gray-100;
     overflow-y: auto;

@@ -98,7 +98,7 @@ function handleFavClick(product: Product) {
   display: flex;
   flex-direction: column;
   width: 100%;
-  flex: 1 1 0;
+  height: 100%;
   border-radius: $radius-xl;
   background: $color-white;
   box-shadow: $shadow-card;
