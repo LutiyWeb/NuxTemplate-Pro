@@ -30,6 +30,7 @@ export default defineNuxtConfig({
     'primevue/resources/themes/aura-light-green/theme.css',
     'primevue/resources/primevue.min.css',
     '~/assets/styles/main.scss',
+    '~/assets/styles/globals.scss',
   ],
 
   vite: {
@@ -44,7 +45,8 @@ export default defineNuxtConfig({
             if (
               filepath.includes('_variables') ||
               filepath.includes('_mixins') ||
-              filepath.includes('main.scss')
+              filepath.includes('main.scss') ||
+              filepath.includes('globals.scss')
             ) return content
             return `@use "~/assets/styles/variables" as *;\n@use "~/assets/styles/mixins" as mixins;\n${content}`
           },
