@@ -3,9 +3,6 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Navigation, Pagination, Autoplay } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
 import type { RouteLocationRaw } from 'vue-router'
-import 'swiper/css'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
 
 type SlideItem = { id: string | number; [key: string]: unknown }
 
