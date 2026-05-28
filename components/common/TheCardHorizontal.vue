@@ -40,7 +40,7 @@ withDefaults(defineProps<Props>(), { loading: false, imageRight: false })
 <style lang="scss">
 .card-horizontal {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 1fr;
   border-radius: $radius-xl;
   background: $color-white;
   box-shadow: $shadow-card;
@@ -56,8 +56,8 @@ withDefaults(defineProps<Props>(), { loading: false, imageRight: false })
     transform: translateY(-2px);
   }
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  @include mixins.respond-to(md) {
+    grid-template-columns: 280px 1fr;
   }
 
   &--image-right &__body {

@@ -111,16 +111,16 @@ const rows = computed(() => {
     display: grid;
     gap: 12px;
 
-    &--a { grid-template-columns: repeat(5, 1fr); }
-    &--b { grid-template-columns: repeat(5, 1fr); }
+    &--a, &--b { grid-template-columns: repeat(2, 1fr); }
 
-    @media (max-width: 1024px) {
+    @include mixins.respond-to(sm) {
       &--a { grid-template-columns: repeat(3, 1fr); }
       &--b { grid-template-columns: repeat(3, 1fr); }
     }
 
-    @media (max-width: 640px) {
-      &--a, &--b { grid-template-columns: repeat(2, 1fr); }
+    @include mixins.respond-to(lg) {
+      &--a { grid-template-columns: repeat(5, 1fr); }
+      &--b { grid-template-columns: repeat(5, 1fr); }
     }
   }
 
@@ -130,7 +130,6 @@ const rows = computed(() => {
 
     .card-horizontal { height: 100%; }
 
-    @media (max-width: 640px) { grid-column: span 2; }
   }
 }
 </style>

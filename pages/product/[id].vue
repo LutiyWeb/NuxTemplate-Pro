@@ -255,10 +255,10 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
 
   &__layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 48px;
     align-items: flex-start;
-    @media (max-width: 768px) { grid-template-columns: 1fr; }
+    @include mixins.respond-to(md) { grid-template-columns: 1fr 1fr; }
   }
 
   // Media

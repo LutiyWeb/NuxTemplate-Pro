@@ -190,15 +190,16 @@ function formatDate(iso: string) {
   // ── Banner ───────────────────────────────────────────────────────────────
   &__banner {
     display: flex;
-    align-items: center;
-    gap: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
     padding: 24px 28px;
     background: $color-white;
     border-radius: $radius-xl;
     box-shadow: $shadow-card;
     margin-bottom: 24px;
 
-    @media (max-width: 640px) { flex-direction: column; align-items: flex-start; gap: 12px; }
+    @include mixins.respond-to(sm) { flex-direction: row; align-items: center; gap: 20px; }
   }
 
   &__banner-icon {
@@ -246,11 +247,11 @@ function formatDate(iso: string) {
   // ── Layout ───────────────────────────────────────────────────────────────
   &__layout {
     display: grid;
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: 1fr;
     gap: 24px;
     align-items: flex-start;
 
-    @media (max-width: 900px) { grid-template-columns: 1fr; }
+    @include mixins.respond-to(lg) { grid-template-columns: 1fr 320px; }
   }
 
   &__main { display: flex; flex-direction: column; gap: 16px; }

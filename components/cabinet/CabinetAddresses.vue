@@ -200,11 +200,9 @@ onMounted(load)
 
   &__grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 12px;
-    @media (max-width: 640px) {
-      grid-template-columns: 1fr;
-    }
+    @include mixins.respond-to(sm) { grid-template-columns: 1fr 1fr; }
   }
 
   &__field {

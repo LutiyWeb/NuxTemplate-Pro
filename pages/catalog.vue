@@ -243,7 +243,7 @@ const pageTitle = computed(() => {
   }
 
   &__filter-btn {
-    display: none;
+    display: flex;
     padding: 8px 16px;
     border: 1px solid $color-gray-200;
     border-radius: $radius-md;
@@ -255,8 +255,8 @@ const pageTitle = computed(() => {
       background: $color-gray-100;
     }
 
-    @media (max-width: 1024px) {
-      display: flex;
+    @include mixins.respond-to(lg) {
+      display: none;
     }
   }
 
@@ -292,13 +292,8 @@ const pageTitle = computed(() => {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
 
-    @media (min-width: 768px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    @media (min-width: 1024px) {
-      grid-template-columns: repeat(4, 1fr);
-    }
+    @include mixins.respond-to(md) { grid-template-columns: repeat(3, 1fr); }
+    @include mixins.respond-to(lg) { grid-template-columns: repeat(4, 1fr); }
   }
 
   &__empty {

@@ -30,6 +30,6 @@ useHead({ title: 'О нас — Nexus Commerce' })
 
   &__lead { font-size: $font-size-lg; color: $color-gray-600; max-width: 640px; }
 
-  &__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; @media (max-width: 768px) { grid-template-columns: 1fr; } }
+  &__grid { display: grid; grid-template-columns: 1fr; gap: 24px; @include mixins.respond-to(md) { grid-template-columns: 1fr 1fr; } }
 }
 </style>

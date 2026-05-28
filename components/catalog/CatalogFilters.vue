@@ -180,29 +180,37 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
 
 <style lang="scss">
 .catalog-filters {
-  width: 240px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: $color-white;
+  z-index: $z-modal;
+  padding: 24px;
+  width: 300px;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform $transition-base;
+  box-shadow: $shadow-xl;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 24px;
 
-  @media (max-width: 1024px) {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    background: $color-white;
-    z-index: $z-modal;
-    padding: 24px;
-    width: 300px;
-    overflow-y: auto;
-    transform: translateX(-100%);
-    transition: transform $transition-base;
-    box-shadow: $shadow-xl;
+  &--open {
+    transform: translateX(0);
+  }
 
-    &--open {
-      transform: translateX(0);
-    }
+  @include mixins.respond-to(lg) {
+    position: static;
+    width: 240px;
+    background: none;
+    z-index: auto;
+    padding: 0;
+    overflow-y: visible;
+    transform: none;
+    transition: none;
+    box-shadow: none;
   }
 
   &__head {
@@ -210,7 +218,7 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
     align-items: center;
     justify-content: space-between;
 
-    @media (min-width: 1025px) {
+    @include mixins.respond-to(lg) {
       display: none;
     }
   }

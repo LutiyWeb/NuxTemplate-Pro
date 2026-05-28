@@ -713,24 +713,24 @@ onBeforeUnmount(() => {
   // ─── Active state: two-column layout ────────────────────────────────────
   &__results {
     display: grid;
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: 1fr;
     min-height: 240px;
 
-    @media (max-width: 600px) {
-      grid-template-columns: 1fr;
+    @include mixins.respond-to(sm) {
+      grid-template-columns: 220px 1fr;
     }
   }
 
   // ─── Left: suggestions ──────────────────────────────────────────────────
   &__suggestions {
-    border-right: 1px solid $color-gray-100;
+    border-bottom: 1px solid $color-gray-100;
     padding: 8px 0;
     display: flex;
     flex-direction: column;
 
-    @media (max-width: 600px) {
-      border-right: none;
-      border-bottom: 1px solid $color-gray-100;
+    @include mixins.respond-to(sm) {
+      border-bottom: none;
+      border-right: 1px solid $color-gray-100;
     }
   }
 

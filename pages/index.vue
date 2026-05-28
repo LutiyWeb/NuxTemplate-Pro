@@ -246,18 +246,12 @@ const PROMO_BANNERS = [
 
   &__skeleton-row {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 
-    @media (max-width: 1280px) {
-      grid-template-columns: repeat(4, 1fr);
-    }
-    @media (max-width: 1024px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    @media (max-width: 768px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    @include mixins.respond-to(lg) { grid-template-columns: repeat(3, 1fr); }
+    @include mixins.respond-to(xl) { grid-template-columns: repeat(4, 1fr); }
+    @include mixins.respond-to(2xl) { grid-template-columns: repeat(5, 1fr); }
   }
 }
 
@@ -268,15 +262,15 @@ const PROMO_BANNERS = [
   justify-content: center;
   gap: 24px;
   width: 100%;
-  min-height: 480px;
-  padding: 64px;
+  min-height: 360px;
+  padding: 40px 24px;
   border-radius: $radius-2xl;
   color: $color-white;
   text-decoration: none;
 
-  @media (max-width: 768px) {
-    min-height: 360px;
-    padding: 40px 24px;
+  @include mixins.respond-to(md) {
+    min-height: 480px;
+    padding: 64px;
   }
 
   &__title {

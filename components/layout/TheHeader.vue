@@ -124,15 +124,15 @@ watch(
   }
 
   &__burger {
-    display: none;
+    display: flex;
     font-size: 22px;
     cursor: pointer;
     background: none;
     border: none;
     padding: 4px;
 
-    @media (max-width: 768px) {
-      display: flex;
+    @include mixins.respond-to(md) {
+      display: none;
     }
   }
 
@@ -144,13 +144,13 @@ watch(
   }
 
   &__nav {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: none;
     flex: 1;
 
-    @media (max-width: 768px) {
-      display: none;
+    @include mixins.respond-to(md) {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
   }
 

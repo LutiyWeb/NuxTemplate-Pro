@@ -82,10 +82,10 @@ function logout() {
 
   &__layout {
     display: grid;
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: 1fr;
     gap: 24px;
     align-items: flex-start;
-    @media (max-width: 768px) { grid-template-columns: 1fr; }
+    @include mixins.respond-to(md) { grid-template-columns: 240px 1fr; }
   }
 
   &__sidebar {

@@ -109,14 +109,10 @@ onMounted(load)
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
     gap: 16px;
-    @media (max-width: 900px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    @media (max-width: 480px) {
-      grid-template-columns: 1fr;
-    }
+    @include mixins.respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
+    @include mixins.respond-to(lg) { grid-template-columns: repeat(3, 1fr); }
   }
 
   &__card {

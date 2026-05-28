@@ -259,11 +259,11 @@ async function submit() {
 
   &__layout {
     display: grid;
-    grid-template-columns: 1fr 360px;
+    grid-template-columns: 1fr;
     gap: 24px;
     align-items: flex-start;
 
-    @media (max-width: 900px) { grid-template-columns: 1fr; }
+    @include mixins.respond-to(lg) { grid-template-columns: 1fr 360px; }
   }
 
   &__form-col {
@@ -338,10 +338,10 @@ async function submit() {
 
   &__fields-row {
     display: grid;
-    grid-template-columns: 1fr 80px 80px;
+    grid-template-columns: 1fr;
     gap: 12px;
 
-    @media (max-width: 480px) { grid-template-columns: 1fr; }
+    @include mixins.respond-to(sm) { grid-template-columns: 1fr 80px 80px; }
   }
 
   // Textarea

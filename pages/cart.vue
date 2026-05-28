@@ -188,11 +188,11 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
   // Two-column layout
   &__layout {
     display: grid;
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 1fr;
     gap: 24px;
     align-items: flex-start;
 
-    @media (max-width: 900px) { grid-template-columns: 1fr; }
+    @include mixins.respond-to(lg) { grid-template-columns: 1fr 300px; }
   }
 
   // Items column

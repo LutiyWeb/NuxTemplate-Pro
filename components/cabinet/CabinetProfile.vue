@@ -267,11 +267,9 @@ async function confirmDelete() {
 
   &__grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 16px;
-    @media (max-width: 640px) {
-      grid-template-columns: 1fr;
-    }
+    @include mixins.respond-to(sm) { grid-template-columns: 1fr 1fr; }
   }
 
   &__field {
@@ -344,16 +342,17 @@ async function confirmDelete() {
 
   &__danger {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 16px;
     padding: 20px;
     border: 1px solid rgb(239 68 68 / 20%);
     border-radius: $radius-lg;
     background: rgb(239 68 68 / 3%);
-    @media (max-width: 640px) {
-      flex-direction: column;
-      align-items: flex-start;
+    @include mixins.respond-to(sm) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
     }
   }
 

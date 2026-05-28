@@ -376,11 +376,9 @@ async function submit() {
   // List
   &__list {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 16px;
-    @media (max-width: 640px) {
-      grid-template-columns: 1fr;
-    }
+    @include mixins.respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
   }
 
   // More button
