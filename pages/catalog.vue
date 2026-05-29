@@ -156,13 +156,24 @@ function onPageUpdate(page: number) {
   router.push({ query: { ...route.query, page: String(page) } })
 }
 
-// ─── Page title ───────────────────────────────────────────────────────────────
-const pageTitle = computed(() => {
-  if (selectedCategories.value.length === 1) {
-    const cat = categoriesStore.categories.find((c) => c.slug === selectedCategories.value[0])
-    return cat?.name ?? 'Каталог'
+// ─── Page title & breadcrumbs ─────────────────────────────────────────────────
+const activeCategory = computed(() =>
+  selectedCategories.value.length === 1
+    ? categoriesStore.categories.find((c) => c.slug === selectedCategories.value[0]) ?? null
+    : null,
+)
+
+const pageTitle = computed(() => activeCategory.value?.name ?? 'Каталог')
+
+const breadcrumbs = computed(() => {
+  const crumbs: { label: string; to?: string }[] = [{ label: 'Головна', to: '/' }]
+  if (activeCategory.value) {
+    crumbs.push({ label: 'Каталог', to: '/catalog' })
+    crumbs.push({ label: activeCategory.value.name })
+  } else {
+    crumbs.push({ label: 'Каталог' })
   }
-  return 'Каталог'
+  return crumbs
 })
 </script>
 
@@ -170,6 +181,7 @@ const pageTitle = computed(() => {
   <div class="catalog container">
     <div class="catalog__head">
       <TheTitle tag="h1">{{ pageTitle }}</TheTitle>
+      <AppBreadcrumbs :crumbs="breadcrumbs" class="catalog__breadcrumbs" />
       <button class="catalog__filter-btn" type="button" @click="isMobileFiltersOpen = true">
         ⚙ Фильтры
       </button>
@@ -234,6 +246,8 @@ const pageTitle = computed(() => {
 <style lang="scss">
 .catalog {
   padding-block: 32px;
+
+  &__breadcrumbs { margin-bottom: 16px; }
 
   &__head {
     display: flex;
