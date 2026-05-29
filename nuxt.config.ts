@@ -42,6 +42,7 @@ export default defineNuxtConfig({
       hmr: { port: 24678 },
     },
     css: {
+      devSourcemap: true,
       preprocessorOptions: {
         scss: {
           additionalData: (content: string, filepath: string) => {
