@@ -29,7 +29,12 @@ const heroSlides = computed(() =>
   })),
 )
 
-const featuredProducts = computed(() => store.products.slice(0, 12))
+const featuredProducts = computed(() => {
+  const products = store.products.slice(0, 12)
+  // TODO: remove — test out-of-stock state
+  if (products.length) return [{ ...products[0], stock: 0 }, ...products.slice(1)]
+  return products
+})
 const newProducts = computed(() => store.products.slice(12, 20))
 const skeletons = Array.from({ length: 5 })
 const skeletonsSmall = Array.from({ length: 8 })

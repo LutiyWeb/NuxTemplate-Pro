@@ -56,6 +56,16 @@ const mockSpecs = computed(() => [
   { label: 'Гарантия', value: '12 месяцев' },
 ])
 
+const tabs = [
+  { key: 'specs',   label: 'Характеристики' },
+  { key: 'reviews', label: 'Відгуки' },
+  { key: 'qa',      label: 'Питання та відповіді' },
+]
+const activeTab = ref('specs')
+
+// TODO: remove route.query.oos check — test only, backend will send real stock
+const isOutOfStock = computed(() => (product.value?.stock ?? 0) === 0 || route.query.oos === '1')
+
 function decrement() { if (qty.value > 1) qty.value-- }
 function increment() { qty.value++ }
 
@@ -64,6 +74,13 @@ function addToCart() {
     cartStore.add(product.value, qty.value)
     qty.value = 1
   }
+}
+
+const toastStore = useToastStore()
+
+function notifyWhenAvailable() {
+  if (!authStore.isLoggedIn) { uiStore.authModalOpen = true; return }
+  toastStore.add('Ми повідомимо вас, коли товар з\'явиться в наявності', 'success')
 }
 
 function toggleFav() {
@@ -113,6 +130,9 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
     <div v-else-if="product" class="pdp__layout">
       <!-- Media -->
       <div class="pdp__media">
+        <div v-if="isOutOfStock" class="pdp__media-oos">
+          <span class="pdp__media-oos-badge">Немає в наявності</span>
+        </div>
         <ClientOnly>
           <Swiper
             :modules="[Thumbs, Navigation]"
@@ -178,8 +198,8 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
           </span>
           <span v-if="product.brand" class="pdp__brand">{{ product.brand }}</span>
           <span
-            :class="['pdp__stock', product.stock > 0 ? 'pdp__stock--in' : 'pdp__stock--out']"
-          >{{ product.stock > 0 ? 'В наличии' : 'Нет в наличии' }}</span>
+            :class="['pdp__stock', !isOutOfStock ? 'pdp__stock--in' : 'pdp__stock--out']"
+          >{{ !isOutOfStock ? 'В наявності' : 'Немає в наявності' }}</span>
         </div>
 
         <p class="pdp__desc">{{ product.description }}</p>
@@ -193,26 +213,38 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
           </span>
         </div>
 
-        <!-- Quantity + Add to cart -->
-        <div class="pdp__purchase">
-          <div class="pdp__qty">
-            <button class="pdp__qty-btn" type="button" :disabled="qty <= 1" @click="decrement">
-              <Minus :size="14" />
-            </button>
-            <span class="pdp__qty-val">{{ qty }}</span>
-            <button class="pdp__qty-btn" type="button" @click="increment">
-              <Plus :size="14" />
-            </button>
+        <!-- Quantity + Add to cart / Out of stock -->
+        <template v-if="!isOutOfStock">
+          <div class="pdp__purchase">
+            <div class="pdp__qty">
+              <button class="pdp__qty-btn" type="button" :disabled="qty <= 1" @click="decrement">
+                <Minus :size="14" />
+              </button>
+              <span class="pdp__qty-val">{{ qty }}</span>
+              <button class="pdp__qty-btn" type="button" @click="increment">
+                <Plus :size="14" />
+              </button>
+            </div>
+            <AppButton variant="primary" size="lg" class="pdp__add-btn" @click="addToCart">
+              <ShoppingCart :size="18" /> Додати до кошика
+            </AppButton>
           </div>
-          <AppButton variant="primary" size="lg" class="pdp__add-btn" @click="addToCart">
-            <ShoppingCart :size="18" /> Добавить в корзину
-          </AppButton>
-        </div>
 
-        <AppButton variant="outline" size="lg" class="pdp__fav-full-btn" @click="toggleFav">
-          <Heart :size="16" :fill="isFav ? 'currentColor' : 'none'" />
-          {{ isFav ? 'В избранном' : 'В избранное' }}
-        </AppButton>
+          <AppButton variant="outline" size="lg" class="pdp__fav-full-btn" @click="toggleFav">
+            <Heart :size="16" :fill="isFav ? 'currentColor' : 'none'" />
+            {{ isFav ? 'В обраному' : 'В обране' }}
+          </AppButton>
+        </template>
+
+        <template v-else>
+          <div class="pdp__oos-banner">
+            <span class="pdp__oos-label">Немає в наявності</span>
+            <p class="pdp__oos-hint">Залиште заявку — ми повідомимо, коли товар з'явиться</p>
+          </div>
+          <AppButton variant="outline" size="lg" class="pdp__notify-btn" @click="notifyWhenAvailable">
+            Повідомити про наявність
+          </AppButton>
+        </template>
 
         <!-- Perks -->
         <div class="pdp__perks">
@@ -230,20 +262,44 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
           </div>
         </div>
 
-        <!-- Specs -->
-        <table class="pdp__specs">
-          <tbody>
-            <tr v-for="spec in mockSpecs" :key="spec.label">
-              <td class="pdp__spec-label">{{ spec.label }}</td>
-              <td class="pdp__spec-value">{{ spec.value }}</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
 
-    <!-- Reviews -->
-    <ProductReviews v-if="product" :product-id="product.id" />
+    <!-- Tabs -->
+    <div v-if="product" class="pdp__tabs">
+      <div class="pdp__tabs-nav">
+        <button
+          v-for="tab in tabs"
+          :key="tab.key"
+          :class="['pdp__tab-btn', { 'pdp__tab-btn--active': activeTab === tab.key }]"
+          type="button"
+          @click="activeTab = tab.key"
+        >
+          {{ tab.label }}
+        </button>
+      </div>
+
+      <div class="pdp__tab-content">
+        <div v-if="activeTab === 'specs'">
+          <table class="pdp__specs">
+            <tbody>
+              <tr v-for="spec in mockSpecs" :key="spec.label">
+                <td class="pdp__spec-label">{{ spec.label }}</td>
+                <td class="pdp__spec-value">{{ spec.value }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div v-else-if="activeTab === 'reviews'">
+          <ProductReviews :product-id="product.id" />
+        </div>
+
+        <div v-else-if="activeTab === 'qa'" class="pdp__qa-empty">
+          <p>Питань поки немає. Будьте першим, хто задасть питання!</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -265,6 +321,30 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
   &__media {
     min-width: 0;
     width: 100%;
+    position: relative;
+  }
+
+  &__media-oos {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    border-radius: $radius-xl;
+    background: rgb(0 0 0 / 35%);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  &__media-oos-badge {
+    padding: 8px 20px;
+    background: $color-white;
+    color: $color-gray-700;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    border-radius: $radius-full;
+    letter-spacing: 0.03em;
   }
 
   &__main-swiper {
@@ -451,6 +531,31 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
 
   &__fav-full-btn { width: 100%; justify-content: center; margin-bottom: 24px; }
 
+  &__oos-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px;
+    background: $color-gray-50;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-lg;
+    margin-bottom: 12px;
+  }
+
+  &__oos-label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-500;
+  }
+
+  &__oos-hint {
+    font-size: $font-size-sm;
+    color: $color-gray-400;
+    margin: 0;
+  }
+
+  &__notify-btn { width: 100%; justify-content: center; margin-bottom: 24px; }
+
   // Perks
   &__perks {
     display: flex;
@@ -471,8 +576,43 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
     svg { color: $color-primary; flex-shrink: 0; }
   }
 
+  // Tabs
+  &__tabs { margin-top: 48px; }
+
+  &__tabs-nav {
+    display: flex;
+    border-bottom: 2px solid $color-gray-100;
+    gap: 4px;
+  }
+
+  &__tab-btn {
+    padding: 12px 20px;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-gray-500;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color $transition-fast, border-color $transition-fast;
+
+    &:hover { color: $color-gray-900; }
+
+    &--active {
+      color: $color-primary;
+      border-bottom-color: $color-primary;
+    }
+  }
+
+  &__tab-content { padding-top: 32px; }
+
   // Specs
-  &__specs { width: 100%; border-collapse: collapse; }
+  &__specs {
+    width: 100%;
+    max-width: 640px;
+    border-collapse: collapse;
+  }
 
   &__spec-label,
   &__spec-value {
@@ -483,6 +623,13 @@ onBeforeUnmount(() => { thumbsSwiper.value = null })
 
   &__spec-label { color: $color-gray-500; width: 40%; }
   &__spec-value { color: $color-gray-900; font-weight: $font-weight-medium; }
+
+  // Q&A
+  &__qa-empty {
+    padding: 48px 0;
+    color: $color-gray-400;
+    font-size: $font-size-sm;
+  }
 
   &__error {
     padding: 48px 0;
