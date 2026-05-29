@@ -93,6 +93,7 @@ function toggle(i: number) {
 
     @include mixins.respond-to(md) {
       flex-direction: row;
+      gap: 48px;
     }
   }
 
@@ -120,11 +121,20 @@ function toggle(i: number) {
     display: flex;
     flex-direction: column;
     flex: 1;
+
+    @include mixins.respond-to(md) {
+      flex-direction: row;
+      gap: 32px;
+    }
   }
 
   &__col {
     display: flex;
     flex-direction: column;
+
+    @include mixins.respond-to(md) {
+      flex: 1;
+    }
   }
 
   &__col-toggle {
@@ -155,12 +165,23 @@ function toggle(i: number) {
         transform: rotate(180deg);
       }
     }
+
+    @include mixins.respond-to(md) {
+      cursor: default;
+      pointer-events: none;
+      border-bottom: none;
+      padding: 0 0 12px;
+    }
   }
 
   &__col-icon {
     flex-shrink: 0;
     color: $color-gray-500;
     transition: transform $transition-base;
+
+    @include mixins.respond-to(md) {
+      display: none;
+    }
   }
 
   &__col-body {
@@ -170,6 +191,11 @@ function toggle(i: number) {
 
     &--open {
       grid-template-rows: 1fr;
+    }
+
+    @include mixins.respond-to(md) {
+      grid-template-rows: 1fr;
+      transition: none;
     }
   }
 
@@ -183,6 +209,12 @@ function toggle(i: number) {
 
     .the-footer__col-body--open & {
       padding-top: 8px;
+    }
+
+    @include mixins.respond-to(md) {
+      overflow: visible;
+      padding-top: 0;
+      transition: none;
     }
   }
 

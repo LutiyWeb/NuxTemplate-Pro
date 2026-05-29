@@ -21,12 +21,17 @@ const emit = defineEmits<{ remove: [key: string]; clearAll: [] }>()
           :aria-label="`Убрать фильтр: ${chip.label}`"
           @click="emit('remove', chip.key)"
         >
-          <X :size="11" />
+          <X :size="16" />
         </button>
       </span>
     </TransitionGroup>
 
-    <button v-if="chips.length > 1" class="catalog-chips__clear" type="button" @click="emit('clearAll')">
+    <button
+      v-if="chips.length > 1"
+      class="catalog-chips__clear"
+      type="button"
+      @click="emit('clearAll')"
+    >
       Сбросить всё
     </button>
   </div>
@@ -65,13 +70,13 @@ const emit = defineEmits<{ remove: [key: string]; clearAll: [] }>()
     width: 16px;
     height: 16px;
     border-radius: $radius-full;
-    background: rgb(255 255 255 / 25%);
     cursor: pointer;
-    transition: background $transition-fast;
+    transition: color $transition-fast;
     flex-shrink: 0;
+    color: $color-white;
 
     &:hover {
-      background: rgb(255 255 255 / 40%);
+      color: rgb(255 255 255 / 40%);
     }
   }
 
