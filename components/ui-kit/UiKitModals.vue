@@ -7,6 +7,12 @@ const AUTH_CODE = `<!-- Открыть из любого места -->
 <!-- Компонент подключен в TheHeader -->
 <HeaderAuthModal v-model:open="uiStore.authModalOpen" />`
 
+const FORGOT_CODE = `<!-- Открыть из любого места -->
+<AppButton @click="uiStore.forgotPasswordModalOpen = true">Забыли пароль?</AppButton>
+
+<!-- Компонент подключен в TheHeader -->
+<HeaderForgotPasswordModal v-model:open="uiStore.forgotPasswordModalOpen" />`
+
 const SEARCH_CODE = `<!-- Открыть поиск -->
 <AppButton @click="uiStore.searchOpen = true">Поиск</AppButton>
 
@@ -18,10 +24,36 @@ const CATALOG_CODE = `<!-- Открыть меню каталога -->
 
 <!-- Компонент подключен в TheHeader -->
 <HeaderCatalogMenu :open="uiStore.catalogOpen" @close="uiStore.catalogOpen = false" />`
+
+const MODAL_CODE = `<!-- Базовый компонент, переиспользуется во всех модалках -->
+<AppModal :open="myModalOpen" @update:open="myModalOpen = $event">
+  <!-- Контент модалки -->
+  <h2>Заголовок</h2>
+  <form class="app-modal__form">
+    <!-- поля -->
+    <p class="app-modal__error">Ошибка</p>
+    <AppButton type="submit">Сохранить</AppButton>
+    <button class="app-modal__secondary-btn">Вторичное действие</button>
+  </form>
+</AppModal>`
 </script>
 
 <template>
   <div class="uikit-modals">
+    <UiKitSection
+      title="AppModal"
+      description="Базовый компонент модалки: оверлей, контейнер, крестик, анимация. Все остальные модалки строятся на его основе."
+    >
+      <template #preview>
+        <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start">
+          <span style="font-size: 13px; color: #9ca3af">Базовый компонент — открой Auth Modal или Forgot Password ниже</span>
+        </div>
+      </template>
+      <template #code>
+        <UiKitCodeBlock :code="MODAL_CODE" />
+      </template>
+    </UiKitSection>
+
     <UiKitSection
       title="Auth Modal"
       description="Модалка входа/регистрации. Управляется через uiStore.authModalOpen"
@@ -36,6 +68,23 @@ const CATALOG_CODE = `<!-- Открыть меню каталога -->
       </template>
       <template #code>
         <UiKitCodeBlock :code="AUTH_CODE" />
+      </template>
+    </UiKitSection>
+
+    <UiKitSection
+      title="Forgot Password Modal"
+      description="Модалка восстановления пароля. Управляется через uiStore.forgotPasswordModalOpen"
+    >
+      <template #preview>
+        <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start">
+          <AppButton variant="outline" @click="uiStore.forgotPasswordModalOpen = true">
+            Открыть Forgot Password Modal
+          </AppButton>
+          <span style="font-size: 13px; color: #9ca3af">uiStore.forgotPasswordModalOpen = true</span>
+        </div>
+      </template>
+      <template #code>
+        <UiKitCodeBlock :code="FORGOT_CODE" />
       </template>
     </UiKitSection>
 
@@ -76,20 +125,11 @@ const CATALOG_CODE = `<!-- Открыть меню каталога -->
     <UiKitSection title="UiStore API" description="Централизованное управление всеми оверлеями">
       <UiKitPropsTable
         :rows="[
-          {
-            name: 'authModalOpen',
-            type: 'boolean',
-            default: 'false',
-            description: 'Auth Modal открыта',
-          },
+          { name: 'authModalOpen', type: 'boolean', default: 'false', description: 'Auth Modal открыта' },
+          { name: 'forgotPasswordModalOpen', type: 'boolean', default: 'false', description: 'Forgot Password Modal открыта' },
           { name: 'catalogOpen', type: 'boolean', default: 'false', description: 'Каталог открыт' },
           { name: 'searchOpen', type: 'boolean', default: 'false', description: 'Поиск открыт' },
-          {
-            name: 'sidebarOpen',
-            type: 'boolean',
-            default: 'false',
-            description: 'Мобильный сайдбар открыт',
-          },
+          { name: 'sidebarOpen', type: 'boolean', default: 'false', description: 'Мобильный сайдбар открыт' },
           { name: 'closeAll()', type: 'function', description: 'Закрыть все оверлеи' },
         ]"
       />

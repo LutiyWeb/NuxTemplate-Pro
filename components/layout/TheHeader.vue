@@ -105,7 +105,14 @@ watch(
 
   <HeaderSearchOverlay :open="uiStore.searchOpen" @close="uiStore.searchOpen = false" />
   <HeaderSidebar :open="uiStore.sidebarOpen" @close="uiStore.sidebarOpen = false" />
-  <HeaderAuthModal v-model:open="uiStore.authModalOpen" />
+  <HeaderAuthModal
+    v-model:open="uiStore.authModalOpen"
+    @forgot-password="uiStore.authModalOpen = false; uiStore.forgotPasswordModalOpen = true"
+  />
+  <HeaderForgotPasswordModal
+    v-model:open="uiStore.forgotPasswordModalOpen"
+    @back-to-login="uiStore.forgotPasswordModalOpen = false; uiStore.authModalOpen = true"
+  />
 </template>
 
 <style lang="scss">

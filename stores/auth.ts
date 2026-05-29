@@ -70,6 +70,36 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function forgotPassword(email: string) {
+    loading.value = true
+    error.value = null
+    try {
+      await apiClient.post('/api/auth/forgot-password', { email })
+    } catch (err) {
+      error.value = axios.isAxiosError(err)
+        ? (err.response?.data?.error?.message ?? 'Ошибка отправки письма')
+        : 'Ошибка отправки письма'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function resetPassword(token: string, password: string) {
+    loading.value = true
+    error.value = null
+    try {
+      await apiClient.post('/api/auth/reset-password', { token, password })
+    } catch (err) {
+      error.value = axios.isAxiosError(err)
+        ? (err.response?.data?.error?.message ?? 'Помилка скидання пароля')
+        : 'Помилка скидання пароля'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   function logout() {
     _clear()
   }
@@ -90,5 +120,5 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  return { token, user, loading, error, isLoggedIn, login, register, logout, deleteAccount }
+  return { token, user, loading, error, isLoggedIn, login, register, forgotPassword, resetPassword, logout, deleteAccount }
 })
