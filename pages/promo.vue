@@ -1,15 +1,35 @@
 <script setup lang="ts">
-useHead({ title: 'Акции — Nexus Commerce' })
+useHead({ title: 'Акції — Nexus Commerce' })
 
 const store = useProductsStore()
+const { isMd } = useBreakpoints()
 
-onMounted(() => { store.fetchProducts({ limit: 40 }) })
+onMounted(() => {
+  store.fetchProducts({ limit: 40 })
+})
 
 const PROMO_BANNERS = [
-  { gradient: 'linear-gradient(135deg, rgb(79 70 229) 0%, rgb(55 48 163) 100%)', title: 'до -40%', subtitle: 'на смартфоны и планшеты' },
-  { gradient: 'linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%)', title: 'до -35%', subtitle: 'на ноутбуки и технику' },
-  { gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)', title: 'до -25%', subtitle: 'на аудио и аксессуары' },
+  {
+    id: 1,
+    gradient: 'linear-gradient(135deg, rgb(79 70 229) 0%, rgb(55 48 163) 100%)',
+    title: 'до -40%',
+    subtitle: 'на смартфони і планшети',
+  },
+  {
+    id: 2,
+    gradient: 'linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%)',
+    title: 'до -35%',
+    subtitle: 'на ноутбуки і техніку',
+  },
+  {
+    id: 3,
+    gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)',
+    title: 'до -25%',
+    subtitle: 'на аудіо та аксесуари',
+  },
 ]
+
+const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
 
 // Row A = 5 cards | Row B = horizontal span-2 + 3 cards, alternating left/right
 const rows = computed(() => {
@@ -35,12 +55,29 @@ const rows = computed(() => {
 <template>
   <div class="promo-page">
     <div class="container">
-      <TheTitle tag="h1" size="l" class="promo-page__title">Акции и скидки</TheTitle>
+      <TheTitle tag="h1" size="m" class="promo-page__title">Акції та знижки</TheTitle>
 
-      <div class="promo-page__banners grid-col-3">
+      <AppSlider
+        v-if="promoNeedsSlider"
+        :slides="PROMO_BANNERS"
+        :space-between="16"
+        :breakpoints="{ 0: { slidesPerView: 1 }, 768: { slidesPerView: 3 } }"
+        class="promo-page__slider"
+      >
+        <template #default="slotProps">
+          <PromoBannerCard
+            v-if="slotProps?.slide"
+            :gradient="(slotProps.slide as any).gradient"
+            :title="(slotProps.slide as any).title"
+            :subtitle="(slotProps.slide as any).subtitle"
+          />
+        </template>
+      </AppSlider>
+
+      <div v-else class="promo-page__banners grid-col-3">
         <PromoBannerCard
-          v-for="(b, i) in PROMO_BANNERS"
-          :key="i"
+          v-for="b in PROMO_BANNERS"
+          :key="b.id"
           :gradient="b.gradient"
           :title="b.title"
           :subtitle="b.subtitle"
@@ -93,7 +130,9 @@ const rows = computed(() => {
 .promo-page {
   padding-block: 32px;
 
-  &__title { margin-bottom: 32px; }
+  &__title {
+    margin-bottom: 32px;
+  }
 
   &__banners {
     margin-bottom: 48px;
@@ -105,22 +144,37 @@ const rows = computed(() => {
     gap: 12px;
   }
 
-  &__grid { display: flex; flex-direction: column; gap: 12px; }
+  &__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
   &__row {
     display: grid;
     gap: 12px;
 
-    &--a, &--b { grid-template-columns: repeat(2, 1fr); }
+    &--a,
+    &--b {
+      grid-template-columns: repeat(2, 1fr);
+    }
 
     @include mixins.respond-to(sm) {
-      &--a { grid-template-columns: repeat(3, 1fr); }
-      &--b { grid-template-columns: repeat(3, 1fr); }
+      &--a {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      &--b {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
 
     @include mixins.respond-to(lg) {
-      &--a { grid-template-columns: repeat(5, 1fr); }
-      &--b { grid-template-columns: repeat(5, 1fr); }
+      &--a {
+        grid-template-columns: repeat(5, 1fr);
+      }
+      &--b {
+        grid-template-columns: repeat(5, 1fr);
+      }
     }
   }
 
@@ -128,8 +182,9 @@ const rows = computed(() => {
     grid-column: span 2;
     display: block;
 
-    .card-horizontal { height: 100%; }
-
+    .card-horizontal {
+      height: 100%;
+    }
   }
 }
 </style>

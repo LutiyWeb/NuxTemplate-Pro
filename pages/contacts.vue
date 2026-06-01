@@ -4,7 +4,7 @@ useHead({ title: 'Контакти — Nexus Commerce' })
 
 <template>
   <div class="contacts-page container">
-    <TheTitle tag="h1" size="l">Контакти</TheTitle>
+    <TheTitle tag="h1" size="m">Контакти</TheTitle>
     <div class="contacts-page__layout">
       <div class="contacts-page__info">
         <div class="contacts-page__block">
@@ -54,7 +54,9 @@ useHead({ title: 'Контакти — Nexus Commerce' })
     grid-template-columns: 1fr;
     gap: 48px;
 
-    @include mixins.respond-to(md) { grid-template-columns: 1fr 1fr; }
+    @include mixins.respond-to(md) {
+      grid-template-columns: 1fr 1fr;
+    }
   }
 
   &__info {
@@ -83,7 +85,9 @@ useHead({ title: 'Контакти — Nexus Commerce' })
     color: $color-gray-900;
     transition: color $transition-fast;
 
-    &:hover { color: $color-primary; }
+    &:hover {
+      color: $color-primary;
+    }
   }
 
   &__contact-text {
@@ -96,9 +100,19 @@ useHead({ title: 'Контакти — Nexus Commerce' })
     color: $color-gray-400;
   }
 
-  &__form { display: flex; flex-direction: column; gap: 16px; }
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 
-  &__label { display: block; font-size: $font-size-sm; font-weight: $font-weight-medium; color: $color-gray-700; margin-bottom: 6px; }
+  &__label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-gray-700;
+    margin-bottom: 6px;
+  }
 
   &__textarea {
     width: 100%;
@@ -111,7 +125,9 @@ useHead({ title: 'Контакти — Nexus Commerce' })
     min-height: 120px;
     outline: none;
 
-    &:focus { border-color: $color-primary; }
+    &:focus {
+      border-color: $color-primary;
+    }
   }
 }
 </style>

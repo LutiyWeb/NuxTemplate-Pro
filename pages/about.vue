@@ -4,7 +4,7 @@ useHead({ title: 'О нас — Nexus Commerce' })
 
 <template>
   <div class="about-page container">
-    <TheTitle tag="h1" size="l">О нас</TheTitle>
+    <TheTitle tag="h1" size="m">О нас</TheTitle>
     <p class="about-page__lead">
       Nexus Commerce — современная платформа шаблонов для e-commerce проектов на Nuxt 3.
     </p>
@@ -28,8 +28,19 @@ useHead({ title: 'О нас — Nexus Commerce' })
   flex-direction: column;
   gap: 32px;
 
-  &__lead { font-size: $font-size-lg; color: $color-gray-600; max-width: 640px; }
+  &__lead {
+    font-size: $font-size-lg;
+    color: $color-gray-600;
+    max-width: 640px;
+  }
 
-  &__grid { display: grid; grid-template-columns: 1fr; gap: 24px; @include mixins.respond-to(md) { grid-template-columns: 1fr 1fr; } }
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    @include mixins.respond-to(md) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
 }
 </style>
