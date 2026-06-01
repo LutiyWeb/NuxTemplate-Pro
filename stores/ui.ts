@@ -21,11 +21,12 @@ export const useUiStore = defineStore('ui', () => {
   // search / auth / sidebar cover everything → backdrop must be ABOVE the header
   const overlayAboveHeader = computed(
     () =>
-      authModalOpen.value ||
-      forgotPasswordModalOpen.value ||
-      searchOpen.value ||
-      sidebarOpen.value,
+      authModalOpen.value || forgotPasswordModalOpen.value || searchOpen.value || sidebarOpen.value,
   )
+
+  if (process.client) {
+    useScrollLock(overlayVisible)
+  }
 
   function closeAll() {
     authModalOpen.value = false
