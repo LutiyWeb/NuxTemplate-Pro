@@ -230,10 +230,7 @@ const breadcrumbs = computed(() => {
       <div
         v-if="isMobileFiltersOpen || isMobileSortOpen"
         class="catalog__backdrop"
-        @click="
-          isMobileFiltersOpen = false
-          isMobileSortOpen = false
-        "
+        @click="isMobileFiltersOpen = false; isMobileSortOpen = false"
       />
     </Transition>
 
