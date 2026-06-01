@@ -5,11 +5,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: true,
 
-  modules: [
-    '@pinia/nuxt',
-    'nuxt-primevue',
-    '@nuxt/image',
-  ],
+  modules: ['@pinia/nuxt', 'nuxt-primevue', '@nuxt/image'],
 
   image: {
     quality: 80,
@@ -21,7 +17,17 @@ export default defineNuxtConfig({
     usePrimeVue: true,
     options: { ripple: true },
     components: {
-      include: ['InputText', 'Button', 'Password', 'Card', 'Sidebar', 'Dialog', 'Skeleton', 'Textarea', 'Dropdown'],
+      include: [
+        'InputText',
+        'Button',
+        'Password',
+        'Card',
+        'Sidebar',
+        'Dialog',
+        'Skeleton',
+        'Textarea',
+        'Dropdown',
+      ],
     },
   },
 
@@ -42,6 +48,7 @@ export default defineNuxtConfig({
       hmr: { port: 24678 },
     },
     css: {
+      devSourcemap: true,
       preprocessorOptions: {
         scss: {
           additionalData: (content: string, filepath: string) => {
@@ -50,7 +57,8 @@ export default defineNuxtConfig({
               filepath.includes('_mixins') ||
               filepath.includes('main.scss') ||
               filepath.includes('globals.scss')
-            ) return content
+            )
+              return content
             return `@use "~/assets/styles/variables" as *;\n@use "~/assets/styles/mixins" as mixins;\n${content}`
           },
         },

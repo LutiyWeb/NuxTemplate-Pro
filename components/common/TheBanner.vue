@@ -20,7 +20,7 @@ withDefaults(defineProps<Props>(), { variant: 'default' })
 <style lang="scss">
 .the-banner {
   border-radius: $radius-2xl;
-  padding: 64px 48px;
+  padding: 28px;
   text-align: center;
   display: flex;
   flex-direction: column;

@@ -7,7 +7,7 @@ interface Props {
   loading?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   variant: 'primary',
   size: 'md',
   tag: 'button',
@@ -31,11 +31,13 @@ const props = withDefaults(defineProps<Props>(), {
 .app-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  min-width: var(--btn-min-width, 165px);
   border-radius: $radius-md;
   font-weight: $font-weight-semibold;
+  text-align: center;
   cursor: pointer;
-  border: none;
   font-family: $font-family-base;
   transition:
     background $transition-fast,
@@ -59,7 +61,7 @@ const props = withDefaults(defineProps<Props>(), {
     font-size: 15px;
   }
   &--lg {
-    padding: 12px 24px;
+    padding: 12px;
     font-size: $font-size-base;
   }
 

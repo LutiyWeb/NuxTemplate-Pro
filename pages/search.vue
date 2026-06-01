@@ -46,9 +46,7 @@ function onPageChange(p: number) {
       {{ q ? `Результаты: "${q}"` : 'Поиск' }}
     </TheTitle>
 
-    <p v-if="q && !loading" class="search-page__count">
-      Найдено: {{ meta.total }} товаров
-    </p>
+    <p v-if="q && !loading" class="search-page__count">Найдено: {{ meta.total }} товаров</p>
 
     <div v-if="loading" class="search-page__grid">
       <TheProductCard v-for="n in LIMIT" :key="n" :loading="true" />
@@ -89,8 +87,12 @@ function onPageChange(p: number) {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
 
-    @include mixins.respond-to(md) { grid-template-columns: repeat(3, 1fr); }
-    @include mixins.respond-to(lg) { grid-template-columns: repeat(4, 1fr); }
+    @include mixins.respond-to(md) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @include mixins.respond-to(lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
 
   &__empty {

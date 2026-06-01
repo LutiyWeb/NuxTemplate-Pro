@@ -4,7 +4,7 @@ useHead({ title: 'Повернення та обмін — Nexus Commerce' })
 
 <template>
   <div class="legal-page container">
-    <TheTitle tag="h1" size="l">Повернення та обмін</TheTitle>
+    <TheTitle tag="h1" size="m">Повернення та обмін</TheTitle>
 
     <div class="legal-page__section">
       <h2 class="legal-page__heading">Загальні умови</h2>
@@ -36,9 +36,7 @@ useHead({ title: 'Повернення та обмін — Nexus Commerce' })
 
     <div class="legal-page__section">
       <h2 class="legal-page__heading">Товари, що не підлягають поверненню</h2>
-      <p class="legal-page__text">
-        Відповідно до Постанови КМУ №172, поверненню не підлягають:
-      </p>
+      <p class="legal-page__text">Відповідно до Постанови КМУ №172, поверненню не підлягають:</p>
       <ul class="legal-page__list">
         <li>Товари, виготовлені на замовлення (індивідуальні характеристики)</li>
         <li>Програмне забезпечення з активованою ліцензією</li>
@@ -75,8 +73,8 @@ useHead({ title: 'Повернення та обмін — Nexus Commerce' })
     <div class="legal-page__section">
       <h2 class="legal-page__heading">Як оформити повернення</h2>
       <p class="legal-page__text">
-        Зв'яжіться з нашою службою підтримки будь-яким зручним способом, вкажіть номер замовлення
-        та причину повернення. Ми надамо інструкції щодо подальших кроків.
+        Зв'яжіться з нашою службою підтримки будь-яким зручним способом, вкажіть номер замовлення та
+        причину повернення. Ми надамо інструкції щодо подальших кроків.
       </p>
       <ul class="legal-page__list">
         <li>Email: support@nexus-commerce.ua</li>

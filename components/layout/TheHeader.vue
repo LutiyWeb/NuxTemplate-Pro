@@ -71,6 +71,14 @@ watch(
 
       <!-- Actions -->
       <div class="the-header__actions">
+        <button
+          class="the-header__action-btn the-header__action-btn--search-mobile"
+          type="button"
+          @click="toggleSearch"
+        >
+          <Search :size="20" />
+        </button>
+
         <button class="the-header__action-btn" type="button" @click="handleUser">
           <User :size="20" />
           <span v-if="authStore.isLoggedIn" class="the-header__action-name">
@@ -105,7 +113,20 @@ watch(
 
   <HeaderSearchOverlay :open="uiStore.searchOpen" @close="uiStore.searchOpen = false" />
   <HeaderSidebar :open="uiStore.sidebarOpen" @close="uiStore.sidebarOpen = false" />
-  <HeaderAuthModal v-model:open="uiStore.authModalOpen" />
+  <HeaderAuthModal
+    v-model:open="uiStore.authModalOpen"
+    @forgot-password="
+      uiStore.authModalOpen = false
+      uiStore.forgotPasswordModalOpen = true
+    "
+  />
+  <HeaderForgotPasswordModal
+    v-model:open="uiStore.forgotPasswordModalOpen"
+    @back-to-login="
+      uiStore.forgotPasswordModalOpen = false
+      uiStore.authModalOpen = true
+    "
+  />
 </template>
 
 <style lang="scss">
@@ -217,6 +238,12 @@ watch(
   &__action-btn {
     position: relative;
     display: flex;
+
+    &--search-mobile {
+      @include mixins.respond-to(md) {
+        display: none;
+      }
+    }
     align-items: center;
     gap: 6px;
     padding: 8px 10px;

@@ -64,9 +64,14 @@ onMounted(load)
   <div class="cab-addr">
     <div class="cab-addr__header">
       <h2 class="cab-addr__title">Адреса доставки</h2>
-      <AppButton variant="outline" size="sm" @click="showForm = !showForm">
+      <AppButton
+        variant="outline"
+        size="sm"
+        class="cab-addr__add-btn"
+        @click="showForm = !showForm"
+      >
         <component :is="showForm ? X : Plus" :size="14" />
-        {{ showForm ? 'Отмена' : 'Добавить адрес' }}
+        <span class="cab-addr__btn-label">{{ showForm ? 'Отмена' : 'Добавить адрес' }}</span>
       </AppButton>
     </div>
 
@@ -174,6 +179,29 @@ onMounted(load)
   flex-direction: column;
   gap: 20px;
 
+  &__add-btn {
+    --btn-min-width: 0;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    flex-shrink: 0;
+
+    @include mixins.respond-to(md) {
+      --btn-min-width: 165px;
+      width: auto;
+      height: auto;
+      padding: 6px 12px;
+    }
+  }
+
+  &__btn-label {
+    display: none;
+
+    @include mixins.respond-to(md) {
+      display: inline;
+    }
+  }
+
   &__header {
     display: flex;
     align-items: center;
@@ -202,7 +230,9 @@ onMounted(load)
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
-    @include mixins.respond-to(sm) { grid-template-columns: 1fr 1fr; }
+    @include mixins.respond-to(sm) {
+      grid-template-columns: 1fr 1fr;
+    }
   }
 
   &__field {

@@ -18,9 +18,10 @@ interface Props {
   linkLabel?: string
   linkTo?: RouteLocationRaw
   linkCount?: number
+  peek?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   slides: () => [] as SlideItem[],
   slidesPerView: 1,
   spaceBetween: 12,
@@ -32,7 +33,10 @@ withDefaults(defineProps<Props>(), {
   linkLabel: '',
   linkTo: undefined,
   linkCount: undefined,
+  peek: false,
 })
+
+const { isSm, isMd } = useBreakpoints()
 
 const swiperRef = ref<SwiperType | null>(null)
 const isBeginning = ref(true)
@@ -57,15 +61,20 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="app-slider">
+  <div :class="['app-slider', { 'app-slider--peek': peek }]">
     <div v-if="title" class="app-slider__header">
       <h2 class="app-slider__title">{{ title }}</h2>
       <div class="app-slider__controls">
         <NuxtLink v-if="linkTo && linkLabel" :to="linkTo" class="app-slider__link">
           {{ linkLabel }}<template v-if="linkCount !== undefined"> ({{ linkCount }})</template>
         </NuxtLink>
-        <AppArrow direction="left" :disabled="isBeginning" @click="swiperRef?.slidePrev()" />
-        <AppArrow direction="right" :disabled="isEnd" @click="swiperRef?.slideNext()" />
+        <AppArrow
+          v-if="isSm"
+          direction="left"
+          :disabled="isBeginning"
+          @click="swiperRef?.slidePrev()"
+        />
+        <AppArrow v-if="isSm" direction="right" :disabled="isEnd" @click="swiperRef?.slideNext()" />
       </div>
     </div>
 
@@ -74,12 +83,12 @@ onBeforeUnmount(() => {
         :modules="[Navigation, Pagination, Autoplay]"
         :slides-per-view="slidesPerView"
         :space-between="spaceBetween"
-        :navigation="!title"
+        :navigation="!title && isSm"
         :pagination="{ clickable: true }"
         :loop="loop"
         :autoplay="autoplay ? { delay: autoplayDelay, disableOnInteraction: false } : false"
         :breakpoints="breakpoints"
-        class="app-slider__swiper"
+        :class="['app-slider__swiper', { 'app-slider__swiper--peek': peek }]"
         @swiper="onSwiper"
         @slide-change="onSlideChange"
       >
@@ -93,6 +102,14 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 .app-slider {
+  &--peek {
+    overflow: visible;
+
+    @include mixins.respond-to(sm) {
+      overflow: unset;
+    }
+  }
+
   &__header {
     display: flex;
     align-items: center;
@@ -101,9 +118,14 @@ onBeforeUnmount(() => {
   }
 
   &__title {
-    font-size: $font-size-2xl;
+    font-size: $font-size-xl;
+
     font-weight: $font-weight-bold;
     color: $color-gray-900;
+
+    @include mixins.respond-to(md) {
+      font-size: $font-size-2xl;
+    }
   }
 
   &__controls {
@@ -127,6 +149,16 @@ onBeforeUnmount(() => {
   &__swiper {
     overflow: hidden;
     border-radius: $radius-xl;
+
+    &--peek {
+      overflow: visible;
+      border-radius: 0;
+
+      @include mixins.respond-to(sm) {
+        overflow: hidden;
+        border-radius: $radius-xl;
+      }
+    }
     padding-block-start: 12px;
     padding-block-end: 40px;
     --swiper-navigation-color: #{$color-gray-500};

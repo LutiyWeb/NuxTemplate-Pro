@@ -21,6 +21,7 @@ import {
   Tv,
 } from 'lucide-vue-next'
 import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Pagination } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
 import type { Component } from 'vue'
 import type { Product } from '~/types/product'
@@ -241,6 +242,7 @@ watch(
 )
 
 // ─── Trending slider nav ──────────────────────────────────────────────────────
+const { isSm } = useBreakpoints()
 const trendingSwiper = ref<SwiperType | null>(null)
 const trendingBegin = ref(true)
 const trendingEnd = ref(false)
@@ -350,11 +352,13 @@ onBeforeUnmount(() => {
                   >
                   <div class="search-modal__trending-controls">
                     <AppArrow
+                      v-if="isSm"
                       direction="left"
                       :disabled="trendingBegin"
                       @click="trendingSwiper?.slidePrev()"
                     />
                     <AppArrow
+                      v-if="isSm"
                       direction="right"
                       :disabled="trendingEnd"
                       @click="trendingSwiper?.slideNext()"
@@ -363,12 +367,14 @@ onBeforeUnmount(() => {
                 </div>
                 <ClientOnly>
                   <Swiper
-                    :slides-per-view="2"
+                    :modules="[Pagination]"
+                    :slides-per-view="1.5"
                     :space-between="10"
                     :breakpoints="{
                       480: { slidesPerView: 3 },
                       768: { slidesPerView: 4 },
                     }"
+                    :pagination="{ clickable: true }"
                     class="search-modal__trending"
                     @swiper="onTrendingSwiper"
                     @slide-change="onTrendingChange"
@@ -545,7 +551,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 16px 20px;
+    padding: 16px 12px;
     flex-shrink: 0;
   }
 
@@ -615,7 +621,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-inline: 20px;
+    padding-inline: 12px;
     margin-bottom: 10px;
   }
 
@@ -698,7 +704,28 @@ onBeforeUnmount(() => {
 
   &__trending {
     overflow: hidden;
-    padding: 20px;
+    padding: 10px 12px 36px;
+
+    :deep(.swiper-pagination) {
+      bottom: 8px;
+    }
+
+    :deep(.swiper-pagination-bullet) {
+      background: $color-gray-300;
+      opacity: 1;
+    }
+
+    :deep(.swiper-pagination-bullet-active) {
+      background: $color-primary;
+    }
+
+    @include mixins.respond-to(sm) {
+      padding-bottom: 10px;
+
+      :deep(.swiper-pagination) {
+        display: none;
+      }
+    }
   }
 
   &__trend-wrap {

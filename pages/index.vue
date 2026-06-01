@@ -29,13 +29,18 @@ const heroSlides = computed(() =>
   })),
 )
 
-const featuredProducts = computed(() => store.products.slice(0, 12))
+const featuredProducts = computed(() => {
+  const products = store.products.slice(0, 12)
+  // TODO: remove — test out-of-stock state
+  if (products.length) return [{ ...products[0], stock: 0 }, ...products.slice(1)]
+  return products
+})
 const newProducts = computed(() => store.products.slice(12, 20))
 const skeletons = Array.from({ length: 5 })
 const skeletonsSmall = Array.from({ length: 8 })
 
 const productBreakpoints = {
-  0: { slidesPerView: 2 },
+  0: { slidesPerView: 1.5 },
   768: { slidesPerView: 3 },
   1024: { slidesPerView: 4 },
   1280: { slidesPerView: 5 },
@@ -43,21 +48,31 @@ const productBreakpoints = {
 
 const PROMO_BANNERS = [
   {
+    id: 1,
     gradient: 'linear-gradient(135deg, rgb(79 70 229) 0%, rgb(55 48 163) 100%)',
     title: 'до -40%',
     subtitle: 'на смартфоны и планшеты',
   },
   {
+    id: 2,
     gradient: 'linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%)',
     title: 'до -35%',
     subtitle: 'на ноутбуки и технику',
   },
   {
+    id: 3,
     gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)',
     title: 'до -25%',
     subtitle: 'на аудио и аксессуары',
   },
 ]
+
+const promoBannerBreakpoints = {
+  0: { slidesPerView: 1 },
+  768: { slidesPerView: 3 },
+}
+
+const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
 </script>
 
 <template>
@@ -92,15 +107,43 @@ const PROMO_BANNERS = [
     <!-- Promo banners -->
     <section class="py-13">
       <div class="container">
-        <div class="grid-col-3">
-          <PromoBannerCard
-            v-for="(b, i) in PROMO_BANNERS"
-            :key="i"
-            :gradient="b.gradient"
-            :title="b.title"
-            :subtitle="b.subtitle"
-          />
-        </div>
+        <AppSlider
+          v-if="promoNeedsSlider"
+          :slides="PROMO_BANNERS"
+          :space-between="CARD_GAP"
+          :breakpoints="promoBannerBreakpoints"
+          title="Акції"
+          link-label="Всі акції"
+          link-to="/promo"
+          :link-count="PROMO_BANNERS.length"
+        >
+          <template #default="slotProps">
+            <PromoBannerCard
+              v-if="slotProps?.slide"
+              :gradient="(slotProps.slide as any).gradient"
+              :title="(slotProps.slide as any).title"
+              :subtitle="(slotProps.slide as any).subtitle"
+            />
+          </template>
+        </AppSlider>
+
+        <template v-else>
+          <div class="home__promo-header">
+            <h2 class="home__promo-title">Акції</h2>
+            <NuxtLink to="/promo" class="home__promo-link">
+              Всі акції ({{ PROMO_BANNERS.length }})
+            </NuxtLink>
+          </div>
+          <div class="grid-col-3">
+            <PromoBannerCard
+              v-for="b in PROMO_BANNERS"
+              :key="b.id"
+              :gradient="b.gradient"
+              :title="b.title"
+              :subtitle="b.subtitle"
+            />
+          </div>
+        </template>
       </div>
     </section>
 
@@ -140,6 +183,7 @@ const PROMO_BANNERS = [
           :slides="featuredProducts"
           :space-between="CARD_GAP"
           :breakpoints="productBreakpoints"
+          :peek="true"
           title="Все продукты"
           link-label="Смотреть все"
           link-to="/catalog"
@@ -157,15 +201,12 @@ const PROMO_BANNERS = [
       <div class="container">
         <TheBanner variant="primary">
           <template #eyebrow>Special Offer</template>
-          <TheTitle size="l" tag="h2" style="color: inherit"
+          <TheTitle :size="isMd ? 'l' : 'm'" tag="h2" style="color: inherit"
             >Получи все Pro-шаблоны по одной цене</TheTitle
           >
           <p>Доступ ко всем премиум-шаблонам и будущим обновлениям по единой лицензии.</p>
           <template #actions>
             <AppButton variant="secondary" size="lg">Смотреть цены</AppButton>
-            <AppButton variant="outline" size="lg" style="border-color: white; color: white"
-              >Узнать больше</AppButton
-            >
           </template>
         </TheBanner>
       </div>
@@ -207,6 +248,7 @@ const PROMO_BANNERS = [
           :slides="newProducts"
           :space-between="CARD_GAP"
           :breakpoints="productBreakpoints"
+          :peek="true"
           title="Новинки"
         >
           <template #default="slotProps">
@@ -221,13 +263,12 @@ const PROMO_BANNERS = [
       <div class="container">
         <TheBanner variant="dark">
           <template #eyebrow>Open Source</template>
-          <TheTitle size="l" tag="h2" style="color: inherit">Присоединяйся к сообществу</TheTitle>
+          <TheTitle :size="isMd ? 'l' : 'm'" tag="h2" style="color: inherit"
+            >Присоединяйся к сообществу</TheTitle
+          >
           <p>Вноси правки, предлагай компоненты и делись проектами.</p>
           <template #actions>
             <AppButton variant="secondary" size="lg">GitHub</AppButton>
-            <AppButton variant="outline" size="lg" style="border-color: white; color: white"
-              >Документация</AppButton
-            >
           </template>
         </TheBanner>
       </div>
@@ -239,19 +280,48 @@ const PROMO_BANNERS = [
 .home {
   --swiper-navigation-top-offset: calc(50% - 20px);
 
-  padding-block: 13px;
   display: flex;
   flex-direction: column;
   gap: 0;
+
+  &__promo-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  &__promo-title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $color-gray-900;
+  }
+
+  &__promo-link {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-primary;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-primary-dark;
+    }
+  }
 
   &__skeleton-row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 
-    @include mixins.respond-to(lg) { grid-template-columns: repeat(3, 1fr); }
-    @include mixins.respond-to(xl) { grid-template-columns: repeat(4, 1fr); }
-    @include mixins.respond-to(2xl) { grid-template-columns: repeat(5, 1fr); }
+    @include mixins.respond-to(lg) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @include mixins.respond-to(xl) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    @include mixins.respond-to(2xl) {
+      grid-template-columns: repeat(5, 1fr);
+    }
   }
 }
 

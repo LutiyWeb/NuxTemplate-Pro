@@ -5,27 +5,27 @@ useSeoMeta({ title: 'UI Kit — Nexus Dev' })
 const route = useRoute()
 
 const SECTIONS = [
-  { slug: 'buttons',    label: 'Кнопки' },
-  { slug: 'forms',      label: 'Формы' },
-  { slug: 'modals',     label: 'Модалки' },
-  { slug: 'cards',      label: 'Карточки' },
-  { slug: 'icons',      label: 'Иконки' },
+  { slug: 'buttons', label: 'Кнопки' },
+  { slug: 'forms', label: 'Формы' },
+  { slug: 'modals', label: 'Модалки' },
+  { slug: 'cards', label: 'Карточки' },
+  { slug: 'icons', label: 'Иконки' },
   { slug: 'navigation', label: 'Навигация' },
-  { slug: 'toasts',     label: 'Тосты' },
+  { slug: 'toasts', label: 'Тосты' },
 ]
 
 const COMPONENTS: Record<string, ReturnType<typeof defineAsyncComponent>> = {
-  buttons:    defineAsyncComponent(() => import('~/components/ui-kit/UiKitButtons.vue')),
-  forms:      defineAsyncComponent(() => import('~/components/ui-kit/UiKitForms.vue')),
-  modals:     defineAsyncComponent(() => import('~/components/ui-kit/UiKitModals.vue')),
-  cards:      defineAsyncComponent(() => import('~/components/ui-kit/UiKitCards.vue')),
-  icons:      defineAsyncComponent(() => import('~/components/ui-kit/UiKitIcons.vue')),
+  buttons: defineAsyncComponent(() => import('~/components/ui-kit/UiKitButtons.vue')),
+  forms: defineAsyncComponent(() => import('~/components/ui-kit/UiKitForms.vue')),
+  modals: defineAsyncComponent(() => import('~/components/ui-kit/UiKitModals.vue')),
+  cards: defineAsyncComponent(() => import('~/components/ui-kit/UiKitCards.vue')),
+  icons: defineAsyncComponent(() => import('~/components/ui-kit/UiKitIcons.vue')),
   navigation: defineAsyncComponent(() => import('~/components/ui-kit/UiKitNavigation.vue')),
-  toasts:     defineAsyncComponent(() => import('~/components/ui-kit/UiKitToasts.vue')),
+  toasts: defineAsyncComponent(() => import('~/components/ui-kit/UiKitToasts.vue')),
 }
 
 const current = computed(() => String(route.params.component))
-const currentLabel = computed(() => SECTIONS.find(s => s.slug === current.value)?.label ?? '')
+const currentLabel = computed(() => SECTIONS.find((s) => s.slug === current.value)?.label ?? '')
 const CurrentComponent = computed(() => COMPONENTS[current.value] ?? null)
 </script>
 
@@ -124,9 +124,14 @@ const CurrentComponent = computed(() => COMPONENTS[current.value] ?? null)
     font-weight: $font-weight-medium;
     color: $color-gray-600;
     text-decoration: none;
-    transition: background $transition-fast, color $transition-fast;
+    transition:
+      background $transition-fast,
+      color $transition-fast;
 
-    &:hover { background: $color-gray-50; color: $color-gray-900; }
+    &:hover {
+      background: $color-gray-50;
+      color: $color-gray-900;
+    }
 
     &--active {
       background: rgb(99 102 241 / 8%);
@@ -144,7 +149,9 @@ const CurrentComponent = computed(() => COMPONENTS[current.value] ?? null)
     font-size: $font-size-xs;
     color: $color-gray-400;
     text-decoration: none;
-    &:hover { color: $color-primary; }
+    &:hover {
+      color: $color-primary;
+    }
   }
 
   // ── Main ─────────────────────────────────────────────────────────────────

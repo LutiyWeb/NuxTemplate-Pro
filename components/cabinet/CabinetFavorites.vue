@@ -111,8 +111,12 @@ onMounted(load)
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
-    @include mixins.respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
-    @include mixins.respond-to(lg) { grid-template-columns: repeat(3, 1fr); }
+    @include mixins.respond-to(sm) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @include mixins.respond-to(lg) {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   &__card {

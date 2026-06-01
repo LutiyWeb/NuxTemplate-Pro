@@ -17,6 +17,7 @@ export interface Product {
   status: string
   thumbnail: string | null
   images: string[]
+  labels?: string[]
   createdAt: string | null
   updatedAt: string | null
 }

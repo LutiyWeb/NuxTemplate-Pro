@@ -31,8 +31,12 @@ const sizesAttr = computed(() => {
   return parts.join(', ')
 })
 
-const width = computed(() => props.sizes.desktop?.w ?? props.sizes.tablet?.w ?? props.sizes.mobile?.w)
-const height = computed(() => props.sizes.desktop?.h ?? props.sizes.tablet?.h ?? props.sizes.mobile?.h)
+const width = computed(
+  () => props.sizes.desktop?.w ?? props.sizes.tablet?.w ?? props.sizes.mobile?.w,
+)
+const height = computed(
+  () => props.sizes.desktop?.h ?? props.sizes.tablet?.h ?? props.sizes.mobile?.h,
+)
 
 const imgAttrs = computed(() => ({
   class: ['app-image__img', props.imgClass].filter(Boolean).join(' '),

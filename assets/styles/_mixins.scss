@@ -1,11 +1,31 @@
 @use 'variables' as *;
 
 @mixin respond-to($bp) {
-  @if $bp == sm  { @media (min-width: $breakpoint-sm)  { @content; } }
-  @if $bp == md  { @media (min-width: $breakpoint-md)  { @content; } }
-  @if $bp == lg  { @media (min-width: $breakpoint-lg)  { @content; } }
-  @if $bp == xl  { @media (min-width: $breakpoint-xl)  { @content; } }
-  @if $bp == 2xl { @media (min-width: $breakpoint-2xl) { @content; } }
+  @if $bp == sm {
+    @media (min-width: $breakpoint-sm) {
+      @content;
+    }
+  }
+  @if $bp == md {
+    @media (min-width: $breakpoint-md) {
+      @content;
+    }
+  }
+  @if $bp == lg {
+    @media (min-width: $breakpoint-lg) {
+      @content;
+    }
+  }
+  @if $bp == xl {
+    @media (min-width: $breakpoint-xl) {
+      @content;
+    }
+  }
+  @if $bp == 2xl {
+    @media (min-width: $breakpoint-2xl) {
+      @content;
+    }
+  }
 }
 
 @mixin shimmer {
@@ -15,6 +35,10 @@
 }
 
 @keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }

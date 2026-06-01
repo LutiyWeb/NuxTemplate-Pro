@@ -8,28 +8,33 @@ const route = useRoute()
 const { authFetch } = useAuthFetch()
 const ordersStore = useOrdersStore()
 
-const { data, pending, error } = useAsyncData(
-  `order-${route.params.id}`,
-  () => authFetch<{ data: Order }>(`/api/orders/${route.params.id}`),
+const { data, pending, error } = useAsyncData(`order-${route.params.id}`, () =>
+  authFetch<{ data: Order }>(`/api/orders/${route.params.id}`),
 )
 
 const order = computed(() => data.value?.data ?? null)
 
 useSeoMeta({
-  title: () => order.value ? `Заказ ${order.value.orderNumber} — Nexus Commerce` : 'Заказ',
+  title: () => (order.value ? `Заказ ${order.value.orderNumber} — Nexus Commerce` : 'Заказ'),
 })
 
 const STATUS_COLOR: Record<OrderStatus, string> = {
-  pending:    'warning',
-  confirmed:  'primary',
+  pending: 'warning',
+  confirmed: 'primary',
   processing: 'primary',
-  shipped:    'info',
-  delivered:  'success',
-  cancelled:  'danger',
+  shipped: 'info',
+  delivered: 'success',
+  cancelled: 'danger',
 }
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  return new Date(iso).toLocaleDateString('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 </script>
 
@@ -57,7 +62,6 @@ function formatDate(iso: string) {
 
     <!-- Content -->
     <template v-else>
-
       <!-- Success banner -->
       <div class="order-page__banner">
         <div class="order-page__banner-icon">
@@ -70,17 +74,20 @@ function formatDate(iso: string) {
             {{ formatDate(order.createdAt) }}
           </p>
         </div>
-        <span :class="['order-page__status', `order-page__status--${STATUS_COLOR[order.status as OrderStatus]}`]">
+        <span
+          :class="[
+            'order-page__status',
+            `order-page__status--${STATUS_COLOR[order.status as OrderStatus]}`,
+          ]"
+        >
           {{ ordersStore.getStatusLabel(order.status as OrderStatus) }}
         </span>
       </div>
 
       <!-- Grid -->
       <div class="order-page__layout">
-
         <!-- Left: items + address -->
         <div class="order-page__main">
-
           <!-- Items -->
           <section class="order-page__card">
             <h2 class="order-page__card-title"><Package :size="16" />Состав заказа</h2>
@@ -89,7 +96,9 @@ function formatDate(iso: string) {
                 <div class="order-page__item-info">
                   <p class="order-page__item-title">{{ item.productTitle }}</p>
                   <p v-if="item.sku" class="order-page__item-sku">SKU: {{ item.sku }}</p>
-                  <p v-if="item.variant" class="order-page__item-variant">{{ (item.variant as any).title }}</p>
+                  <p v-if="item.variant" class="order-page__item-variant">
+                    {{ (item.variant as any).title }}
+                  </p>
                 </div>
                 <div class="order-page__item-qty">× {{ item.quantity }}</div>
                 <div class="order-page__item-price">
@@ -114,8 +123,8 @@ function formatDate(iso: string) {
               <p>
                 <MapPin :size="13" />
                 {{ order.deliveryAddressSnapshot.city }},
-                {{ order.deliveryAddressSnapshot.street }},
-                д. {{ order.deliveryAddressSnapshot.house }}
+                {{ order.deliveryAddressSnapshot.street }}, д.
+                {{ order.deliveryAddressSnapshot.house }}
                 <template v-if="order.deliveryAddressSnapshot.apartment">
                   , кв. {{ order.deliveryAddressSnapshot.apartment }}
                 </template>
@@ -139,13 +148,20 @@ function formatDate(iso: string) {
               <span>Товары</span>
               <span>{{ ordersStore.formatMoney(order.subtotalPrice, order.currency) }}</span>
             </div>
-            <div v-if="parseFloat(order.discountAmount) > 0" class="order-page__summary-row order-page__summary-row--discount">
+            <div
+              v-if="parseFloat(order.discountAmount) > 0"
+              class="order-page__summary-row order-page__summary-row--discount"
+            >
               <span>Скидка</span>
               <span>− {{ ordersStore.formatMoney(order.discountAmount, order.currency) }}</span>
             </div>
             <div class="order-page__summary-row">
               <span>Доставка</span>
-              <span>{{ parseFloat(order.deliveryPrice) === 0 ? 'Бесплатно' : ordersStore.formatMoney(order.deliveryPrice, order.currency) }}</span>
+              <span>{{
+                parseFloat(order.deliveryPrice) === 0
+                  ? 'Бесплатно'
+                  : ordersStore.formatMoney(order.deliveryPrice, order.currency)
+              }}</span>
             </div>
 
             <div class="order-page__summary-total">
@@ -157,7 +173,10 @@ function formatDate(iso: string) {
               <NuxtLink to="/catalog" class="order-page__btn order-page__btn--primary">
                 Продолжить покупки
               </NuxtLink>
-              <NuxtLink to="/cabinet?section=orders" class="order-page__btn order-page__btn--outline">
+              <NuxtLink
+                to="/cabinet?section=orders"
+                class="order-page__btn order-page__btn--outline"
+              >
                 Мои заказы <ChevronRight :size="14" />
               </NuxtLink>
             </div>
@@ -172,9 +191,12 @@ function formatDate(iso: string) {
 .order-page {
   padding-block: 32px;
 
-  &__breadcrumbs { margin-bottom: 24px; }
+  &__breadcrumbs {
+    margin-bottom: 24px;
+  }
 
-  &__loading, &__error {
+  &__loading,
+  &__error {
     padding: 48px 0;
     text-align: center;
     color: $color-gray-500;
@@ -199,7 +221,11 @@ function formatDate(iso: string) {
     box-shadow: $shadow-card;
     margin-bottom: 24px;
 
-    @include mixins.respond-to(sm) { flex-direction: row; align-items: center; gap: 20px; }
+    @include mixins.respond-to(sm) {
+      flex-direction: row;
+      align-items: center;
+      gap: 20px;
+    }
   }
 
   &__banner-icon {
@@ -214,7 +240,9 @@ function formatDate(iso: string) {
     flex-shrink: 0;
   }
 
-  &__banner-body { flex: 1; }
+  &__banner-body {
+    flex: 1;
+  }
 
   &__banner-title {
     font-size: $font-size-2xl;
@@ -237,11 +265,26 @@ function formatDate(iso: string) {
     white-space: nowrap;
     flex-shrink: 0;
 
-    &--primary { background: rgb(99 102 241 / 10%); color: $color-primary; }
-    &--warning { background: rgb(234 179 8 / 12%); color: $color-warning; }
-    &--success { background: rgb(34 197 94 / 10%); color: $color-success; }
-    &--danger  { background: rgb(239 68 68 / 10%); color: $color-danger; }
-    &--info    { background: rgb(6 182 212 / 10%); color: #0891b2; }
+    &--primary {
+      background: rgb(99 102 241 / 10%);
+      color: $color-primary;
+    }
+    &--warning {
+      background: rgb(234 179 8 / 12%);
+      color: $color-warning;
+    }
+    &--success {
+      background: rgb(34 197 94 / 10%);
+      color: $color-success;
+    }
+    &--danger {
+      background: rgb(239 68 68 / 10%);
+      color: $color-danger;
+    }
+    &--info {
+      background: rgb(6 182 212 / 10%);
+      color: #0891b2;
+    }
   }
 
   // ── Layout ───────────────────────────────────────────────────────────────
@@ -251,10 +294,16 @@ function formatDate(iso: string) {
     gap: 24px;
     align-items: flex-start;
 
-    @include mixins.respond-to(lg) { grid-template-columns: 1fr 320px; }
+    @include mixins.respond-to(lg) {
+      grid-template-columns: 1fr 320px;
+    }
   }
 
-  &__main { display: flex; flex-direction: column; gap: 16px; }
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 
   // ── Card ─────────────────────────────────────────────────────────────────
   &__card {
@@ -273,11 +322,16 @@ function formatDate(iso: string) {
     color: $color-gray-900;
     margin: 0 0 16px;
 
-    svg { color: $color-primary; }
+    svg {
+      color: $color-primary;
+    }
   }
 
   // ── Items ────────────────────────────────────────────────────────────────
-  &__items { display: flex; flex-direction: column; }
+  &__items {
+    display: flex;
+    flex-direction: column;
+  }
 
   &__item {
     display: flex;
@@ -286,10 +340,15 @@ function formatDate(iso: string) {
     padding: 12px 0;
     border-bottom: 1px solid $color-gray-100;
 
-    &:last-child { border-bottom: none; }
+    &:last-child {
+      border-bottom: none;
+    }
   }
 
-  &__item-info { flex: 1; min-width: 0; }
+  &__item-info {
+    flex: 1;
+    min-width: 0;
+  }
 
   &__item-title {
     font-size: $font-size-sm;
@@ -301,7 +360,8 @@ function formatDate(iso: string) {
     text-overflow: ellipsis;
   }
 
-  &__item-sku, &__item-variant {
+  &__item-sku,
+  &__item-variant {
     font-size: $font-size-xs;
     color: $color-gray-400;
     margin: 0;
@@ -338,14 +398,26 @@ function formatDate(iso: string) {
       color: $color-gray-700;
       margin: 0;
 
-      svg { color: $color-primary; flex-shrink: 0; margin-top: 2px; }
+      svg {
+        color: $color-primary;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
     }
   }
 
-  &__notes { font-size: $font-size-sm; color: $color-gray-600; margin: 0; line-height: $line-height-relaxed; }
+  &__notes {
+    font-size: $font-size-sm;
+    color: $color-gray-600;
+    margin: 0;
+    line-height: $line-height-relaxed;
+  }
 
   // ── Summary ──────────────────────────────────────────────────────────────
-  &__aside { position: sticky; top: 80px; }
+  &__aside {
+    position: sticky;
+    top: 80px;
+  }
 
   &__summary {
     background: $color-white;
@@ -370,7 +442,9 @@ function formatDate(iso: string) {
     color: $color-gray-600;
     margin-bottom: 10px;
 
-    &--discount { color: $color-success; }
+    &--discount {
+      color: $color-success;
+    }
   }
 
   &__summary-total {
@@ -385,7 +459,11 @@ function formatDate(iso: string) {
     margin-bottom: 20px;
   }
 
-  &__summary-actions { display: flex; flex-direction: column; gap: 10px; }
+  &__summary-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 
   // ── Buttons ───────────────────────────────────────────────────────────────
   &__btn {
@@ -398,18 +476,26 @@ function formatDate(iso: string) {
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     text-decoration: none;
-    transition: background $transition-fast, color $transition-fast, border-color $transition-fast;
+    transition:
+      background $transition-fast,
+      color $transition-fast,
+      border-color $transition-fast;
 
     &--primary {
       background: $color-primary;
       color: $color-white;
-      &:hover { background: $color-primary-dark; }
+      &:hover {
+        background: $color-primary-dark;
+      }
     }
 
     &--outline {
       border: 1px solid $color-gray-200;
       color: $color-gray-700;
-      &:hover { border-color: $color-primary; color: $color-primary; }
+      &:hover {
+        border-color: $color-primary;
+        color: $color-primary;
+      }
     }
   }
 }

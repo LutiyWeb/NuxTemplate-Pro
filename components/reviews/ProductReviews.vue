@@ -184,7 +184,9 @@ async function submit() {
 
     <!-- Load more -->
     <div v-if="hasMore" class="product-reviews__more">
-      <AppButton variant="outline" size="md" @click="visibleCount += 3"> РџРѕРєР°Р·Р°С‚СЊ РµС‰С‘ </AppButton>
+      <AppButton variant="outline" size="md" @click="visibleCount += 3">
+        РџРѕРєР°Р·Р°С‚СЊ РµС‰С‘
+      </AppButton>
     </div>
 
     <!-- Dialog -->
@@ -233,7 +235,9 @@ async function submit() {
           </div>
 
           <div class="review-dialog__footer">
-            <AppButton variant="outline" size="md" @click="dialogOpen = false">РћС‚РјРµРЅР°</AppButton>
+            <AppButton variant="outline" size="md" @click="dialogOpen = false"
+              >РћС‚РјРµРЅР°</AppButton
+            >
             <AppButton variant="primary" size="md" :loading="submitting" @click="submit">
               РћС‚РїСЂР°РІРёС‚СЊ РѕС‚Р·С‹РІ
             </AppButton>
@@ -249,9 +253,8 @@ async function submit() {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding-top: 48px;
+  padding-top: 12px;
   border-top: 1px solid $color-gray-100;
-  margin-top: 48px;
 
   &__header {
     display: flex;
@@ -378,7 +381,9 @@ async function submit() {
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
-    @include mixins.respond-to(sm) { grid-template-columns: repeat(2, 1fr); }
+    @include mixins.respond-to(sm) {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   // More button
@@ -522,4 +527,3 @@ async function submit() {
   }
 }
 </style>
-
