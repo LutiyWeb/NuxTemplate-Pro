@@ -122,8 +122,9 @@ function addSelectedToFavorites() {
                 title="Рекомендуем"
                 :slides="recommendations"
                 :space-between="12"
+                :peek="true"
                 :breakpoints="{
-                  0: { slidesPerView: 2 },
+                  0: { slidesPerView: 1.5 },
                   640: { slidesPerView: 3 },
                   1024: { slidesPerView: 4 },
                 }"
