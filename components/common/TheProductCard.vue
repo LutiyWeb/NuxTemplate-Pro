@@ -17,12 +17,17 @@ const uiStore = useUiStore()
 const toastStore = useToastStore()
 
 const LABEL_MAP: Record<string, string> = {
-  new:  'Новинка',
+  new: 'Новинка',
   sale: 'Акція',
-  hit:  'Хіт',
+  hit: 'Хіт',
 }
 
 const isOutOfStock = (product: Product) => product.stock === 0
+
+function getHoverImage(product: Product): string | null {
+  if (!product.images?.length) return null
+  return product.images.find((img) => img !== product.thumbnail) ?? null
+}
 
 function handleCartClick(product: Product) {
   cartStore.add(product)
@@ -41,16 +46,31 @@ function handleFavClick(product: Product) {
 <template>
   <component
     :is="!loading && product ? NuxtLink : 'article'"
-    v-bind="!loading && product ? { to: isOutOfStock(product) ? `/product/${product.id}?oos=1` : `/product/${product.id}` } : {}"
+    v-bind="
+      !loading && product
+        ? { to: isOutOfStock(product) ? `/product/${product.id}?oos=1` : `/product/${product.id}` }
+        : {}
+    "
     :class="['product-card', { 'product-card--loading': loading }]"
   >
-    <div :class="['product-card__media', { 'product-card__media--oos': !loading && product && isOutOfStock(product) }]">
+    <div
+      :class="[
+        'product-card__media',
+        { 'product-card__media--oos': !loading && product && isOutOfStock(product) },
+      ]"
+    >
       <div v-if="loading" class="product-card__shimmer product-card__shimmer--image" />
       <AppImage
         v-else-if="product?.thumbnail"
         :src="product.thumbnail"
         :alt="product.title"
         :sizes="{ mobile: { w: 240, h: 360 }, desktop: { w: 320, h: 480 } }"
+      />
+
+      <div
+        v-if="!loading && product && getHoverImage(product) && !isOutOfStock(product)"
+        class="product-card__hover-img"
+        :style="{ backgroundImage: `url(${getHoverImage(product)})` }"
       />
 
       <div v-if="!loading && product && isOutOfStock(product)" class="product-card__oos">
@@ -69,7 +89,10 @@ function handleFavClick(product: Product) {
 
       <button
         v-if="!loading && product"
-        :class="['product-card__fav-btn', { 'product-card__fav-btn--active': favoritesStore.has(product.id) }]"
+        :class="[
+          'product-card__fav-btn',
+          { 'product-card__fav-btn--active': favoritesStore.has(product.id) },
+        ]"
         type="button"
         @click.prevent="handleFavClick(product)"
       >
@@ -97,7 +120,12 @@ function handleFavClick(product: Product) {
         <span v-if="product.category" class="product-card__category">{{ product.category }}</span>
         <h3 class="product-card__title">{{ product.title }}</h3>
         <div class="product-card__price-row">
-          <span :class="['product-card__price', { 'product-card__price--discounted': product.compareAtPrice }]">
+          <span
+            :class="[
+              'product-card__price',
+              { 'product-card__price--discounted': product.compareAtPrice },
+            ]"
+          >
             ${{ product.price }}
           </span>
           <span v-if="product.compareAtPrice" class="product-card__compare-price">
@@ -141,6 +169,24 @@ function handleFavClick(product: Product) {
     justify-content: center;
     overflow: hidden;
     --ai-height: 100%;
+  }
+
+  &__hover-img {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: scale(1.05);
+    transition:
+      opacity 0.5s ease,
+      transform 0.5s ease;
+    z-index: 1;
+    background-size: cover;
+    background-position: center;
+  }
+
+  &:hover &__hover-img {
+    opacity: 1;
+    transform: scale(1);
   }
 
   &__media--oos {
@@ -187,9 +233,18 @@ function handleFavClick(product: Product) {
     background: $color-gray-200;
     color: $color-gray-600;
 
-    &--new  { background: #dbeafe; color: #2563eb; }
-    &--sale { background: #fee2e2; color: #c0392b; }
-    &--hit  { background: #fef3c7; color: #b45309; }
+    &--new {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+    &--sale {
+      background: #fee2e2;
+      color: #c0392b;
+    }
+    &--hit {
+      background: #fef3c7;
+      color: #b45309;
+    }
   }
 
   &__fav-btn {
@@ -212,8 +267,14 @@ function handleFavClick(product: Product) {
       border-color $transition-fast;
     box-shadow: 0 1px 4px rgb(0 0 0 / 10%);
 
-    &:hover { color: $color-danger; border-color: $color-danger; }
-    &--active { color: $color-danger; border-color: rgb(239 68 68 / 30%); }
+    &:hover {
+      color: $color-danger;
+      border-color: $color-danger;
+    }
+    &--active {
+      color: $color-danger;
+      border-color: rgb(239 68 68 / 30%);
+    }
   }
 
   &__cart-btn {
@@ -229,7 +290,7 @@ function handleFavClick(product: Product) {
     background: $color-gray-900;
     color: $color-white;
     border: none;
-    font-size: $font-size-sm;
+    font-size: $font-size-xs;
     font-weight: $font-weight-medium;
     cursor: pointer;
     transform: translateY(100%);
@@ -240,6 +301,10 @@ function handleFavClick(product: Product) {
 
     &:hover {
       background: $color-gray-700;
+    }
+
+    @include mixins.respond-to(md) {
+      font-size: $font-size-sm;
     }
   }
 
@@ -280,7 +345,6 @@ function handleFavClick(product: Product) {
     align-items: baseline;
     gap: 6px;
     margin-top: auto;
-    padding-top: 8px;
   }
 
   &__price {
@@ -288,7 +352,9 @@ function handleFavClick(product: Product) {
     font-weight: $font-weight-bold;
     color: $color-gray-900;
 
-    &--discounted { color: $color-primary; }
+    &--discounted {
+      color: $color-primary;
+    }
   }
 
   &__compare-price {
@@ -307,9 +373,18 @@ function handleFavClick(product: Product) {
       inset: 0;
       border-radius: 0;
     }
-    &--badge  { width: 64px; height: 12px; }
-    &--title  { width: 85%; height: 32px; }
-    &--price  { width: 60px; height: 16px; }
+    &--badge {
+      width: 64px;
+      height: 12px;
+    }
+    &--title {
+      width: 85%;
+      height: 32px;
+    }
+    &--price {
+      width: 60px;
+      height: 16px;
+    }
   }
 }
 </style>
