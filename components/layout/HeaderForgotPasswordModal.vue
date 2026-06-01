@@ -6,12 +6,15 @@ const authStore = useAuthStore()
 const toastStore = useToastStore()
 const email = ref('')
 
-watch(() => props.open, (val) => {
-  if (!val) {
-    email.value = ''
-    authStore.error = null
-  }
-})
+watch(
+  () => props.open,
+  (val) => {
+    if (!val) {
+      email.value = ''
+      authStore.error = null
+    }
+  },
+)
 
 async function submit() {
   if (!email.value) return
@@ -26,17 +29,10 @@ async function submit() {
 <template>
   <AppModal :open="open" @update:open="emit('update:open', $event)">
     <h2 class="forgot-modal__title">Відновлення пароля</h2>
-    <p class="forgot-modal__desc">
-      Введіть email, і ми надішлемо посилання для скидання пароля.
-    </p>
+    <p class="forgot-modal__desc">Введіть email, і ми надішлемо посилання для скидання пароля.</p>
 
     <form class="app-modal__form" @submit.prevent="submit">
-      <AppInputText
-        v-model="email"
-        label="Email"
-        placeholder="email@example.com"
-        type="email"
-      />
+      <AppInputText v-model="email" label="Email" placeholder="email@example.com" type="email" />
 
       <p v-if="authStore.error" class="app-modal__error">{{ authStore.error }}</p>
 

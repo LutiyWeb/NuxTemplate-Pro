@@ -2,7 +2,9 @@
 @use 'mixins' as mixins;
 
 // Spacing utilities
-.py-13 { padding-block: 13px; }
+.py-13 {
+  padding-block: 13px;
+}
 
 // Grid layout utilities
 .grid-col-2 {

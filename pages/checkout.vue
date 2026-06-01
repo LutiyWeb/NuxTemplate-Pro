@@ -46,10 +46,12 @@ onMounted(async () => {
     try {
       const res = await authFetch<{ data: Address[] }>('/api/addresses')
       savedAddresses.value = res.data
-      const def = res.data.find(a => a.isDefault)
+      const def = res.data.find((a) => a.isDefault)
       if (def) applyAddress(def)
-    } catch {}
-    finally { loading.value = false }
+    } catch {
+    } finally {
+      loading.value = false
+    }
   }
 })
 
@@ -71,7 +73,7 @@ async function submit() {
   errors.value = {}
   const result = checkoutSchema.safeParse(form)
   if (!result.success) {
-    result.error.issues.forEach(e => {
+    result.error.issues.forEach((e) => {
       const key = e.path[0] as keyof typeof form
       if (!errors.value[key]) errors.value[key] = e.message
     })
@@ -99,7 +101,10 @@ async function submit() {
     navigateTo(`/order/${res.data.id}`)
   } catch (err: unknown) {
     const msg = (err as { data?: { error?: { message?: string } } })?.data?.error?.message
-    toastStore.add(CHECKOUT_ERROR_MESSAGES[msg ?? ''] ?? 'Не удалось оформить заказ. Попробуйте снова.', 'error')
+    toastStore.add(
+      CHECKOUT_ERROR_MESSAGES[msg ?? ''] ?? 'Не удалось оформить заказ. Попробуйте снова.',
+      'error',
+    )
   } finally {
     submitting.value = false
   }
@@ -122,7 +127,6 @@ async function submit() {
     <div class="checkout__layout">
       <!-- Left: form -->
       <div class="checkout__form-col">
-
         <!-- Saved addresses -->
         <div v-if="savedAddresses.length" class="checkout__section">
           <h2 class="checkout__section-title">Сохранённые адреса</h2>
@@ -130,11 +134,17 @@ async function submit() {
             <button
               v-for="addr in savedAddresses"
               :key="addr.id"
-              :class="['checkout__address-card', { 'checkout__address-card--active': selectedAddressId === addr.id }]"
+              :class="[
+                'checkout__address-card',
+                { 'checkout__address-card--active': selectedAddressId === addr.id },
+              ]"
               type="button"
               @click="selectAddress(addr)"
             >
-              <span class="checkout__address-line">{{ addr.city }}, {{ addr.street }}, {{ addr.house }}<template v-if="addr.apartment">, кв. {{ addr.apartment }}</template></span>
+              <span class="checkout__address-line"
+                >{{ addr.city }}, {{ addr.street }}, {{ addr.house
+                }}<template v-if="addr.apartment">, кв. {{ addr.apartment }}</template></span
+              >
               <span v-if="addr.isDefault" class="checkout__address-badge">По умолчанию</span>
             </button>
           </div>
@@ -176,11 +186,7 @@ async function submit() {
                 placeholder="1"
                 :error="errors.house"
               />
-              <AppInputText
-                v-model="form.apartment"
-                label="Квартира"
-                placeholder="42"
-              />
+              <AppInputText v-model="form.apartment" label="Квартира" placeholder="42" />
             </div>
           </div>
         </div>
@@ -202,13 +208,24 @@ async function submit() {
         <h2 class="checkout__summary-title">Ваш заказ</h2>
 
         <div class="checkout__summary-items">
-          <div v-for="item in cartStore.items" :key="item.product.id" class="checkout__summary-item">
-            <img v-if="item.product.thumbnail" :src="item.product.thumbnail" :alt="item.product.title" class="checkout__summary-img" />
+          <div
+            v-for="item in cartStore.items"
+            :key="item.product.id"
+            class="checkout__summary-item"
+          >
+            <img
+              v-if="item.product.thumbnail"
+              :src="item.product.thumbnail"
+              :alt="item.product.title"
+              class="checkout__summary-img"
+            />
             <div class="checkout__summary-info">
               <span class="checkout__summary-name">{{ item.product.title }}</span>
               <span class="checkout__summary-qty">{{ item.qty }} шт.</span>
             </div>
-            <span class="checkout__summary-price">{{ formatPrice(item.product.price * item.qty) }}</span>
+            <span class="checkout__summary-price">{{
+              formatPrice(item.product.price * item.qty)
+            }}</span>
           </div>
         </div>
 
@@ -249,7 +266,9 @@ async function submit() {
   flex-direction: column;
   gap: 24px;
 
-  &__breadcrumbs { margin-bottom: 8px; }
+  &__breadcrumbs {
+    margin-bottom: 8px;
+  }
 
   &__heading {
     font-size: $font-size-2xl;
@@ -263,7 +282,9 @@ async function submit() {
     gap: 24px;
     align-items: flex-start;
 
-    @include mixins.respond-to(lg) { grid-template-columns: 1fr 360px; }
+    @include mixins.respond-to(lg) {
+      grid-template-columns: 1fr 360px;
+    }
   }
 
   &__form-col {
@@ -307,9 +328,14 @@ async function submit() {
     border-radius: $radius-lg;
     text-align: left;
     cursor: pointer;
-    transition: border-color $transition-fast, background $transition-fast;
+    transition:
+      border-color $transition-fast,
+      background $transition-fast;
 
-    &:hover { border-color: $color-primary; background: rgb(79 70 229 / 3%); }
+    &:hover {
+      border-color: $color-primary;
+      background: rgb(79 70 229 / 3%);
+    }
 
     &--active {
       border-color: $color-primary;
@@ -317,7 +343,10 @@ async function submit() {
     }
   }
 
-  &__address-line { font-size: $font-size-sm; color: $color-gray-700; }
+  &__address-line {
+    font-size: $font-size-sm;
+    color: $color-gray-700;
+  }
 
   &__address-badge {
     font-size: $font-size-xs;
@@ -341,7 +370,9 @@ async function submit() {
     grid-template-columns: 1fr;
     gap: 12px;
 
-    @include mixins.respond-to(sm) { grid-template-columns: 1fr 80px 80px; }
+    @include mixins.respond-to(sm) {
+      grid-template-columns: 1fr 80px 80px;
+    }
   }
 
   // Textarea
@@ -358,8 +389,12 @@ async function submit() {
     transition: border-color $transition-fast;
     background: $color-white;
 
-    &::placeholder { color: $color-gray-400; }
-    &:focus { border-color: $color-primary; }
+    &::placeholder {
+      color: $color-gray-400;
+    }
+    &:focus {
+      border-color: $color-primary;
+    }
   }
 
   // Summary
@@ -420,7 +455,10 @@ async function submit() {
     text-overflow: ellipsis;
   }
 
-  &__summary-qty { font-size: $font-size-xs; color: $color-gray-400; }
+  &__summary-qty {
+    font-size: $font-size-xs;
+    color: $color-gray-400;
+  }
 
   &__summary-price {
     font-size: $font-size-sm;
@@ -444,7 +482,10 @@ async function submit() {
     color: $color-gray-600;
   }
 
-  &__summary-free { color: $color-success; font-weight: $font-weight-medium; }
+  &__summary-free {
+    color: $color-success;
+    font-weight: $font-weight-medium;
+  }
 
   &__summary-total {
     display: flex;

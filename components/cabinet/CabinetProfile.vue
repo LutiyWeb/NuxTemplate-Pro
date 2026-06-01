@@ -269,7 +269,9 @@ async function confirmDelete() {
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
-    @include mixins.respond-to(sm) { grid-template-columns: 1fr 1fr; }
+    @include mixins.respond-to(sm) {
+      grid-template-columns: 1fr 1fr;
+    }
   }
 
   &__field {

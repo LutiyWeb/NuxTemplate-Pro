@@ -56,9 +56,7 @@ async function submit() {
         <div class="reset-page__icon">✓</div>
         <TheTitle tag="h1" size="m">Пароль змінено</TheTitle>
         <p class="reset-page__text">Ви можете увійти до облікового запису з новим паролем.</p>
-        <AppButton variant="primary" size="md" @click="router.push('/')">
-          На головну
-        </AppButton>
+        <AppButton variant="primary" size="md" @click="router.push('/')"> На головну </AppButton>
       </div>
     </template>
 

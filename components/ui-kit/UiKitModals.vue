@@ -46,7 +46,9 @@ const MODAL_CODE = `<!-- Базовый компонент, переисполь
     >
       <template #preview>
         <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start">
-          <span style="font-size: 13px; color: #9ca3af">Базовый компонент — открой Auth Modal или Forgot Password ниже</span>
+          <span style="font-size: 13px; color: #9ca3af"
+            >Базовый компонент — открой Auth Modal или Forgot Password ниже</span
+          >
         </div>
       </template>
       <template #code>
@@ -80,7 +82,9 @@ const MODAL_CODE = `<!-- Базовый компонент, переисполь
           <AppButton variant="outline" @click="uiStore.forgotPasswordModalOpen = true">
             Открыть Forgot Password Modal
           </AppButton>
-          <span style="font-size: 13px; color: #9ca3af">uiStore.forgotPasswordModalOpen = true</span>
+          <span style="font-size: 13px; color: #9ca3af"
+            >uiStore.forgotPasswordModalOpen = true</span
+          >
         </div>
       </template>
       <template #code>
@@ -125,11 +129,26 @@ const MODAL_CODE = `<!-- Базовый компонент, переисполь
     <UiKitSection title="UiStore API" description="Централизованное управление всеми оверлеями">
       <UiKitPropsTable
         :rows="[
-          { name: 'authModalOpen', type: 'boolean', default: 'false', description: 'Auth Modal открыта' },
-          { name: 'forgotPasswordModalOpen', type: 'boolean', default: 'false', description: 'Forgot Password Modal открыта' },
+          {
+            name: 'authModalOpen',
+            type: 'boolean',
+            default: 'false',
+            description: 'Auth Modal открыта',
+          },
+          {
+            name: 'forgotPasswordModalOpen',
+            type: 'boolean',
+            default: 'false',
+            description: 'Forgot Password Modal открыта',
+          },
           { name: 'catalogOpen', type: 'boolean', default: 'false', description: 'Каталог открыт' },
           { name: 'searchOpen', type: 'boolean', default: 'false', description: 'Поиск открыт' },
-          { name: 'sidebarOpen', type: 'boolean', default: 'false', description: 'Мобильный сайдбар открыт' },
+          {
+            name: 'sidebarOpen',
+            type: 'boolean',
+            default: 'false',
+            description: 'Мобильный сайдбар открыт',
+          },
           { name: 'closeAll()', type: 'function', description: 'Закрыть все оверлеи' },
         ]"
       />
