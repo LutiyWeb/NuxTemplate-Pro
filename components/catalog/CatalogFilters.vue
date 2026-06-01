@@ -50,10 +50,11 @@ function toggleCategory(slug: string) {
 }
 
 // ─── Price Presets ────────────────────────────────────────────────────────────
-const activePreset = computed(() =>
-  props.pricePresets.find(
-    (p) => p.priceMin === local.priceMin && p.priceMax === local.priceMax,
-  ) ?? null,
+const activePreset = computed(
+  () =>
+    props.pricePresets.find(
+      (p) => p.priceMin === local.priceMin && p.priceMax === local.priceMax,
+    ) ?? null,
 )
 
 function togglePreset(preset: PricePreset) {
@@ -99,18 +100,16 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
 <template>
   <aside :class="['catalog-filters', { 'catalog-filters--open': isOpen }]">
     <div class="catalog-filters__head">
-      <span class="catalog-filters__title">Фильтры</span>
+      <span class="catalog-filters__title">Фільтри</span>
       <button class="catalog-filters__close" type="button" @click="$emit('close')">✕</button>
     </div>
+
+    <slot name="chips" />
 
     <!-- Categories -->
     <div class="catalog-filters__section">
       <span class="catalog-filters__label">Категории</span>
-      <label
-        v-for="cat in categoriesStore.categories"
-        :key="cat.id"
-        class="catalog-filters__check"
-      >
+      <label v-for="cat in categoriesStore.categories" :key="cat.id" class="catalog-filters__check">
         <input
           type="checkbox"
           :checked="local.categories.includes(cat.slug)"
@@ -123,16 +122,8 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
     <!-- Price presets -->
     <div class="catalog-filters__section">
       <span class="catalog-filters__label">Цена</span>
-      <label
-        v-for="preset in pricePresets"
-        :key="preset.label"
-        class="catalog-filters__check"
-      >
-        <input
-          type="checkbox"
-          :checked="activePreset === preset"
-          @change="togglePreset(preset)"
-        />
+      <label v-for="preset in pricePresets" :key="preset.label" class="catalog-filters__check">
+        <input type="checkbox" :checked="activePreset === preset" @change="togglePreset(preset)" />
         {{ preset.label }}
       </label>
     </div>
@@ -329,7 +320,12 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
   &__brand-shimmer {
     height: 18px;
     border-radius: $radius-sm;
-    background: linear-gradient(90deg, $color-gray-100 25%, $color-gray-50 50%, $color-gray-100 75%);
+    background: linear-gradient(
+      90deg,
+      $color-gray-100 25%,
+      $color-gray-50 50%,
+      $color-gray-100 75%
+    );
     background-size: 200% 100%;
     animation: shimmer 1.2s infinite;
   }
@@ -342,7 +338,11 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 </style>
