@@ -31,24 +31,64 @@ const PROMO_BANNERS = [
 
 const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
 
-// Row A = 5 cards | Row B = horizontal span-2 + 3 cards, alternating left/right
-const rows = computed(() => {
-  const products = store.products
-  const result: Array<{ type: 'A' | 'B'; items: typeof products; bIndex?: number }> = []
-  let i = 0
-  let rowIndex = 0
-  let bIndex = 0
-  while (i < products.length) {
-    if (rowIndex % 2 === 0) {
-      result.push({ type: 'A', items: products.slice(i, i + 5) })
-      i += 5
-    } else {
-      result.push({ type: 'B', items: products.slice(i, i + 4), bIndex: bIndex++ })
-      i += 4
-    }
-    rowIndex++
-  }
-  return result
+// ─── View mode toggle ─────────────────────────────────────────────────────────
+const viewMode = ref<'bento' | 'grid'>('bento')
+
+// ─── Bento layout ─────────────────────────────────────────────────────────────
+// size: 'sm' = 1×1 | 'tall' = 1×2 (goes beside banner) | banner = 2×2
+// Pattern: [banner][tall][tall] fills 4 cols × 2 rows, then sm cards follow
+
+type BentoSlot =
+  | { type: 'product'; size: 'sm' | 'tall' }
+  | { type: 'banner'; bg: string; title: string; subtitle: string; to: string }
+
+const BENTO_LAYOUT: BentoSlot[] = [
+  // Pattern A — banner left
+  { type: 'banner', bg: 'rgb(79 70 229)', title: 'до -40%', subtitle: 'на смартфони та планшети', to: '/catalog' },
+  { type: 'product', size: 'tall' },
+  { type: 'product', size: 'tall' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  // Pattern B — banner right
+  { type: 'product', size: 'tall' },
+  { type: 'product', size: 'tall' },
+  { type: 'banner', bg: 'rgb(30 41 59)', title: 'до -35%', subtitle: 'на ноутбуки та техніку', to: '/catalog' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  // Pattern A — banner left, third colour
+  { type: 'banner', bg: 'rgb(6 182 212)', title: 'до -25%', subtitle: 'на аудіо та аксесуари', to: '/catalog' },
+  { type: 'product', size: 'tall' },
+  { type: 'product', size: 'tall' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+  { type: 'product', size: 'sm' },
+]
+
+// Merge layout slots with real products
+const bentoItems = computed(() => {
+  let productIdx = 0
+  return BENTO_LAYOUT.map(slot => {
+    if (slot.type === 'banner') return slot
+    const product = store.products[productIdx++]
+    return product ? { ...slot, product } : null
+  }).filter(Boolean)
 })
 </script>
 
@@ -88,40 +128,60 @@ const rows = computed(() => {
         <TheProductCard v-for="n in 10" :key="n" :loading="true" />
       </div>
 
-      <div v-else class="promo-page__grid">
-        <template v-for="(row, ri) in rows" :key="ri">
-          <div v-if="row.type === 'A'" class="promo-page__row promo-page__row--a">
-            <TheProductCard v-for="p in row.items" :key="p.id" :product="p" />
+      <template v-else>
+        <!-- Mobile: flat 2-column grid -->
+        <div v-if="!isMd" class="promo-page__flat">
+          <TheProductCard v-for="p in store.products" :key="p.id" :product="p" />
+        </div>
+
+        <!-- Desktop: view toggle + grid -->
+        <div v-else>
+          <div class="promo-page__toolbar">
+            <button
+              :class="['promo-page__view-btn', { 'promo-page__view-btn--active': viewMode === 'bento' }]"
+              type="button"
+              @click="viewMode = 'bento'"
+            >
+              Bento
+            </button>
+            <button
+              :class="['promo-page__view-btn', { 'promo-page__view-btn--active': viewMode === 'grid' }]"
+              type="button"
+              @click="viewMode = 'grid'"
+            >
+              Сетка
+            </button>
           </div>
-          <div v-else class="promo-page__row promo-page__row--b">
-            <!-- Even bIndex: featured LEFT -->
-            <template v-if="row.bIndex! % 2 === 0">
-              <NuxtLink :to="`/product/${row.items[0].id}`" class="promo-page__featured">
-                <TheCardHorizontal
-                  :image="row.items[0].thumbnail ?? undefined"
-                  :title="row.items[0].title"
-                  :description="row.items[0].description"
-                  :badge="row.items[0].category ?? undefined"
-                />
-              </NuxtLink>
-              <TheProductCard v-for="p in row.items.slice(1)" :key="p.id" :product="p" />
-            </template>
-            <!-- Odd bIndex: featured RIGHT, image mirrored -->
-            <template v-else>
-              <TheProductCard v-for="p in row.items.slice(1)" :key="p.id" :product="p" />
-              <NuxtLink :to="`/product/${row.items[0].id}`" class="promo-page__featured">
-                <TheCardHorizontal
-                  :image="row.items[0].thumbnail ?? undefined"
-                  :title="row.items[0].title"
-                  :description="row.items[0].description"
-                  :badge="row.items[0].category ?? undefined"
-                  image-right
-                />
-              </NuxtLink>
+
+          <!-- Bento -->
+          <div v-if="viewMode === 'bento'" class="promo-page__bento">
+            <template v-for="(item, i) in bentoItems" :key="i">
+              <AppCategoryBanner
+                v-if="item.type === 'banner'"
+                :bg="item.bg"
+                :title="item.title"
+                :subtitle="item.subtitle"
+                :to="item.to"
+                class="promo-page__bento-banner"
+              />
+              <TheProductCard
+                v-else-if="item.type === 'product' && item.product && item.size === 'tall'"
+                :product="item.product"
+                class="promo-page__bento-tall"
+              />
+              <AppImageCard
+                v-else-if="item.type === 'product' && item.product && item.size === 'sm'"
+                :product="item.product"
+              />
             </template>
           </div>
-        </template>
-      </div>
+
+          <!-- Regular grid -->
+          <div v-else class="promo-page__grid">
+            <TheProductCard v-for="p in store.products" :key="p.id" :product="p" />
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -140,53 +200,74 @@ const rows = computed(() => {
 
   &__skeleton {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
+  }
+
+  &__flat {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  &__toolbar {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+  }
+
+  &__view-btn {
+    padding: 6px 16px;
+    border-radius: $radius-md;
+    border: 1px solid $color-gray-200;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-gray-500;
+    background: $color-white;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover {
+      border-color: $color-gray-300;
+      color: $color-gray-700;
+    }
+
+    &--active {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: $color-white;
+    }
+  }
+
+  &__bento {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 220px;
+    grid-auto-flow: row dense;
+    gap: 12px;
+
+    @include mixins.respond-to(lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  &__bento-banner {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  &__bento-tall {
+    grid-row: span 2;
   }
 
   &__grid {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  &__row {
     display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
 
-    &--a,
-    &--b {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @include mixins.respond-to(sm) {
-      &--a {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      &--b {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
     @include mixins.respond-to(lg) {
-      &--a {
-        grid-template-columns: repeat(5, 1fr);
-      }
-      &--b {
-        grid-template-columns: repeat(5, 1fr);
-      }
-    }
-  }
-
-  &__featured {
-    display: block;
-
-    @include mixins.respond-to(lg) {
-      grid-column: span 2;
-    }
-
-    .card-horizontal {
-      height: 100%;
+      grid-template-columns: repeat(5, 1fr);
     }
   }
 }

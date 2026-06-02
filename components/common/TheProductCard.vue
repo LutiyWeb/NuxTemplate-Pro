@@ -117,20 +117,22 @@ function handleFavClick(product: Product) {
         <div class="product-card__shimmer product-card__shimmer--price" />
       </template>
       <template v-else-if="product">
-        <span v-if="product.category" class="product-card__category">{{ product.category }}</span>
         <h3 class="product-card__title">{{ product.title }}</h3>
         <div class="product-card__price-row">
-          <span
-            :class="[
-              'product-card__price',
-              { 'product-card__price--discounted': product.compareAtPrice },
-            ]"
-          >
-            ${{ product.price }}
-          </span>
-          <span v-if="product.compareAtPrice" class="product-card__compare-price">
-            ${{ product.compareAtPrice }}
-          </span>
+          <div class="product-card__prices">
+            <span
+              :class="[
+                'product-card__price',
+                { 'product-card__price--discounted': product.compareAtPrice },
+              ]"
+            >
+              ${{ product.price }}
+            </span>
+            <span v-if="product.compareAtPrice" class="product-card__compare-price">
+              ${{ product.compareAtPrice }}
+            </span>
+          </div>
+          <span v-if="product.category" class="product-card__category">{{ product.category }}</span>
         </div>
       </template>
     </div>
@@ -162,7 +164,7 @@ function handleFavClick(product: Product) {
 
   &__media {
     position: relative;
-    aspect-ratio: 5 / 6;
+    aspect-ratio: 5 / 5.1;
     background: $color-gray-100;
     display: flex;
     align-items: center;
@@ -322,10 +324,12 @@ function handleFavClick(product: Product) {
 
   &__category {
     font-size: $font-size-xs;
-    font-weight: $font-weight-semibold;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: $color-primary;
+    font-weight: $font-weight-medium;
+    color: $color-gray-400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 45%;
   }
 
   &__title {
@@ -342,9 +346,16 @@ function handleFavClick(product: Product) {
 
   &__price-row {
     display: flex;
-    align-items: baseline;
+    align-items: center;
+    justify-content: space-between;
     gap: 6px;
     margin-top: auto;
+  }
+
+  &__prices {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
   }
 
   &__price {

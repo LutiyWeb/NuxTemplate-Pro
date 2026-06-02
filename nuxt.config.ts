@@ -51,6 +51,7 @@ export default defineNuxtConfig({
       devSourcemap: true,
       preprocessorOptions: {
         scss: {
+          api: 'modern',
           additionalData: (content: string, filepath: string) => {
             if (
               filepath.includes('_variables') ||
