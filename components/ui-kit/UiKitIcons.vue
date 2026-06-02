@@ -216,6 +216,8 @@ const USAGE_CODE = `import { ShoppingCart, Heart } from 'lucide-vue-next'
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .uikit-icons {
   display: flex;
   flex-direction: column;

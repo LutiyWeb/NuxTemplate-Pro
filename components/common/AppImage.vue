@@ -59,6 +59,8 @@ const imgAttrs = computed(() => ({
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .app-image {
   display: contents;
 

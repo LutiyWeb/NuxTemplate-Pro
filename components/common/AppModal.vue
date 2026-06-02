@@ -21,6 +21,8 @@ const emit = defineEmits<{ 'update:open': [boolean] }>()
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .app-modal-overlay {
   position: fixed;
   inset: 0;

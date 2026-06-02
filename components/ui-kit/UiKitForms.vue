@@ -129,6 +129,8 @@ const PROPS = [
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .uikit-forms { display: flex; flex-direction: column; gap: 40px; }
 
 .uk-form-check {

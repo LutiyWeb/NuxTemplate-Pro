@@ -25,6 +25,8 @@ async function copy(code: string) {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .uk-code {
   border-radius: $radius-lg;
   overflow: hidden;

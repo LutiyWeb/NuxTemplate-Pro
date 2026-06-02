@@ -19,6 +19,8 @@ defineProps<{
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .app-empty {
   display: flex;
   flex-direction: column;

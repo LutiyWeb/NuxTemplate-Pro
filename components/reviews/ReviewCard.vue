@@ -27,6 +27,8 @@ function formatDate(iso: string) {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .review-card {
   background: $color-white;
   border-radius: $radius-xl;

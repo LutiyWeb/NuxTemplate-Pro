@@ -249,6 +249,8 @@ async function submit() {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .product-reviews {
   display: flex;
   flex-direction: column;

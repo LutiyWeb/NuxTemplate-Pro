@@ -95,6 +95,8 @@ async function submit() {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .auth-modal {
   &__tabs {
     display: flex;

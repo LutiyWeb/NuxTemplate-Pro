@@ -20,6 +20,8 @@ defineProps<{ title: string; description?: string }>()
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .uk-section {
   display: flex;
   flex-direction: column;

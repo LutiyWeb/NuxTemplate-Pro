@@ -18,6 +18,8 @@ defineEmits<{ click: [] }>()
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .app-arrow {
   width: 28px;
   height: 28px;

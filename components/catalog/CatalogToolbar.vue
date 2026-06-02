@@ -49,6 +49,8 @@ const perPageOptions = [
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .catalog-toolbar {
   display: flex;
   gap: 12px;

@@ -27,6 +27,8 @@ defineProps<{
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .category-banner {
   position: relative;
   display: flex;

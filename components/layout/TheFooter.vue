@@ -80,6 +80,8 @@ function toggle(i: number) {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .the-footer {
   background: $color-gray-900;
   color: $color-white;

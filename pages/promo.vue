@@ -187,6 +187,8 @@ const bentoItems = computed(() => {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .promo-page {
   padding-block: 32px;
 

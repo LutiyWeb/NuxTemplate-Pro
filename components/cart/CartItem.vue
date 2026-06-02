@@ -55,6 +55,8 @@ function formatPrice(p: number) {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .cart-item {
   display: flex;
   align-items: center;

@@ -96,6 +96,8 @@ onUnmounted(() => {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .category-ribbon {
   position: relative;
   height: 45px;

@@ -114,6 +114,8 @@ function close() {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .header-sidebar {
   position: fixed;
   inset: 0;

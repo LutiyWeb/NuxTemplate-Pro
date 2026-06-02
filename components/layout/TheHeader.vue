@@ -124,6 +124,8 @@ watch(
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .the-header {
   position: sticky;
   top: 0;

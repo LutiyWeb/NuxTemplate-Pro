@@ -137,6 +137,8 @@ const ARROW_CODE = `<!-- AppArrow — универсальная стрелка 
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .uikit-nav {
   display: flex;
   flex-direction: column;

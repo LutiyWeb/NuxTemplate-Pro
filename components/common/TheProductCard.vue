@@ -140,6 +140,8 @@ function handleFavClick(product: Product) {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .product-card {
   position: relative;
   display: flex;

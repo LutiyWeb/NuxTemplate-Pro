@@ -69,6 +69,8 @@ const CurrentComponent = computed(() => COMPONENTS[current.value] ?? null)
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .uikit {
   display: grid;
   grid-template-columns: 220px 1fr;

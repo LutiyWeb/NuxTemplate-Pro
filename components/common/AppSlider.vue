@@ -112,6 +112,8 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .app-slider {
   &--peek {
     overflow: visible;

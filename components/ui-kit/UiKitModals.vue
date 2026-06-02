@@ -157,6 +157,8 @@ const MODAL_CODE = `<!-- Базовый компонент, переисполь
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .uikit-modals {
   display: flex;
   flex-direction: column;

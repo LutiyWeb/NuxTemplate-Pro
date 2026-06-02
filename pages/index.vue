@@ -277,6 +277,8 @@ const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .home {
   --swiper-navigation-top-offset: calc(50% - 20px);
 

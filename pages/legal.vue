@@ -24,6 +24,8 @@ useHead({ title: 'Правовая информация — Nexus Commerce' })
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .legal-page {
   padding-block: 48px;
   display: flex;

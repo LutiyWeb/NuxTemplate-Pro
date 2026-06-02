@@ -52,16 +52,6 @@ export default defineNuxtConfig({
       preprocessorOptions: {
         scss: {
           api: 'modern',
-          additionalData: (content: string, filepath: string) => {
-            if (
-              filepath.includes('_variables') ||
-              filepath.includes('_mixins') ||
-              filepath.includes('main.scss') ||
-              filepath.includes('globals.scss')
-            )
-              return content
-            return `@use "~/assets/styles/variables" as *;\n@use "~/assets/styles/mixins" as mixins;\n${content}`
-          },
         },
       },
     },

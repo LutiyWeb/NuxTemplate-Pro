@@ -42,6 +42,8 @@ useHead({ title: is404.value ? '404 — Страница не найдена' : 
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .error-page {
   min-height: 60vh;
   display: flex;

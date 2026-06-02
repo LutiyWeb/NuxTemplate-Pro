@@ -38,6 +38,8 @@ const emit = defineEmits<{ remove: [key: string]; clearAll: [] }>()
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .catalog-chips {
   display: flex;
   align-items: center;

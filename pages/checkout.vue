@@ -260,6 +260,8 @@ async function submit() {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .checkout {
   padding-block: 32px;
   display: flex;

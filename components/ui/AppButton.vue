@@ -28,6 +28,8 @@ withDefaults(defineProps<Props>(), {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .app-btn {
   display: inline-flex;
   align-items: center;

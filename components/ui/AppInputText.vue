@@ -26,6 +26,8 @@ const emit = defineEmits<{ 'update:modelValue': [string] }>()
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .app-input {
   display: flex;
   flex-direction: column;

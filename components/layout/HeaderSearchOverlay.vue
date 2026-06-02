@@ -522,6 +522,8 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss">
+@use "~/assets/styles/variables" as *;
+@use "~/assets/styles/mixins" as mixins;
 .search-modal {
   position: fixed;
   inset: 0;
@@ -622,7 +624,6 @@ onBeforeUnmount(() => {
     align-items: center;
     justify-content: space-between;
     padding-inline: 12px;
-    margin-bottom: 10px;
   }
 
   &__section-title {
@@ -704,7 +705,7 @@ onBeforeUnmount(() => {
 
   &__trending {
     overflow: hidden;
-    padding: 10px 12px 36px;
+    padding: 24px 12px 36px;
 
     :deep(.swiper-pagination) {
       bottom: 8px;
@@ -720,7 +721,7 @@ onBeforeUnmount(() => {
     }
 
     @include mixins.respond-to(sm) {
-      padding-bottom: 10px;
+      padding: 24px 12px 36px;
 
       :deep(.swiper-pagination) {
         display: none;
