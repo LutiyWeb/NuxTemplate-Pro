@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SearchX } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
 useHead({ title: 'Поиск — Nexus Commerce' })
@@ -65,7 +66,20 @@ function onPageChange(p: number) {
       />
     </template>
 
-    <p v-else-if="q" class="search-page__empty">Ничего не найдено. Попробуйте другой запрос.</p>
+    <AppEmpty
+      v-else-if="q"
+      title="Ничего не найдено"
+      description="Попробуйте изменить запрос или поискать что-то другое"
+    >
+      <template #icon>
+        <SearchX :size="56" :stroke-width="1.2" />
+      </template>
+      <template #action>
+        <AppButton variant="outline" size="md" @click="router.push('/catalog')">
+          Перейти в каталог
+        </AppButton>
+      </template>
+    </AppEmpty>
   </div>
 </template>
 
@@ -93,11 +107,6 @@ function onPageChange(p: number) {
     @include mixins.respond-to(lg) {
       grid-template-columns: repeat(4, 1fr);
     }
-  }
-
-  &__empty {
-    color: $color-gray-400;
-    font-size: $font-size-lg;
   }
 }
 </style>

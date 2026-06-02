@@ -61,14 +61,20 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
     </h1>
 
     <!-- Empty -->
-    <div v-if="!cartStore.items.length" class="cart-page__empty">
-      <ShoppingCart :size="56" :stroke-width="1.5" class="cart-page__empty-icon" />
-      <p class="cart-page__empty-title">Корзина пуста</p>
-      <p class="cart-page__empty-desc">Добавьте товары, чтобы оформить заказ</p>
-      <AppButton variant="primary" size="md" @click="navigateTo('/catalog')"
-        >Перейти в каталог</AppButton
-      >
-    </div>
+    <AppEmpty
+      v-if="!cartStore.items.length"
+      title="Корзина пуста"
+      description="Добавьте товары, чтобы оформить заказ"
+    >
+      <template #icon>
+        <ShoppingCart :size="56" :stroke-width="1.2" />
+      </template>
+      <template #action>
+        <AppButton variant="primary" size="md" @click="navigateTo('/catalog')">
+          Перейти в каталог
+        </AppButton>
+      </template>
+    </AppEmpty>
 
     <!-- Layout with items -->
     <div v-else class="cart-page__layout">

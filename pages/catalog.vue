@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LayoutGrid, LayoutList } from 'lucide-vue-next'
+import { LayoutGrid, LayoutList, SearchX } from 'lucide-vue-next'
 import type { Filters, PricePreset } from '~/components/catalog/CatalogFilters.vue'
 import type { Chip } from '~/components/catalog/CatalogChips.vue'
 
@@ -328,9 +328,20 @@ const breadcrumbs = computed(() => {
           />
         </div>
 
-        <div v-else class="catalog__empty">
-          <p>Товары не найдены. Попробуйте изменить фильтры.</p>
-        </div>
+        <AppEmpty
+          v-else
+          title="Товары не найдены"
+          description="Попробуйте изменить фильтры или сбросить их"
+        >
+          <template #icon>
+            <SearchX :size="56" :stroke-width="1.2" />
+          </template>
+          <template #action>
+            <AppButton variant="outline" size="md" @click="clearAllFilters">
+              Сбросить фильтры
+            </AppButton>
+          </template>
+        </AppEmpty>
 
         <CatalogPagination
           v-if="productsStore.meta.totalPages > 1"
@@ -468,13 +479,6 @@ const breadcrumbs = computed(() => {
     @include mixins.respond-to(lg) {
       grid-template-columns: repeat(4, 1fr);
     }
-  }
-
-  &__empty {
-    padding: 48px;
-    text-align: center;
-    color: $color-gray-400;
-    font-size: $font-size-lg;
   }
 
   &__sort-drawer {
