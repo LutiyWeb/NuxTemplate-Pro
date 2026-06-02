@@ -179,8 +179,11 @@ const rows = computed(() => {
   }
 
   &__featured {
-    grid-column: span 2;
     display: block;
+
+    @include mixins.respond-to(lg) {
+      grid-column: span 2;
+    }
 
     .card-horizontal {
       height: 100%;
