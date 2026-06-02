@@ -130,8 +130,8 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .cab-orders {
   display: flex;
   flex-direction: column;

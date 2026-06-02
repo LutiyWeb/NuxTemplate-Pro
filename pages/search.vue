@@ -84,8 +84,8 @@ function onPageChange(p: number) {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .search-page {
   padding-block: 32px;
   display: flex;

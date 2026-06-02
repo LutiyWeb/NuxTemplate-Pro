@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Search } from 'lucide-vue-next'
-import type { Brand } from '~/stores/brands'
 
 export interface Filters {
   categories: string[]
@@ -170,8 +169,8 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .catalog-filters {
   position: fixed;
   left: 0;

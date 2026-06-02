@@ -6,7 +6,7 @@ export interface Chip {
   label: string
 }
 
-const props = defineProps<{ chips: Chip[] }>()
+defineProps<{ chips: Chip[] }>()
 const emit = defineEmits<{ remove: [key: string]; clearAll: [] }>()
 </script>
 
@@ -38,8 +38,8 @@ const emit = defineEmits<{ remove: [key: string]; clearAll: [] }>()
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .catalog-chips {
   display: flex;
   align-items: center;

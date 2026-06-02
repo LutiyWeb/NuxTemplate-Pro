@@ -166,8 +166,8 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .cart-page {
   padding-block: 40px;
   display: flex;

@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { ArrowDownRight } from 'lucide-vue-next'
+
 useHead({ title: 'Акції — Nexus Commerce' })
 
 const store = useProductsStore()
 const { isMd } = useBreakpoints()
 
 onMounted(() => {
-  store.fetchProducts({ limit: 40 })
+  store.fetchProducts({ limit: 30 })
 })
 
 const PROMO_BANNERS = [
@@ -30,66 +32,75 @@ const PROMO_BANNERS = [
 ]
 
 const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
-
-// ─── View mode toggle ─────────────────────────────────────────────────────────
 const viewMode = ref<'bento' | 'grid'>('bento')
 
-// ─── Bento layout ─────────────────────────────────────────────────────────────
-// size: 'sm' = 1×1 | 'tall' = 1×2 (goes beside banner) | banner = 2×2
-// Pattern: [banner][tall][tall] fills 4 cols × 2 rows, then sm cards follow
+// ─── Sections ────────────────────────────────────────────────────────────────
+// Each section: 1 banner (2×2) + 2 tall cards + 7 sm cards + 1 CTA card
+// bannerSide: 'left' → [banner][tall][tall], 'right' → [tall][tall][banner]
 
-type BentoSlot =
-  | { type: 'product'; size: 'sm' | 'tall' }
-  | { type: 'banner'; bg: string; title: string; subtitle: string; to: string }
+interface PromoSection {
+  banner: {
+    bg: string
+    title: string
+    subtitle: string
+    to: string
+    video?: string
+    image?: string
+  }
+  bannerSide: 'left' | 'right'
+  ctaTo: string
+}
 
-const BENTO_LAYOUT: BentoSlot[] = [
-  // Pattern A — banner left
-  { type: 'banner', bg: 'rgb(79 70 229)', title: 'до -40%', subtitle: 'на смартфони та планшети', to: '/catalog' },
-  { type: 'product', size: 'tall' },
-  { type: 'product', size: 'tall' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  // Pattern B — banner right
-  { type: 'product', size: 'tall' },
-  { type: 'product', size: 'tall' },
-  { type: 'banner', bg: 'rgb(30 41 59)', title: 'до -35%', subtitle: 'на ноутбуки та техніку', to: '/catalog' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  // Pattern A — banner left, third colour
-  { type: 'banner', bg: 'rgb(6 182 212)', title: 'до -25%', subtitle: 'на аудіо та аксесуари', to: '/catalog' },
-  { type: 'product', size: 'tall' },
-  { type: 'product', size: 'tall' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
-  { type: 'product', size: 'sm' },
+const SECTIONS: PromoSection[] = [
+  {
+    banner: {
+      bg: 'rgb(79 70 229)',
+      title: 'до -40%',
+      subtitle: 'на смартфони та планшети',
+      to: '/catalog',
+      video: 'https://vjs.zencdn.net/v/oceans.mp4',
+      image: 'https://images.unsplash.com/photo-1512054502232-10a0a035d672?w=800&q=80',
+    },
+    bannerSide: 'left',
+    ctaTo: '/catalog?label=sale',
+  },
+  {
+    banner: {
+      bg: 'rgb(30 41 59)',
+      title: 'до -35%',
+      subtitle: 'на ноутбуки та техніку',
+      to: '/catalog',
+      video: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
+      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80',
+    },
+    bannerSide: 'right',
+    ctaTo: '/catalog?label=sale',
+  },
+  {
+    banner: {
+      bg: 'rgb(6 182 212)',
+      title: 'до -25%',
+      subtitle: 'на аудіо та аксесуари',
+      to: '/catalog',
+      video: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80',
+    },
+    bannerSide: 'left',
+    ctaTo: '/catalog?label=sale',
+  },
 ]
 
-// Merge layout slots with real products
-const bentoItems = computed(() => {
-  let productIdx = 0
-  return BENTO_LAYOUT.map(slot => {
-    if (slot.type === 'banner') return slot
-    const product = store.products[productIdx++]
-    return product ? { ...slot, product } : null
-  }).filter(Boolean)
-})
+// 9 products per section (2 tall + 7 sm)
+const PRODUCTS_PER_SECTION = 10
+
+const bentoSections = computed(() =>
+  SECTIONS.map((section, i) => ({
+    ...section,
+    tall: store.products.slice(i * PRODUCTS_PER_SECTION, i * PRODUCTS_PER_SECTION + 2),
+    sm: store.products.slice(i * PRODUCTS_PER_SECTION + 2, i * PRODUCTS_PER_SECTION + 9),
+    ctaImage: store.products[i * PRODUCTS_PER_SECTION + 9]?.thumbnail ?? null,
+  })),
+)
 </script>
 
 <template>
@@ -129,23 +140,29 @@ const bentoItems = computed(() => {
       </div>
 
       <template v-else>
-        <!-- Mobile: flat 2-column grid -->
+        <!-- Mobile -->
         <div v-if="!isMd" class="promo-page__flat">
           <TheProductCard v-for="p in store.products" :key="p.id" :product="p" />
         </div>
 
-        <!-- Desktop: view toggle + grid -->
+        <!-- Desktop -->
         <div v-else>
           <div class="promo-page__toolbar">
             <button
-              :class="['promo-page__view-btn', { 'promo-page__view-btn--active': viewMode === 'bento' }]"
+              :class="[
+                'promo-page__view-btn',
+                { 'promo-page__view-btn--active': viewMode === 'bento' },
+              ]"
               type="button"
               @click="viewMode = 'bento'"
             >
               Bento
             </button>
             <button
-              :class="['promo-page__view-btn', { 'promo-page__view-btn--active': viewMode === 'grid' }]"
+              :class="[
+                'promo-page__view-btn',
+                { 'promo-page__view-btn--active': viewMode === 'grid' },
+              ]"
               type="button"
               @click="viewMode = 'grid'"
             >
@@ -153,27 +170,66 @@ const bentoItems = computed(() => {
             </button>
           </div>
 
-          <!-- Bento -->
-          <div v-if="viewMode === 'bento'" class="promo-page__bento">
-            <template v-for="(item, i) in bentoItems" :key="i">
-              <AppCategoryBanner
-                v-if="item.type === 'banner'"
-                :bg="item.bg"
-                :title="item.title"
-                :subtitle="item.subtitle"
-                :to="item.to"
-                class="promo-page__bento-banner"
-              />
-              <TheProductCard
-                v-else-if="item.type === 'product' && item.product && item.size === 'tall'"
-                :product="item.product"
-                class="promo-page__bento-tall"
-              />
-              <AppImageCard
-                v-else-if="item.type === 'product' && item.product && item.size === 'sm'"
-                :product="item.product"
-              />
-            </template>
+          <!-- Bento: sections -->
+          <div v-if="viewMode === 'bento'" class="promo-page__sections">
+            <div v-for="(section, i) in bentoSections" :key="i" class="promo-section">
+              <!-- Banner row: [banner][tall][tall] or [tall][tall][banner] -->
+              <div class="promo-section__banner-row">
+                <template v-if="section.bannerSide === 'left'">
+                  <AppCategoryBanner
+                    :bg="section.banner.bg"
+                    :title="section.banner.title"
+                    :subtitle="section.banner.subtitle"
+                    :to="section.banner.to"
+                    :video="section.banner.video"
+                    :image="section.banner.image"
+                    class="promo-section__banner"
+                  />
+                  <TheProductCard
+                    v-for="p in section.tall"
+                    :key="p.id"
+                    :product="p"
+                    class="promo-section__tall"
+                  />
+                </template>
+                <template v-else>
+                  <TheProductCard
+                    v-for="p in section.tall"
+                    :key="p.id"
+                    :product="p"
+                    class="promo-section__tall"
+                  />
+                  <AppCategoryBanner
+                    :bg="section.banner.bg"
+                    :title="section.banner.title"
+                    :subtitle="section.banner.subtitle"
+                    :to="section.banner.to"
+                    :video="section.banner.video"
+                    :image="section.banner.image"
+                    class="promo-section__banner"
+                  />
+                </template>
+              </div>
+
+              <!-- SM cards row: gray bg, 7 products + 1 CTA -->
+              <div class="promo-section__cards">
+                <AppImageCard v-for="p in section.sm" :key="p.id" :product="p" />
+
+                <!-- CTA card -->
+                <NuxtLink :to="section.ctaTo" class="promo-section__cta">
+                  <div
+                    v-if="section.ctaImage"
+                    class="promo-section__cta-bg"
+                    :style="{ backgroundImage: `url(${section.ctaImage})` }"
+                  />
+                  <div class="promo-section__cta-overlay" />
+                  <span class="promo-section__cta-label">
+                    Смотреть всё
+                    <ArrowDownRight :size="20" class="promo-section__cta-arrow" />
+                  </span>
+                </NuxtLink>
+              </div>
+            </div>
           </div>
 
           <!-- Regular grid -->
@@ -187,15 +243,15 @@ const bentoItems = computed(() => {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
+
 .promo-page {
   padding-block: 32px;
 
   &__title {
     margin-bottom: 32px;
   }
-
   &__banners {
     margin-bottom: 48px;
   }
@@ -210,6 +266,12 @@ const bentoItems = computed(() => {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
+  }
+
+  &__sections {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
   }
 
   &__toolbar {
@@ -234,33 +296,11 @@ const bentoItems = computed(() => {
       border-color: $color-gray-300;
       color: $color-gray-700;
     }
-
     &--active {
       background: $color-primary;
       border-color: $color-primary;
       color: $color-white;
     }
-  }
-
-  &__bento {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 220px;
-    grid-auto-flow: row dense;
-    gap: 12px;
-
-    @include mixins.respond-to(lg) {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  &__bento-banner {
-    grid-column: span 2;
-    grid-row: span 2;
-  }
-
-  &__bento-tall {
-    grid-row: span 2;
   }
 
   &__grid {
@@ -271,6 +311,104 @@ const bentoItems = computed(() => {
     @include mixins.respond-to(lg) {
       grid-template-columns: repeat(5, 1fr);
     }
+  }
+}
+
+// ─── Section ─────────────────────────────────────────────────────────────────
+.promo-section {
+  &__banner-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 220px;
+    gap: 12px;
+  }
+
+  &__banner {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  &__tall {
+    grid-row: span 2;
+  }
+
+  &__cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 220px;
+    gap: 12px;
+    background: $color-gray-100;
+    border-radius: 0;
+    padding: 24px $container-padding;
+    margin-inline: -#{$container-padding};
+
+    @include mixins.respond-to(lg) {
+      padding: 32px calc(#{$container-padding} * 2) 32px;
+      margin-top: 48px;
+      margin-inline: -#{$container-padding};
+    }
+  }
+
+  &__cta {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 20px;
+    border-radius: $radius-xl;
+    overflow: hidden;
+    text-decoration: none;
+    color: $color-gray-700;
+    gap: 8px;
+    transition: transform $transition-base;
+
+    &:hover {
+      transform: translateY(-2px);
+
+      .promo-section__cta-arrow {
+        transform: translate(3px, 3px);
+      }
+    }
+  }
+
+  &__cta-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    transition: transform $transition-slow;
+
+    .promo-section__cta:hover & {
+      transform: scale(1.05);
+    }
+  }
+
+  &__cta-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgb(255 255 255 / 75%);
+    z-index: 1;
+  }
+
+  &__cta-label {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    column-gap: 2px;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  &__cta-arrow {
+    position: relative;
+    z-index: 2;
+    color: $color-gray-600;
+    flex-shrink: 0;
+    transition: transform $transition-fast;
   }
 }
 </style>

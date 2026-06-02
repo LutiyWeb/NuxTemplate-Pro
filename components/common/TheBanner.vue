@@ -18,8 +18,8 @@ withDefaults(defineProps<Props>(), { variant: 'default' })
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .the-banner {
   border-radius: $radius-2xl;
   padding: 28px;

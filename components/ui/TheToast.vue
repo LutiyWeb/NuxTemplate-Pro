@@ -31,8 +31,8 @@ const ICONS = {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .toast-container {
   position: fixed;
   bottom: 24px;

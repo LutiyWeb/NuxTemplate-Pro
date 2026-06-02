@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { POPULAR_CARDS, ARTICLES_CARDS } from '~/data/landingCards'
-import type { LandingCard } from '~/data/landingCards'
 import { CARD_GAP } from '~/constants/layout'
 
 useHead({ title: 'Nexus Commerce — Главная' })
@@ -277,8 +276,8 @@ const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .home {
   --swiper-navigation-top-offset: calc(50% - 20px);
 

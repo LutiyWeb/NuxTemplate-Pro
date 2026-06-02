@@ -522,8 +522,8 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .search-modal {
   position: fixed;
   inset: 0;
@@ -542,7 +542,7 @@ onBeforeUnmount(() => {
       0 24px 64px -12px rgb(0 0 0 / 28%),
       0 4px 16px rgb(0 0 0 / 10%);
     overflow: hidden;
-    min-height: 500px;
+    min-height: 470px;
     max-height: calc(100vh - 96px);
     display: flex;
     flex-direction: column;
@@ -604,9 +604,6 @@ onBeforeUnmount(() => {
   &__body {
     overflow-y: auto;
     overflow-x: hidden;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
   }
 
   // ─── Sections ───────────────────────────────────────────────────────────
@@ -816,10 +813,12 @@ onBeforeUnmount(() => {
 
   // ─── Right: product mini-cards ───────────────────────────────────────────
   &__products {
-    padding: 10px 12px;
+    padding: 16px 12px;
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 0;
+    overflow: hidden;
   }
 
   &__product-card {
@@ -828,6 +827,7 @@ onBeforeUnmount(() => {
     gap: 12px;
     padding: 8px 10px;
     border-radius: $radius-lg;
+    min-width: 0;
     text-decoration: none;
     color: inherit;
     cursor: pointer;

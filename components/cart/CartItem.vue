@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { CartEntry } from '~/stores/cart'
 import { Trash2 } from 'lucide-vue-next'
+import type { CartEntry } from '~/stores/cart'
 
-const props = defineProps<{
+defineProps<{
   item: CartEntry
   selected: boolean
 }>()
@@ -55,8 +55,8 @@ function formatPrice(p: number) {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .cart-item {
   display: flex;
   align-items: center;

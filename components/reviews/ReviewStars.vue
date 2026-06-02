@@ -50,8 +50,8 @@ function pick(n: number) {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .review-stars {
   display: inline-flex;
   align-items: center;

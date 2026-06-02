@@ -35,8 +35,8 @@ withDefaults(defineProps<Props>(), { loading: false })
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .card-vertical {
   border-radius: $radius-xl;
   background: $color-white;

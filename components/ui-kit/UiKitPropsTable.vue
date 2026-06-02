@@ -42,8 +42,8 @@ defineProps<{ rows: PropRow[] }>()
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .uk-props {
   overflow-x: auto;
   border-radius: $radius-lg;

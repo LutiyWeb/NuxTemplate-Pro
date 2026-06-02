@@ -22,8 +22,8 @@ useHead({ title: 'О нас — Nexus Commerce' })
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .about-page {
   padding-block: 48px;
   display: flex;

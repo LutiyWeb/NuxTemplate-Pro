@@ -18,8 +18,8 @@ const uiStore = useUiStore()
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .app-backdrop {
   position: fixed;
   inset: 0;

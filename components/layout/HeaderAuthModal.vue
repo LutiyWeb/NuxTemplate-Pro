@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{ open: boolean }>()
+defineProps<{ open: boolean }>()
 const emit = defineEmits<{ 'update:open': [boolean]; success: []; 'forgot-password': [] }>()
 
 const authStore = useAuthStore()
@@ -95,8 +95,8 @@ async function submit() {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .auth-modal {
   &__tabs {
     display: flex;

@@ -6,6 +6,7 @@ export const useUiStore = defineStore('ui', () => {
   const catalogOpen = ref(false)
   const searchOpen = ref(false)
   const sidebarOpen = ref(false)
+  const menuOpen = ref(false)
 
   // true whenever any overlay is visible
   const overlayVisible = computed(
@@ -14,7 +15,8 @@ export const useUiStore = defineStore('ui', () => {
       forgotPasswordModalOpen.value ||
       catalogOpen.value ||
       searchOpen.value ||
-      sidebarOpen.value,
+      sidebarOpen.value ||
+      menuOpen.value,
   )
 
   // catalog sits inside the header stacking context → backdrop must be BELOW the header
@@ -34,6 +36,7 @@ export const useUiStore = defineStore('ui', () => {
     catalogOpen.value = false
     searchOpen.value = false
     sidebarOpen.value = false
+    menuOpen.value = false
   }
 
   return {
@@ -42,6 +45,7 @@ export const useUiStore = defineStore('ui', () => {
     catalogOpen,
     searchOpen,
     sidebarOpen,
+    menuOpen,
     overlayVisible,
     overlayAboveHeader,
     closeAll,

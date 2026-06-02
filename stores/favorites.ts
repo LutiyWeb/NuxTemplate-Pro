@@ -41,9 +41,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
         else ids.value.push(id)
         toastStore.add('Не удалось обновить избранное', 'error')
       }
-    } else {
-      if (adding) toastStore.add('Войдите, чтобы сохранить в избранное', 'warning')
-    }
+    } else if (adding) toastStore.add('Войдите, чтобы сохранить в избранное', 'warning')
   }
 
   return { ids, count, has, toggle }

@@ -14,8 +14,8 @@ withDefaults(defineProps<Props>(), { tag: 'h2', size: 'm' })
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .the-title {
   font-weight: $font-weight-bold;
   color: $color-gray-900;

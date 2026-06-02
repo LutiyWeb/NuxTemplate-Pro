@@ -98,8 +98,8 @@ async function submit() {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .reset-page {
   padding-block: 80px;
   display: flex;

@@ -15,6 +15,21 @@ const isMobileFiltersOpen = ref(false)
 const isMobileSortOpen = ref(false)
 const mobileGridCols = ref<1 | 2>(2)
 
+function closeDrawers() {
+  isMobileFiltersOpen.value = false
+  isMobileSortOpen.value = false
+}
+
+function selectSort(val: string) {
+  onSortUpdate(val)
+  isMobileSortOpen.value = false
+}
+
+function selectPerPage(n: number) {
+  onPerPageUpdate(n)
+  isMobileSortOpen.value = false
+}
+
 useScrollLock(computed(() => isMobileFiltersOpen.value || isMobileSortOpen.value))
 
 const sortOptions = [
@@ -230,7 +245,7 @@ const breadcrumbs = computed(() => {
       <div
         v-if="isMobileFiltersOpen || isMobileSortOpen"
         class="catalog__backdrop"
-        @click="isMobileFiltersOpen = false; isMobileSortOpen = false"
+        @click="closeDrawers"
       />
     </Transition>
 
@@ -256,7 +271,7 @@ const breadcrumbs = computed(() => {
               { 'catalog__sort-option--active': sortKey === opt.value },
             ]"
             type="button"
-            @click="onSortUpdate(opt.value); isMobileSortOpen = false"
+            @click="selectSort(opt.value)"
           >
             {{ opt.label }}
           </button>
@@ -272,7 +287,7 @@ const breadcrumbs = computed(() => {
                 { 'catalog__sort-perpage-btn--active': perPage === n },
               ]"
               type="button"
-              @click="onPerPageUpdate(n); isMobileSortOpen = false"
+              @click="selectPerPage(n)"
             >
               {{ n }}
             </button>
@@ -355,8 +370,8 @@ const breadcrumbs = computed(() => {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .catalog {
   padding-block: 32px;
 

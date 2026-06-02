@@ -110,8 +110,8 @@ const PROPS = [
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .uikit-buttons {
   display: flex;
   flex-direction: column;

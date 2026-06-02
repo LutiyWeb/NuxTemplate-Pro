@@ -2,17 +2,7 @@
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Thumbs, Navigation } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
-import {
-  Heart,
-  ShoppingCart,
-  Minus,
-  Plus,
-  Share2,
-  Star,
-  Package,
-  Shield,
-  Truck,
-} from 'lucide-vue-next'
+import { Heart, ShoppingCart, Minus, Plus, Star, Package, Shield, Truck } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
 const route = useRoute()
@@ -380,8 +370,8 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .product-detail {
   padding-block: 24px;
 

@@ -19,8 +19,8 @@ withDefaults(defineProps<Props>(), { tag: 'Акция' })
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .promo-card {
   display: flex;
   flex-direction: column;

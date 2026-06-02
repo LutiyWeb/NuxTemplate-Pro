@@ -90,7 +90,12 @@ function handleFavClick(product: Product) {
         <span v-if="product.category" class="image-card__category">{{ product.category }}</span>
         <h3 class="image-card__title">{{ product.title }}</h3>
         <div class="image-card__price-row">
-          <span :class="['image-card__price', { 'image-card__price--discounted': product.compareAtPrice }]">
+          <span
+            :class="[
+              'image-card__price',
+              { 'image-card__price--discounted': product.compareAtPrice },
+            ]"
+          >
             ${{ product.price }}
           </span>
           <span v-if="product.compareAtPrice" class="image-card__compare">
@@ -113,8 +118,8 @@ function handleFavClick(product: Product) {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .image-card {
   position: relative;
   display: block;
@@ -197,9 +202,18 @@ function handleFavClick(product: Product) {
     background: $color-white;
     color: $color-gray-700;
 
-    &--new { background: #dbeafe; color: #2563eb; }
-    &--sale { background: #fee2e2; color: #c0392b; }
-    &--hit { background: #fef3c7; color: #b45309; }
+    &--new {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+    &--sale {
+      background: #fee2e2;
+      color: #c0392b;
+    }
+    &--hit {
+      background: #fef3c7;
+      color: #b45309;
+    }
   }
 
   &__fav {
@@ -222,8 +236,14 @@ function handleFavClick(product: Product) {
       border-color $transition-fast;
     box-shadow: 0 1px 4px rgb(0 0 0 / 10%);
 
-    &:hover { color: $color-danger; border-color: $color-danger; }
-    &--active { color: $color-danger; border-color: rgb(239 68 68 / 30%); }
+    &:hover {
+      color: $color-danger;
+      border-color: $color-danger;
+    }
+    &--active {
+      color: $color-danger;
+      border-color: rgb(239 68 68 / 30%);
+    }
   }
 
   &__info {
@@ -277,7 +297,9 @@ function handleFavClick(product: Product) {
     font-weight: $font-weight-bold;
     color: $color-gray-900;
 
-    &--discounted { color: $color-primary; }
+    &--discounted {
+      color: $color-primary;
+    }
   }
 
   &__compare {
@@ -303,7 +325,9 @@ function handleFavClick(product: Product) {
     cursor: pointer;
     transition: background $transition-fast;
 
-    &:hover { background: $color-gray-700; }
+    &:hover {
+      background: $color-gray-700;
+    }
   }
 
   &__oos {

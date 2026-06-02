@@ -38,8 +38,8 @@ withDefaults(defineProps<Props>(), { loading: false, imageRight: false })
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .card-horizontal {
   display: grid;
   grid-template-columns: 1fr;

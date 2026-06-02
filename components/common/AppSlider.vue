@@ -21,7 +21,7 @@ interface Props {
   peek?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   slides: () => [] as SlideItem[],
   slidesPerView: 1,
   spaceBetween: 12,
@@ -39,7 +39,9 @@ const props = withDefaults(defineProps<Props>(), {
 const { isSm } = useBreakpoints()
 
 const mounted = ref(false)
-onMounted(() => { mounted.value = true })
+onMounted(() => {
+  mounted.value = true
+})
 
 const swiperRef = ref<SwiperType | null>(null)
 const isBeginning = ref(true)
@@ -112,8 +114,8 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .app-slider {
   &--peek {
     overflow: visible;

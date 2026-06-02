@@ -120,8 +120,8 @@ async function confirmDelete() {
         <div class="cab-profile__field">
           <label class="cab-profile__label">Телефон</label>
           <input
-            v-maska="'+38 (0##) ###-##-##'"
             v-model="form.phone"
+            v-maska="'+38 (0##) ###-##-##'"
             class="cab-profile__input"
             placeholder="+38 (0__) ___-__-__"
           />
@@ -246,8 +246,8 @@ async function confirmDelete() {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .cab-profile {
   display: flex;
   flex-direction: column;

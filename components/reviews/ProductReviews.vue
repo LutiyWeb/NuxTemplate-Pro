@@ -1,9 +1,9 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { MessageSquare, X } from 'lucide-vue-next'
 import { reviewSchema } from '~/api/reviews'
 import type { Review } from '~/types/review'
 
-const props = defineProps<{ productId: number }>()
+defineProps<{ productId: number }>()
 
 const authStore = useAuthStore()
 const uiStore = useUiStore()
@@ -112,7 +112,7 @@ async function submit() {
     //   body: { rating: formRating.value, text: formText.value },
     // })
 
-    await new Promise((r) => setTimeout(r, 500)) // simulate request
+    await new Promise((resolve) => setTimeout(resolve, 500)) // simulate request
 
     const user = authStore.user
     const name = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'РђРЅРѕРЅРёРј'
@@ -249,8 +249,8 @@ async function submit() {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .product-reviews {
   display: flex;
   flex-direction: column;

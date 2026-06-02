@@ -13,6 +13,9 @@ function toggle(i: number) {
       <div class="the-footer__brand">
         <NuxtLink to="/" class="the-footer__logo">Nexus</NuxtLink>
         <p class="the-footer__desc">Лучшие шаблоны для современных проектов.</p>
+        <NuxtLink v-if="$config.public.isDev" to="/ui" class="the-footer__dev-link">
+          Dev: UI Kit
+        </NuxtLink>
       </div>
 
       <div class="the-footer__cols">
@@ -80,8 +83,8 @@ function toggle(i: number) {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .the-footer {
   background: $color-gray-900;
   color: $color-white;
@@ -110,6 +113,24 @@ function toggle(i: number) {
     font-size: $font-size-xl;
     font-weight: $font-weight-bold;
     color: $color-primary;
+  }
+
+  &__dev-link {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 11px;
+    font-weight: $font-weight-semibold;
+    color: $color-white;
+    background: $color-primary;
+    padding: 3px 10px;
+    border-radius: $radius-sm;
+    text-decoration: none;
+    opacity: 0.6;
+    transition: opacity $transition-fast;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 
   &__desc {

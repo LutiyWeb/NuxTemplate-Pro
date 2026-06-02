@@ -107,8 +107,8 @@ interface Toast {
 </template>
 
 <style lang="scss">
-@use "~/assets/styles/variables" as *;
-@use "~/assets/styles/mixins" as mixins;
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .uikit-toasts {
   display: flex;
   flex-direction: column;
