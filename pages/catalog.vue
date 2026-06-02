@@ -256,10 +256,7 @@ const breadcrumbs = computed(() => {
               { 'catalog__sort-option--active': sortKey === opt.value },
             ]"
             type="button"
-            @click="
-              onSortUpdate(opt.value)
-              isMobileSortOpen = false
-            "
+            @click="onSortUpdate(opt.value); isMobileSortOpen = false"
           >
             {{ opt.label }}
           </button>
@@ -275,10 +272,7 @@ const breadcrumbs = computed(() => {
                 { 'catalog__sort-perpage-btn--active': perPage === n },
               ]"
               type="button"
-              @click="
-                onPerPageUpdate(n)
-                isMobileSortOpen = false
-              "
+              @click="onPerPageUpdate(n); isMobileSortOpen = false"
             >
               {{ n }}
             </button>

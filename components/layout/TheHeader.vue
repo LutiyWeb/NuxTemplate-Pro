@@ -115,17 +115,11 @@ watch(
   <HeaderSidebar :open="uiStore.sidebarOpen" @close="uiStore.sidebarOpen = false" />
   <HeaderAuthModal
     v-model:open="uiStore.authModalOpen"
-    @forgot-password="
-      uiStore.authModalOpen = false
-      uiStore.forgotPasswordModalOpen = true
-    "
+    @forgot-password="uiStore.authModalOpen = false; uiStore.forgotPasswordModalOpen = true"
   />
   <HeaderForgotPasswordModal
     v-model:open="uiStore.forgotPasswordModalOpen"
-    @back-to-login="
-      uiStore.forgotPasswordModalOpen = false
-      uiStore.authModalOpen = true
-    "
+    @back-to-login="uiStore.forgotPasswordModalOpen = false; uiStore.authModalOpen = true"
   />
 </template>
 
