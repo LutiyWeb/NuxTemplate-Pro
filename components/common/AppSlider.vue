@@ -36,7 +36,10 @@ const props = withDefaults(defineProps<Props>(), {
   peek: false,
 })
 
-const { isSm, isMd } = useBreakpoints()
+const { isSm } = useBreakpoints()
+
+const mounted = ref(false)
+onMounted(() => { mounted.value = true })
 
 const swiperRef = ref<SwiperType | null>(null)
 const isBeginning = ref(true)
@@ -69,34 +72,42 @@ onBeforeUnmount(() => {
           {{ linkLabel }}<template v-if="linkCount !== undefined"> ({{ linkCount }})</template>
         </NuxtLink>
         <AppArrow
-          v-if="isSm"
+          v-if="mounted && isSm"
           direction="left"
           :disabled="isBeginning"
           @click="swiperRef?.slidePrev()"
         />
-        <AppArrow v-if="isSm" direction="right" :disabled="isEnd" @click="swiperRef?.slideNext()" />
+        <AppArrow
+          v-if="mounted && isSm"
+          direction="right"
+          :disabled="isEnd"
+          @click="swiperRef?.slideNext()"
+        />
       </div>
     </div>
 
-    <ClientOnly>
-      <Swiper
-        :modules="[Navigation, Pagination, Autoplay]"
-        :slides-per-view="slidesPerView"
-        :space-between="spaceBetween"
-        :navigation="!title && isSm"
-        :pagination="{ clickable: true }"
-        :loop="loop"
-        :autoplay="autoplay ? { delay: autoplayDelay, disableOnInteraction: false } : false"
-        :breakpoints="breakpoints"
-        :class="['app-slider__swiper', { 'app-slider__swiper--peek': peek }]"
-        @swiper="onSwiper"
-        @slide-change="onSlideChange"
-      >
-        <SwiperSlide v-for="slide in slides" :key="slide.id">
-          <slot v-if="slide" :slide="slide" />
-        </SwiperSlide>
-      </Swiper>
-    </ClientOnly>
+    <Swiper
+      v-if="mounted"
+      :modules="[Navigation, Pagination, Autoplay]"
+      :slides-per-view="slidesPerView"
+      :space-between="spaceBetween"
+      :navigation="!title && isSm"
+      :pagination="{ clickable: true }"
+      :loop="loop"
+      :autoplay="autoplay ? { delay: autoplayDelay, disableOnInteraction: false } : false"
+      :breakpoints="breakpoints"
+      :class="['app-slider__swiper', { 'app-slider__swiper--peek': peek }]"
+      @swiper="onSwiper"
+      @slide-change="onSlideChange"
+    >
+      <SwiperSlide v-for="slide in slides" :key="slide.id">
+        <slot v-if="slide" :slide="slide" />
+      </SwiperSlide>
+    </Swiper>
+
+    <div v-else class="app-slider__static">
+      <slot v-for="slide in slides" :key="slide.id" :slide="slide" />
+    </div>
   </div>
 </template>
 
@@ -108,6 +119,12 @@ onBeforeUnmount(() => {
     @include mixins.respond-to(sm) {
       overflow: unset;
     }
+  }
+
+  &__static {
+    display: flex;
+    gap: 12px;
+    overflow: hidden;
   }
 
   &__header {
