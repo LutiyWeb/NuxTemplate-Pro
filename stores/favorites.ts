@@ -2,6 +2,10 @@ import { defineStore } from 'pinia'
 
 export const useFavoritesStore = defineStore('favorites', () => {
   const config = useRuntimeConfig()
+  const authStore = useAuthStore()
+  const { authFetch } = useAuthFetch()
+  const toastStore = useToastStore()
+
   const ids = ref<number[]>([])
   const count = computed(() => ids.value.length)
 
@@ -9,16 +13,19 @@ export const useFavoritesStore = defineStore('favorites', () => {
     return ids.value.includes(id)
   }
 
+  async function fetchFavorites() {
+    try {
+      const res = await authFetch<{ data: { productId: number }[] }>('/api/favorites')
+      ids.value = res.data.map((f) => f.productId)
+    } catch {}
+  }
+
   async function toggle(id: number) {
-    const authStore = useAuthStore()
-    const toastStore = useToastStore()
     const adding = !ids.value.includes(id)
 
-    // Optimistic update
     if (adding) ids.value.push(id)
     else ids.value.splice(ids.value.indexOf(id), 1)
 
-    // Sync with server if logged in
     if (authStore.isLoggedIn && authStore.token) {
       try {
         if (adding) {
@@ -36,7 +43,6 @@ export const useFavoritesStore = defineStore('favorites', () => {
           toastStore.add('Товар удалён из избранного', 'warning')
         }
       } catch {
-        // Rollback on error
         if (adding) ids.value.splice(ids.value.indexOf(id), 1)
         else ids.value.push(id)
         toastStore.add('Не удалось обновить избранное', 'error')
@@ -44,5 +50,17 @@ export const useFavoritesStore = defineStore('favorites', () => {
     } else if (adding) toastStore.add('Войдите, чтобы сохранить в избранное', 'warning')
   }
 
-  return { ids, count, has, toggle }
+  if (process.client && authStore.isLoggedIn) {
+    fetchFavorites()
+  }
+
+  watch(
+    () => authStore.isLoggedIn,
+    (loggedIn) => {
+      if (loggedIn) fetchFavorites()
+      else ids.value = []
+    },
+  )
+
+  return { ids, count, has, toggle, fetchFavorites }
 })

@@ -86,7 +86,7 @@ const PROPS = [
         </div>
       </template>
       <template #code>
-        <UiKitCodeBlock code="<AppPasswordInput v-model=\"password\" label=\"РџР°СЂРѕР»СЊ\" />" />
+        <UiKitCodeBlock :code='`<AppPasswordInput v-model="password" label="РџР°СЂРѕР»СЊ" />`' />
       </template>
     </UiKitSection>
 

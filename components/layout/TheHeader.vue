@@ -44,10 +44,19 @@ function onBackToLogin() {
 <template>
   <header class="the-header">
     <div class="the-header__inner container">
-      <!-- Left: burger + catalog -->
+      <!-- Left: burger + mobile search + catalog -->
       <div class="the-header__left">
-        <button class="the-header__burger-btn" type="button" @click="uiStore.menuOpen = true">
+        <button class="the-header__burger-btn" type="button" @click="uiStore.menuOpen = true; uiStore.catalogOpen = false">
           <Menu :size="20" />
+        </button>
+
+        <!-- Mobile search button — left of logo -->
+        <button
+          class="the-header__action-btn the-header__action-btn--search-mobile"
+          type="button"
+          @click="uiStore.searchOpen = true"
+        >
+          <Search :size="20" />
         </button>
 
         <button
@@ -73,21 +82,13 @@ function onBackToLogin() {
           <span class="the-header__search-placeholder">Поиск товаров...</span>
         </div>
 
-        <!-- Mobile search button -->
-        <button
-          class="the-header__action-btn the-header__action-btn--search-mobile"
-          type="button"
-          @click="uiStore.searchOpen = true"
-        >
-          <Search :size="20" />
-        </button>
-
         <!-- User -->
-        <button class="the-header__action-btn" type="button" @click="handleUser">
+        <button
+          :class="['the-header__action-btn', { 'the-header__action-btn--logged-in': authStore.isLoggedIn }]"
+          type="button"
+          @click="handleUser"
+        >
           <User :size="20" />
-          <span v-if="authStore.isLoggedIn" class="the-header__action-name">
-            {{ authStore.user?.firstName }}
-          </span>
         </button>
 
         <!-- Favorites -->
@@ -150,13 +151,13 @@ function onBackToLogin() {
     display: flex;
     align-items: center;
     gap: 4px;
-    flex: 1;
+
+    @include mixins.respond-to(md) {
+      flex: 1;
+    }
   }
 
   &__logo {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
     font-size: $font-size-xl;
     font-weight: $font-weight-bold;
     color: $color-primary;
@@ -225,7 +226,7 @@ function onBackToLogin() {
       align-items: center;
       gap: 8px;
       flex: 1;
-      max-width: 280px;
+      max-width: 220px;
       height: 36px;
       padding: 0 12px;
       border: 1px solid $color-gray-200;
@@ -240,6 +241,10 @@ function onBackToLogin() {
         border-color: $color-primary;
         background: $color-white;
       }
+    }
+
+    @include mixins.respond-to(lg) {
+      max-width: 280px;
     }
   }
 
@@ -278,29 +283,28 @@ function onBackToLogin() {
         display: none;
       }
     }
-  }
 
-  &__action-name {
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    color: $color-gray-700;
+    &--logged-in svg {
+      fill: $color-primary;
+      color: $color-primary;
+    }
   }
 
   &__badge {
     position: absolute;
     top: 4px;
     right: 4px;
-    min-width: 18px;
-    height: 18px;
+    min-width: 14px;
+    height: 14px;
     background: $color-primary;
     color: $color-white;
     border-radius: $radius-full;
-    font-size: 10px;
+    font-size: 8px;
     font-weight: $font-weight-bold;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 4px;
+    padding: 0 3px;
   }
 }
 </style>

@@ -375,15 +375,17 @@ const breadcrumbs = computed(() => {
 .catalog {
   padding-block: 32px;
 
-  /* &__breadcrumbs {
-    margin-bottom: 16px;
-  } */
+  &__breadcrumbs {
+    margin-bottom: 8px;
+  }
 
   &__head {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: block;
     margin-bottom: 24px;
+
+    > * + * {
+      margin-top: 12px;
+    }
   }
 
   &__mobile-actions {

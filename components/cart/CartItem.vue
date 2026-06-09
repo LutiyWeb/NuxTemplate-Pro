@@ -27,13 +27,15 @@ function formatPrice(p: number) {
       @change="emit('update:selected', ($event.target as HTMLInputElement).checked)"
     />
 
-    <img
-      v-if="item.product.thumbnail"
-      :src="item.product.thumbnail"
-      :alt="item.product.title"
-      class="cart-item__img"
-    />
-    <div v-else class="cart-item__img cart-item__img--placeholder" />
+    <NuxtLink :to="`/product/${item.product.id}`" class="cart-item__img-link">
+      <img
+        v-if="item.product.thumbnail"
+        :src="item.product.thumbnail"
+        :alt="item.product.title"
+        class="cart-item__img"
+      />
+      <div v-else class="cart-item__img cart-item__img--placeholder" />
+    </NuxtLink>
 
     <div class="cart-item__info">
       <NuxtLink :to="`/product/${item.product.id}`" class="cart-item__title">
@@ -58,37 +60,74 @@ function formatPrice(p: number) {
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
 .cart-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  row-gap: 6px;
   padding: 12px 0;
   border-bottom: 1px solid $color-gray-100;
+  align-items: start;
+
+  @include mixins.respond-to(md) {
+    grid-template-columns: auto 64px 1fr auto auto;
+    grid-template-rows: auto;
+    align-items: center;
+  }
 
   &__check {
-    flex-shrink: 0;
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: center;
     width: 16px;
     height: 16px;
     cursor: pointer;
+
+    @include mixins.respond-to(md) {
+      grid-row: 1;
+    }
+  }
+
+  &__img-link {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    display: block;
+    border-radius: $radius-md;
+    flex-shrink: 0;
+
+    @include mixins.respond-to(md) {
+      grid-row: 1;
+    }
   }
 
   &__img {
-    width: 64px;
-    height: 64px;
+    display: block;
+    width: 80px;
+    height: 80px;
     object-fit: cover;
     border-radius: $radius-md;
-    flex-shrink: 0;
 
     &--placeholder {
       background: $color-gray-100;
     }
+
+    @include mixins.respond-to(md) {
+      width: 64px;
+      height: 64px;
+    }
   }
 
   &__info {
-    flex: 1;
+    grid-column: 3;
+    grid-row: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 4px;
+
+    @include mixins.respond-to(md) {
+      grid-column: 3;
+    }
   }
 
   &__title {
@@ -111,10 +150,16 @@ function formatPrice(p: number) {
   }
 
   &__qty {
+    grid-column: 3 / 5;
+    grid-row: 2;
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-shrink: 0;
+
+    @include mixins.respond-to(md) {
+      grid-column: 4;
+      grid-row: 1;
+    }
 
     button {
       width: 28px;
@@ -142,17 +187,22 @@ function formatPrice(p: number) {
   }
 
   &__remove {
-    flex-shrink: 0;
+    grid-column: 4;
+    grid-row: 1;
     width: 32px;
     height: 32px;
     background: transparent;
+    border: none;
     border-radius: $radius-md;
     cursor: pointer;
-    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background $transition-fast;
+
+    @include mixins.respond-to(md) {
+      grid-column: 5;
+    }
 
     &:hover {
       background: rgb(239 68 68 / 10%);

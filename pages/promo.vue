@@ -106,6 +106,10 @@ const bentoSections = computed(() =>
 <template>
   <div class="promo-page">
     <div class="container">
+      <AppBreadcrumbs
+        :crumbs="[{ label: 'Головна', to: '/' }, { label: 'Акції та знижки' }]"
+        class="promo-page__breadcrumbs"
+      />
       <TheTitle tag="h1" size="m" class="promo-page__title">Акції та знижки</TheTitle>
 
       <AppSlider
@@ -249,8 +253,12 @@ const bentoSections = computed(() =>
 .promo-page {
   padding-block: 32px;
 
+  &__breadcrumbs {
+    margin-bottom: 12px;
+  }
+
   &__title {
-    margin-bottom: 32px;
+    margin-bottom: 16px;
   }
   &__banners {
     margin-bottom: 48px;
