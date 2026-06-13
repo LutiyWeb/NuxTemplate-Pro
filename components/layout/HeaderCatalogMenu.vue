@@ -87,7 +87,7 @@ function isNew(cat: { slug?: string; name?: string }) {
     padding: 9px 16px;
     font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
-    color: $color-gray-800;
+    color: $color-heading;
     border-radius: $radius-md;
     transition:
       color $transition-fast,
@@ -95,12 +95,12 @@ function isNew(cat: { slug?: string; name?: string }) {
 
     &:hover,
     &--active {
-      color: $color-primary;
+      color: $color-accent;
       background: $color-gray-50;
     }
 
     &--new {
-      color: $color-primary;
+      color: $color-accent;
     }
   }
 
@@ -110,7 +110,7 @@ function isNew(cat: { slug?: string; name?: string }) {
     align-items: center;
     padding: 1px 5px;
     border-radius: $radius-sm;
-    background: $color-primary;
+    background: $color-accent;
     color: $color-white;
     font-size: 9px;
     font-weight: $font-weight-bold;
@@ -138,7 +138,7 @@ function isNew(cat: { slug?: string; name?: string }) {
       background $transition-fast;
 
     &:hover {
-      color: $color-primary;
+      color: $color-accent;
       background: $color-gray-50;
     }
   }

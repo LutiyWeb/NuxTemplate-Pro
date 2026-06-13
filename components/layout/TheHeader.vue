@@ -8,6 +8,7 @@ import IconOk from '~/assets/icons/ok.svg'
 const authStore = useAuthStore()
 const cartStore = useCartStore()
 const favoritesStore = useFavoritesStore()
+const categoriesStore = useCategoriesStore()
 const uiStore = useUiStore()
 const router = useRouter()
 const route = useRoute()
@@ -46,7 +47,10 @@ function handleUser() {
 
 function toggleCatalog() {
   uiStore.catalogOpen = !uiStore.catalogOpen
-  if (uiStore.catalogOpen) uiStore.searchOpen = false
+  if (uiStore.catalogOpen) {
+    uiStore.searchOpen = false
+    if (!categoriesStore.categories.length) categoriesStore.fetchCategories()
+  }
 }
 
 watch(
