@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { Menu, Search, LayoutGrid, User, Heart, ShoppingCart } from 'lucide-vue-next'
+import { Menu, MapPin, Phone, ShoppingBag, ChevronDown } from 'lucide-vue-next'
+import LogoMacaron from '~/assets/icons/logo-macaron.svg'
+import IconTg from '~/assets/icons/tg.svg'
+import IconVk from '~/assets/icons/vk.svg'
+import IconOk from '~/assets/icons/ok.svg'
 
 const authStore = useAuthStore()
 const cartStore = useCartStore()
@@ -7,6 +11,29 @@ const favoritesStore = useFavoritesStore()
 const uiStore = useUiStore()
 const router = useRouter()
 const route = useRoute()
+
+// Top info-bar links (mapped to existing pages where they exist)
+const topLinks = [
+  { label: 'Гарантия свежести', to: '/about' },
+  { label: 'Доставка и оплата', to: '/payment-delivery' },
+  { label: 'Оптовые поставки', to: '/contacts' },
+  { label: 'Контакты', to: '/contacts' },
+]
+
+const socials = [
+  { icon: IconTg, label: 'Telegram', href: '#' },
+  { icon: IconVk, label: 'VK', href: '#' },
+  { icon: IconOk, label: 'Одноклассники', href: '#' },
+]
+
+// Russian plural: 1 товар / 2 товара / 5 товаров
+function pluralItems(n: number) {
+  const mod10 = n % 10
+  const mod100 = n % 100
+  if (mod10 === 1 && mod100 !== 11) return 'товар'
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'товара'
+  return 'товаров'
+}
 
 function handleCart() {
   navigateTo('/cart')
@@ -43,75 +70,111 @@ function onBackToLogin() {
 
 <template>
   <header class="the-header">
-    <div class="the-header__inner container">
-      <!-- Left: burger + mobile search + catalog -->
-      <div class="the-header__left">
-        <button class="the-header__burger-btn" type="button" @click="uiStore.menuOpen = true; uiStore.catalogOpen = false">
-          <Menu :size="20" />
-        </button>
+    <!-- ── Top info-bar ───────────────────────────────────────────── -->
+    <div class="the-header__topbar">
+      <div class="the-header__topbar-inner container">
+        <nav class="the-header__toplinks">
+          <NuxtLink
+            v-for="link in topLinks"
+            :key="link.label"
+            :to="link.to"
+            class="the-header__toplink"
+          >
+            {{ link.label }}
+          </NuxtLink>
+        </nav>
 
-        <!-- Mobile search button — left of logo -->
-        <button
-          class="the-header__action-btn the-header__action-btn--search-mobile"
-          type="button"
-          @click="uiStore.searchOpen = true"
-        >
-          <Search :size="20" />
-        </button>
+        <div class="the-header__topinfo">
+          <button class="the-header__city" type="button">
+            <MapPin :size="18" />
+            <span>Санкт-Петербург</span>
+            <ChevronDown :size="14" />
+          </button>
 
-        <button
-          :class="[
-            'the-header__catalog-btn',
-            { 'the-header__catalog-btn--active': uiStore.catalogOpen },
-          ]"
-          type="button"
-          @click="toggleCatalog"
-        >
-          <LayoutGrid :size="16" /> Каталог
-        </button>
-      </div>
+          <a class="the-header__phone" href="tel:88123098288">
+            <Phone :size="18" />
+            <span>8 812 309-82-88</span>
+          </a>
 
-      <!-- Center: logo -->
-      <NuxtLink to="/" class="the-header__logo">Nexus</NuxtLink>
+          <NuxtLink class="the-header__cart-link" to="/cart">
+            <span class="the-header__cart-icon">
+              <ShoppingBag :size="18" />
+              <span v-if="cartStore.count" class="the-header__cart-count">{{
+                cartStore.count
+              }}</span>
+            </span>
+            <span>В корзине ({{ cartStore.count }} {{ pluralItems(cartStore.count) }})</span>
+          </NuxtLink>
 
-      <!-- Right: search + actions -->
-      <div class="the-header__right">
-        <!-- Search input (desktop) — opens overlay on focus -->
-        <div class="the-header__search" role="button" @click="uiStore.searchOpen = true">
-          <Search class="the-header__search-icon" :size="16" />
-          <span class="the-header__search-placeholder">Поиск товаров...</span>
+          <div class="the-header__socials">
+            <a
+              v-for="s in socials"
+              :key="s.label"
+              class="the-header__social"
+              :href="s.href"
+              :aria-label="s.label"
+            >
+              <component :is="s.icon" />
+            </a>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <!-- User -->
+    <!-- ── Main nav bar ───────────────────────────────────────────── -->
+    <div class="the-header__main">
+      <div class="the-header__main-inner container">
+        <!-- Mobile burger -->
         <button
-          :class="['the-header__action-btn', { 'the-header__action-btn--logged-in': authStore.isLoggedIn }]"
+          class="the-header__burger"
           type="button"
-          @click="handleUser"
+          aria-label="Меню"
+          @click="uiStore.menuOpen = true; uiStore.catalogOpen = false"
         >
-          <User :size="20" />
+          <Menu :size="22" />
         </button>
 
-        <!-- Favorites -->
-        <button
-          class="the-header__action-btn"
-          type="button"
-          @click="
-            authStore.isLoggedIn
-              ? router.push('/cabinet?section=favorites')
-              : (uiStore.authModalOpen = true)
-          "
-        >
-          <Heart :size="20" />
-          <span v-if="favoritesStore.count" class="the-header__badge">{{
-            favoritesStore.count
-          }}</span>
-        </button>
+        <nav class="the-header__nav the-header__nav--left">
+          <NuxtLink to="/promo" class="the-header__nav-link">
+            Сладкие дни
+            <span class="the-header__sale-badge">%</span>
+          </NuxtLink>
+          <button type="button" class="the-header__nav-link the-header__nav-link--caret">
+            Подарочные наборы
+            <ChevronDown :size="14" />
+          </button>
+          <NuxtLink to="/catalog" class="the-header__nav-link">Собрать набор</NuxtLink>
+        </nav>
 
-        <!-- Cart -->
-        <button class="the-header__action-btn" type="button" @click="handleCart">
-          <ShoppingCart :size="20" />
-          <span v-if="cartStore.count" class="the-header__badge">{{ cartStore.count }}</span>
-        </button>
+        <NuxtLink to="/" class="the-header__logo" aria-label="Macaron shop — на главную">
+          <LogoMacaron class="the-header__logo-img" />
+        </NuxtLink>
+
+        <nav class="the-header__nav the-header__nav--right">
+          <NuxtLink to="/promo" class="the-header__nav-link">Создать дизайн</NuxtLink>
+          <button type="button" class="the-header__nav-link the-header__nav-link--caret">
+            Компаниям
+            <ChevronDown :size="14" />
+          </button>
+          <button
+            type="button"
+            :class="[
+              'the-header__nav-link',
+              'the-header__nav-link--caret',
+              { 'the-header__nav-link--active': uiStore.catalogOpen },
+            ]"
+            @click="toggleCatalog"
+          >
+            Весь каталог
+            <ChevronDown :size="14" />
+          </button>
+        </nav>
+
+        <!-- Mobile cart -->
+        <NuxtLink class="the-header__mobile-cart" to="/cart" aria-label="Корзина">
+          <ShoppingBag :size="22" />
+          <span v-if="cartStore.count" class="the-header__cart-count">{{ cartStore.count }}</span>
+        </NuxtLink>
       </div>
     </div>
 
@@ -137,174 +200,243 @@ function onBackToLogin() {
   top: 0;
   z-index: $z-dropdown;
   background: $color-white;
-  border-bottom: 1px solid $color-gray-100;
 
-  &__inner {
-    display: flex;
-    align-items: center;
-    height: 64px;
-    gap: 12px;
-    position: relative;
-  }
+  // ── Top info-bar ──────────────────────────────────────────────
+  &__topbar {
+    display: none;
+    background: $color-header-top-bg;
 
-  &__left {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-
-    @include mixins.respond-to(md) {
-      flex: 1;
+    @include mixins.respond-to(lg) {
+      display: block;
     }
   }
 
-  &__logo {
-    font-size: $font-size-xl;
-    font-weight: $font-weight-bold;
-    color: $color-primary;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
-  &__right {
+  &__topbar-inner {
     display: flex;
     align-items: center;
-    gap: 4px;
-    flex: 1;
-    justify-content: flex-end;
+    justify-content: space-between;
+    gap: $spacing-6;
+    min-height: 48px;
+    padding-top: $spacing-2;
+    padding-bottom: $spacing-2;
   }
 
-  &__burger-btn {
-    width: 36px;
-    height: 36px;
+  &__toplinks {
+    display: flex;
+    align-items: center;
+    gap: $spacing-5;
+  }
+
+  &__toplink {
+    font-size: $font-size-sm;
+    color: $color-top-link;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-accent;
+    }
+  }
+
+  &__topinfo {
+    display: flex;
+    align-items: center;
+    gap: $spacing-6;
+  }
+
+  &__city,
+  &__phone,
+  &__cart-link {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-2;
+    font-size: $font-size-sm;
+    color: $color-top-contact;
+    background: none;
+    border: none;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color $transition-fast;
+
+    svg {
+      flex-shrink: 0;
+      color: $color-ink;
+    }
+
+    &:hover {
+      color: $color-accent;
+
+      svg {
+        color: $color-accent;
+      }
+    }
+  }
+
+  &__cart-icon {
+    position: relative;
+    display: inline-flex;
+  }
+
+  &__cart-count {
+    position: absolute;
+    top: -6px;
+    right: -7px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: $radius-md;
+    background: $color-accent;
+    color: $color-white;
+    border-radius: $radius-full;
+    font-size: 10px;
+    font-weight: $font-weight-bold;
+    line-height: 1;
+  }
+
+  &__socials {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+  }
+
+  &__social {
+    display: inline-flex;
+    color: $color-ink;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-accent;
+    }
+
+    svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  // ── Main nav bar ──────────────────────────────────────────────
+  &__main {
+    border-bottom: 1px solid $color-gray-100;
+  }
+
+  &__main-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-4;
+    min-height: 64px;
+
+    @include mixins.respond-to(lg) {
+      min-height: 150px;
+    }
+  }
+
+  &__nav {
+    display: none;
+    align-items: center;
+    gap: $spacing-6;
+
+    @include mixins.respond-to(lg) {
+      display: flex;
+    }
+  }
+
+  &__nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-1;
+    font-family: $font-family-base;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: $color-heading;
     background: none;
     border: none;
-    color: $color-gray-600;
+    text-decoration: none;
+    white-space: nowrap;
     cursor: pointer;
+    transition: color $transition-fast;
+
+    svg {
+      flex-shrink: 0;
+      transition: transform $transition-fast;
+    }
+
+    &:hover,
+    &--active {
+      color: $color-accent;
+    }
+
+    &--active svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__sale-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    margin-left: $spacing-1;
+    background: $color-accent;
+    color: $color-white;
+    border-radius: $radius-full;
+    font-size: 13px;
+    font-weight: $font-weight-semibold;
+    line-height: 1;
+  }
+
+  // Centered logo (absolute so flanking navs stay balanced)
+  &__logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: block;
+    line-height: 0;
+  }
+
+  &__logo-img {
+    width: 56px;
+    height: auto;
+    display: block;
+
+    @include mixins.respond-to(lg) {
+      width: 116px;
+    }
+  }
+
+  // Mobile-only controls
+  &__burger,
+  &__mobile-cart {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-md;
+    border: none;
+    background: none;
+    color: $color-heading;
+    cursor: pointer;
+    text-decoration: none;
     transition: background $transition-fast;
 
     &:hover {
       background: $color-gray-100;
-    }
-  }
-
-  &__catalog-btn {
-    display: none;
-
-    @include mixins.respond-to(md) {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: $radius-md;
-      font-size: $font-size-sm;
-      font-weight: $font-weight-medium;
-      cursor: pointer;
-      border: none;
-      background: none;
-      color: $color-gray-700;
-      transition:
-        background $transition-fast,
-        color $transition-fast;
-
-      &:hover,
-      &--active {
-        background: $color-gray-100;
-        color: $color-primary;
-      }
-    }
-  }
-
-  &__search {
-    display: none;
-
-    @include mixins.respond-to(md) {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1;
-      max-width: 220px;
-      height: 36px;
-      padding: 0 12px;
-      border: 1px solid $color-gray-200;
-      border-radius: $radius-md;
-      background: $color-gray-50;
-      cursor: text;
-      transition:
-        border-color $transition-fast,
-        background $transition-fast;
-
-      &:focus-within {
-        border-color: $color-primary;
-        background: $color-white;
-      }
     }
 
     @include mixins.respond-to(lg) {
-      max-width: 280px;
+      display: none;
     }
-  }
-
-  &__search-icon {
-    color: $color-gray-400;
-    flex-shrink: 0;
-  }
-
-  &__search-placeholder {
-    flex: 1;
-    font-size: $font-size-sm;
-    color: $color-gray-400;
-    user-select: none;
-  }
-
-  &__action-btn {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 10px;
-    border-radius: $radius-md;
-    border: none;
-    background: none;
-    font-size: 18px;
-    cursor: pointer;
-    color: $color-gray-700;
-    transition: background $transition-fast;
-
-    &:hover {
-      background: $color-gray-100;
-    }
-
-    &--search-mobile {
-      @include mixins.respond-to(md) {
-        display: none;
-      }
-    }
-
-    &--logged-in svg {
-      fill: $color-primary;
-      color: $color-primary;
-    }
-  }
-
-  &__badge {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    min-width: 14px;
-    height: 14px;
-    background: $color-primary;
-    color: $color-white;
-    border-radius: $radius-full;
-    font-size: 8px;
-    font-weight: $font-weight-bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 3px;
   }
 }
 </style>

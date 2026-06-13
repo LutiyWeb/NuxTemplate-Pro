@@ -24,6 +24,15 @@ $color-success: rgb(34 197 94);
 $color-warning: rgb(245 158 11);
 $color-danger: rgb(239 68 68);
 
+// Macaron-shop brand & header palette
+$color-accent: rgb(231 66 106); // sale / cart badge (#E7426A)
+$color-brand-sky: rgb(179 217 243); // logo disc (#B3D9F3)
+$color-ink: rgb(41 41 41); // dark neutral (#292929)
+$color-header-top-bg: rgb(247 235 229); // top info-bar background (#f7ebe5)
+$color-heading: rgb(43 20 20); // nav labels (#2b1414)
+$color-top-link: rgb(0 0 0 / 79%); // top-bar menu links
+$color-top-contact: rgb(0 0 0 / 88%); // top-bar contact text
+
 // Typography
 $font-family-base:
   'Inter',
