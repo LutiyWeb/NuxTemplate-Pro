@@ -54,6 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
     email: string
     password: string
     phone?: string
+    captchaToken: string
   }) {
     loading.value = true
     error.value = null
