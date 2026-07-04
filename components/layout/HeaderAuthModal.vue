@@ -14,6 +14,10 @@ const formError = ref('')
 const captchaToken = ref('')
 const captchaRef = ref<InstanceType<typeof AppCaptcha> | null>(null)
 
+watch(mode, () => {
+  captchaToken.value = ''
+})
+
 function onCaptchaVerify(token: string) {
   captchaToken.value = token
 }
@@ -30,7 +34,11 @@ async function submit() {
         formError.value = 'Заполните все поля'
         return
       }
-      await authStore.login(email.value, password.value)
+      if (!captchaToken.value) {
+        formError.value = 'Пройдите проверку капчи'
+        return
+      }
+      await authStore.login(email.value, password.value, captchaToken.value)
     } else {
       if (!email.value || !password.value || !firstName.value || !lastName.value) {
         formError.value = 'Заполните все поля'
@@ -89,7 +97,6 @@ async function submit() {
       <AppPasswordInput v-model="password" label="Пароль" placeholder="Минимум 8 символов" />
 
       <AppCaptcha
-        v-if="mode === 'register'"
         ref="captchaRef"
         @verify="onCaptchaVerify"
         @expired="onCaptchaExpired"

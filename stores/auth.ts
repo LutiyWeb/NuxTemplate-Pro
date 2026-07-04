@@ -32,11 +32,11 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('auth_user')
   }
 
-  async function login(email: string, password: string) {
+  async function login(email: string, password: string, captchaToken?: string) {
     loading.value = true
     error.value = null
     try {
-      const res = await apiClient.post('/api/auth/login', { email, password })
+      const res = await apiClient.post('/api/auth/login', { email, password, captchaToken })
       _save(res.data.data.token, res.data.data.user)
     } catch (err) {
       error.value = axios.isAxiosError(err)
@@ -54,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
     email: string
     password: string
     phone?: string
-    captchaToken: string
+    captchaToken?: string
   }) {
     loading.value = true
     error.value = null
@@ -71,11 +71,11 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function forgotPassword(email: string) {
+  async function forgotPassword(email: string, captchaToken?: string) {
     loading.value = true
     error.value = null
     try {
-      await apiClient.post('/api/auth/forgot-password', { email })
+      await apiClient.post('/api/auth/forgot-password', { email, captchaToken })
     } catch (err) {
       error.value = axios.isAxiosError(err)
         ? (err.response?.data?.error?.message ?? 'Ошибка отправки письма')

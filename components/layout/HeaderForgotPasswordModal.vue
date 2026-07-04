@@ -1,28 +1,51 @@
 <script setup lang="ts">
+import type AppCaptcha from '~/components/common/AppCaptcha.vue'
+
 const props = defineProps<{ open: boolean }>()
 const emit = defineEmits<{ 'update:open': [boolean]; 'back-to-login': [] }>()
 
 const authStore = useAuthStore()
 const toastStore = useToastStore()
 const email = ref('')
+const formError = ref('')
+const captchaToken = ref('')
+const captchaRef = ref<InstanceType<typeof AppCaptcha> | null>(null)
 
 watch(
   () => props.open,
   (val) => {
     if (!val) {
       email.value = ''
+      formError.value = ''
+      captchaToken.value = ''
       authStore.error = null
     }
   },
 )
 
+function onCaptchaVerify(token: string) {
+  captchaToken.value = token
+}
+
+function onCaptchaExpired() {
+  captchaToken.value = ''
+}
+
 async function submit() {
+  formError.value = ''
   if (!email.value) return
+  if (!captchaToken.value) {
+    formError.value = 'Пройдите проверку капчи'
+    return
+  }
   try {
-    await authStore.forgotPassword(email.value)
+    await authStore.forgotPassword(email.value, captchaToken.value)
     emit('update:open', false)
     toastStore.add(`Посилання для відновлення пароля надіслано на ${email.value}`, 'success')
-  } catch {}
+  } catch {
+    captchaToken.value = ''
+    captchaRef.value?.reset()
+  }
 }
 </script>
 
@@ -34,7 +57,15 @@ async function submit() {
     <form class="app-modal__form" @submit.prevent="submit">
       <AppInputText v-model="email" label="Email" placeholder="email@example.com" type="email" />
 
-      <p v-if="authStore.error" class="app-modal__error">{{ authStore.error }}</p>
+      <AppCaptcha
+        ref="captchaRef"
+        @verify="onCaptchaVerify"
+        @expired="onCaptchaExpired"
+      />
+
+      <p v-if="formError || authStore.error" class="app-modal__error">
+        {{ formError || authStore.error }}
+      </p>
 
       <AppButton
         type="submit"
