@@ -45,8 +45,8 @@ const emit = defineEmits<{ 'update:open': [boolean] }>()
 
   &__close {
     position: absolute;
-    top: 16px;
-    right: 16px;
+    top: 10px;
+    right: 10px;
     width: 32px;
     height: 32px;
     border-radius: $radius-full;

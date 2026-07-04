@@ -7,9 +7,7 @@ import type { Product } from '~/types/product'
 
 const route = useRoute()
 const cartStore = useCartStore()
-const favoritesStore = useFavoritesStore()
-const authStore = useAuthStore()
-const uiStore = useUiStore()
+const wishlistsStore = useWishlistsStore()
 
 const config = useRuntimeConfig()
 
@@ -43,7 +41,7 @@ const allImages = computed(() => {
   return [p.thumbnail, ...p.images].filter(Boolean) as string[]
 })
 
-const isFav = computed(() => (product.value ? favoritesStore.has(product.value.id) : false))
+const isFav = computed(() => (product.value ? wishlistsStore.has(product.value.id) : false))
 
 const originalPrice = computed(() => {
   const p = product.value
@@ -101,11 +99,7 @@ function notifyWhenAvailable() {
 }
 
 function toggleFav() {
-  if (!authStore.isLoggedIn) {
-    uiStore.authModalOpen = true
-    return
-  }
-  if (product.value) favoritesStore.toggle(product.value.id)
+  if (product.value) wishlistsStore.toggle(product.value.id)
 }
 
 onBeforeUnmount(() => {

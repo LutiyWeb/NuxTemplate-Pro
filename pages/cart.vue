@@ -4,7 +4,7 @@ import { ShoppingCart, Heart, Trash2 } from 'lucide-vue-next'
 useSeoMeta({ title: 'Корзина — Nexus Commerce' })
 
 const cartStore = useCartStore()
-const favoritesStore = useFavoritesStore()
+const wishlistsStore = useWishlistsStore()
 const productsStore = useProductsStore()
 
 const selectedIds = ref<number[]>([])
@@ -32,7 +32,7 @@ function removeSelected() {
 
 function addSelectedToFavorites() {
   selectedIds.value.forEach((id) => {
-    if (!favoritesStore.has(id)) favoritesStore.toggle(id)
+    if (!wishlistsStore.has(id)) wishlistsStore.toggle(id)
   })
   selectedIds.value = []
 }

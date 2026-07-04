@@ -37,7 +37,8 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
     try {
       const res = await apiClient.post('/api/auth/login', { email, password, captchaToken })
-      _save(res.data.data.token, res.data.data.user)
+      _save(res.data.data.accessToken, res.data.data.user)
+      await useWishlistsStore().syncGuest()
     } catch (err) {
       error.value = axios.isAxiosError(err)
         ? (err.response?.data?.error?.message ?? 'Ошибка входа')
@@ -60,7 +61,8 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
     try {
       const res = await apiClient.post('/api/auth/register', data)
-      _save(res.data.data.token, res.data.data.user)
+      _save(res.data.data.accessToken, res.data.data.user)
+      await useWishlistsStore().syncGuest()
     } catch (err) {
       error.value = axios.isAxiosError(err)
         ? (err.response?.data?.error?.message ?? 'Ошибка регистрации')

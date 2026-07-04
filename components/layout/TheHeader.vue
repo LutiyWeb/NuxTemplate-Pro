@@ -3,7 +3,7 @@ import { Menu, Search, LayoutGrid, User, Heart, ShoppingCart } from 'lucide-vue-
 
 const authStore = useAuthStore()
 const cartStore = useCartStore()
-const favoritesStore = useFavoritesStore()
+const wishlistsStore = useWishlistsStore()
 const uiStore = useUiStore()
 const router = useRouter()
 const route = useRoute()
@@ -102,8 +102,8 @@ function onBackToLogin() {
           "
         >
           <Heart :size="20" />
-          <span v-if="favoritesStore.count" class="the-header__badge">{{
-            favoritesStore.count
+          <span v-if="wishlistsStore.count" class="the-header__badge">{{
+            wishlistsStore.count
           }}</span>
         </button>
 

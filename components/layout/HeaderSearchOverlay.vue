@@ -242,7 +242,6 @@ watch(
 )
 
 // ─── Trending slider nav ──────────────────────────────────────────────────────
-const { isSm } = useBreakpoints()
 const trendingSwiper = ref<SwiperType | null>(null)
 const trendingBegin = ref(true)
 const trendingEnd = ref(false)
@@ -352,13 +351,11 @@ onBeforeUnmount(() => {
                   >
                   <div class="search-modal__trending-controls">
                     <AppArrow
-                      v-if="isSm"
                       direction="left"
                       :disabled="trendingBegin"
                       @click="trendingSwiper?.slidePrev()"
                     />
                     <AppArrow
-                      v-if="isSm"
                       direction="right"
                       :disabled="trendingEnd"
                       @click="trendingSwiper?.slideNext()"
@@ -525,6 +522,9 @@ onBeforeUnmount(() => {
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
 .search-modal {
+  --arrow-left-position: 12px;
+  --arrow-right-position: 12px;
+
   position: fixed;
   inset: 0;
   z-index: $z-modal-overlay;
