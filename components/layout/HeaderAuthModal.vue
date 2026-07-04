@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type AppCaptcha from '~/components/common/AppCaptcha.vue'
+
 defineProps<{ open: boolean }>()
 const emit = defineEmits<{ 'update:open': [boolean]; success: []; 'forgot-password': [] }>()
 
@@ -9,6 +11,20 @@ const password = ref('')
 const firstName = ref('')
 const lastName = ref('')
 const formError = ref('')
+const captchaToken = ref('')
+const captchaRef = ref<InstanceType<typeof AppCaptcha> | null>(null)
+
+watch(mode, () => {
+  captchaToken.value = ''
+})
+
+function onCaptchaVerify(token: string) {
+  captchaToken.value = token
+}
+
+function onCaptchaExpired() {
+  captchaToken.value = ''
+}
 
 async function submit() {
   formError.value = ''
@@ -18,7 +34,11 @@ async function submit() {
         formError.value = 'Заполните все поля'
         return
       }
-      await authStore.login(email.value, password.value)
+      if (!captchaToken.value) {
+        formError.value = 'Пройдите проверку капчи'
+        return
+      }
+      await authStore.login(email.value, password.value, captchaToken.value)
     } else {
       if (!email.value || !password.value || !firstName.value || !lastName.value) {
         formError.value = 'Заполните все поля'
@@ -28,16 +48,24 @@ async function submit() {
         formError.value = 'Пароль минимум 8 символов'
         return
       }
+      if (!captchaToken.value) {
+        formError.value = 'Пройдите проверку капчи'
+        return
+      }
       await authStore.register({
         email: email.value,
         password: password.value,
         firstName: firstName.value,
         lastName: lastName.value,
+        captchaToken: captchaToken.value,
       })
     }
     emit('update:open', false)
     emit('success')
-  } catch {}
+  } catch {
+    captchaToken.value = ''
+    captchaRef.value?.reset()
+  }
 }
 </script>
 
@@ -67,6 +95,12 @@ async function submit() {
       </template>
       <AppInputText v-model="email" label="Email" placeholder="email@example.com" />
       <AppPasswordInput v-model="password" label="Пароль" placeholder="Минимум 8 символов" />
+
+      <AppCaptcha
+        ref="captchaRef"
+        @verify="onCaptchaVerify"
+        @expired="onCaptchaExpired"
+      />
 
       <p v-if="formError || authStore.error" class="app-modal__error">
         {{ formError || authStore.error }}
