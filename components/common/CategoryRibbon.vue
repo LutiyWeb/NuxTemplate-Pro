@@ -154,14 +154,14 @@ onUnmounted(() => {
     top: 50%;
     transform: translateY(-50%);
     box-shadow: $shadow-sm;
-    opacity: 0;
+    // opacity: 0;
     transition: opacity $transition-fast;
 
     &--left {
-      left: 0;
+      left: var(--arrow-left-position, 0);
     }
     &--right {
-      right: 0;
+      right: var(--arrow-right-position, 0);
     }
   }
 

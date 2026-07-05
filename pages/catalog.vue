@@ -212,8 +212,10 @@ const breadcrumbs = computed(() => {
 <template>
   <div class="catalog container">
     <div class="catalog__head">
-      <AppBreadcrumbs :crumbs="breadcrumbs" class="catalog__breadcrumbs" />
-      <TheTitle tag="h1">{{ pageTitle }}</TheTitle>
+      <div class="catalog__title-row">
+        <TheTitle tag="h1">{{ pageTitle }}</TheTitle>
+        <AppBreadcrumbs :crumbs="breadcrumbs" class="catalog__breadcrumbs" />
+      </div>
       <div class="catalog__mobile-actions">
         <button class="catalog__action-btn" type="button" @click="isMobileFiltersOpen = true">
           Фільтри
@@ -376,7 +378,14 @@ const breadcrumbs = computed(() => {
   padding-block: 32px;
 
   &__breadcrumbs {
-    margin-bottom: 8px;
+    flex-shrink: 0;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
   }
 
   &__head {

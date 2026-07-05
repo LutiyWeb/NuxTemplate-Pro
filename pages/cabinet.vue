@@ -375,10 +375,6 @@ function logout() {
   }
 
   &__main {
-    background: $color-white;
-    border: 1px solid $color-gray-100;
-    border-radius: $radius-xl;
-    padding: 28px;
     min-height: 400px;
   }
 }

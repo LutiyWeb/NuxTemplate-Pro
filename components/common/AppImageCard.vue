@@ -11,9 +11,7 @@ withDefaults(defineProps<Props>(), { loading: false })
 const NuxtLink = resolveComponent('NuxtLink')
 
 const cartStore = useCartStore()
-const favoritesStore = useFavoritesStore()
-const authStore = useAuthStore()
-const uiStore = useUiStore()
+const wishlistsStore = useWishlistsStore()
 const toastStore = useToastStore()
 
 const isOutOfStock = (product: Product) => product.stock === 0
@@ -29,11 +27,7 @@ function handleCartClick(product: Product) {
 }
 
 function handleFavClick(product: Product) {
-  if (!authStore.isLoggedIn) {
-    uiStore.authModalOpen = true
-    return
-  }
-  favoritesStore.toggle(product.id)
+  wishlistsStore.toggle(product.id)
 }
 </script>
 
@@ -78,11 +72,11 @@ function handleFavClick(product: Product) {
 
       <!-- Fav button — always visible -->
       <button
-        :class="['image-card__fav', { 'image-card__fav--active': favoritesStore.has(product.id) }]"
+        :class="['image-card__fav', { 'image-card__fav--active': wishlistsStore.has(product.id) }]"
         type="button"
         @click.prevent="handleFavClick(product)"
       >
-        <Heart :size="14" :fill="favoritesStore.has(product.id) ? 'currentColor' : 'none'" />
+        <Heart :size="14" :fill="wishlistsStore.has(product.id) ? 'currentColor' : 'none'" />
       </button>
 
       <!-- Info panel — slides up on hover -->

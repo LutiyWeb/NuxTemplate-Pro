@@ -4,7 +4,7 @@ import { ShoppingCart, Heart, Trash2 } from 'lucide-vue-next'
 useSeoMeta({ title: 'Корзина — Nexus Commerce' })
 
 const cartStore = useCartStore()
-const favoritesStore = useFavoritesStore()
+const wishlistsStore = useWishlistsStore()
 const productsStore = useProductsStore()
 
 const selectedIds = ref<number[]>([])
@@ -32,7 +32,7 @@ function removeSelected() {
 
 function addSelectedToFavorites() {
   selectedIds.value.forEach((id) => {
-    if (!favoritesStore.has(id)) favoritesStore.toggle(id)
+    if (!wishlistsStore.has(id)) wishlistsStore.toggle(id)
   })
   selectedIds.value = []
 }
@@ -52,13 +52,12 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
 
 <template>
   <div class="cart-page container">
-    <AppBreadcrumbs
-      :crumbs="[{ label: 'Главная', to: '/' }, { label: 'Корзина' }]"
-      class="cart-page__breadcrumbs"
-    />
-    <h1 class="cart-page__heading">
-      Корзина <span class="cart-page__count">{{ cartStore.count }}</span>
-    </h1>
+    <div class="cart-page__title-row">
+      <h1 class="cart-page__heading">
+        Корзина <span class="cart-page__count">{{ cartStore.count }}</span>
+      </h1>
+      <AppBreadcrumbs :crumbs="[{ label: 'Главная', to: '/' }, { label: 'Корзина' }]" />
+    </div>
 
     <!-- Empty -->
     <AppEmpty
@@ -174,8 +173,11 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
   flex-direction: column;
   gap: 40px;
 
-  &__breadcrumbs {
-    margin-bottom: -24px;
+  &__title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
   }
 
   &__heading {

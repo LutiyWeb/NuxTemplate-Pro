@@ -3,7 +3,7 @@ import { Menu, Search, LayoutGrid, User, Heart, ShoppingCart } from 'lucide-vue-
 
 const authStore = useAuthStore()
 const cartStore = useCartStore()
-const favoritesStore = useFavoritesStore()
+const wishlistsStore = useWishlistsStore()
 const uiStore = useUiStore()
 const router = useRouter()
 const route = useRoute()
@@ -95,15 +95,11 @@ function onBackToLogin() {
         <button
           class="the-header__action-btn"
           type="button"
-          @click="
-            authStore.isLoggedIn
-              ? router.push('/cabinet?section=favorites')
-              : (uiStore.authModalOpen = true)
-          "
+          @click="router.push(authStore.isLoggedIn ? '/cabinet?section=favorites' : '/wishlist')"
         >
           <Heart :size="20" />
-          <span v-if="favoritesStore.count" class="the-header__badge">{{
-            favoritesStore.count
+          <span v-if="wishlistsStore.count" class="the-header__badge">{{
+            wishlistsStore.count
           }}</span>
         </button>
 

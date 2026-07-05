@@ -6,7 +6,7 @@ const emit = defineEmits<{ 'update:open': [boolean] }>()
 
 const router = useRouter()
 const cartStore = useCartStore()
-const favoritesStore = useFavoritesStore()
+const wishlistsStore = useWishlistsStore()
 const productsStore = useProductsStore()
 
 const stopNavWatch = router.afterEach(() => {
@@ -57,7 +57,7 @@ function removeSelected() {
 
 function addSelectedToFavorites() {
   selectedIds.value.forEach((id) => {
-    if (!favoritesStore.has(id)) favoritesStore.toggle(id)
+    if (!wishlistsStore.has(id)) wishlistsStore.toggle(id)
   })
   selectedIds.value = []
 }
