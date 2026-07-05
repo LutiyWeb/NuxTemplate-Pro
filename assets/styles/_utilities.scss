@@ -30,3 +30,19 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+.swiper-nav-bg {
+  .swiper-button-prev,
+  .swiper-button-next {
+    --swiper-navigation-sides-offset: 22px;
+    --swiper-navigation-size: 14px;
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -12px;
+      z-index: -1;
+      background-color: rgb(255 255 255 / 0.6);
+      border-radius: $radius-md;
+    }
+  }
+}

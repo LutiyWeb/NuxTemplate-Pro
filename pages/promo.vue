@@ -327,7 +327,7 @@ const bentoSections = computed(() =>
   &__banner-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: 220px;
+    grid-auto-rows: 170px;
     gap: 12px;
   }
 

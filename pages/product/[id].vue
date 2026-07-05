@@ -2,7 +2,7 @@
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Thumbs, Navigation } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
-import { Heart, ShoppingCart, Minus, Plus, Star, Package, Shield, Truck } from 'lucide-vue-next'
+import { Heart, ShoppingCart, Minus, Plus, Star, Package, Shield, Truck, X } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
 const route = useRoute()
@@ -34,6 +34,29 @@ useSeoMeta({
 const { isMd } = useBreakpoints()
 const thumbsSwiper = ref<SwiperType | null>(null)
 const qty = ref(1)
+
+const lightboxOpen = ref(false)
+const lightboxActiveIndex = ref(0)
+const lightboxThumbsSwiper = ref<SwiperType | null>(null)
+
+function openLightbox(index: number) {
+  lightboxActiveIndex.value = index
+  lightboxOpen.value = true
+}
+
+function closeLightbox() {
+  lightboxOpen.value = false
+  lightboxThumbsSwiper.value = null
+}
+
+function handleLightboxKey(e: KeyboardEvent) {
+  if (e.key === 'Escape') closeLightbox()
+}
+
+watch(lightboxOpen, (open) => {
+  if (open) window.addEventListener('keydown', handleLightboxKey)
+  else window.removeEventListener('keydown', handleLightboxKey)
+})
 
 const allImages = computed(() => {
   const p = product.value
@@ -104,6 +127,7 @@ function toggleFav() {
 
 onBeforeUnmount(() => {
   thumbsSwiper.value = null
+  window.removeEventListener('keydown', handleLightboxKey)
 })
 </script>
 
@@ -167,9 +191,14 @@ onBeforeUnmount(() => {
             :modules="[Thumbs, Navigation]"
             :thumbs="isMd ? { swiper: thumbsSwiper } : undefined"
             navigation
-            class="product-detail__main-swiper"
+            class="product-detail__main-swiper swiper-nav-bg"
           >
-            <SwiperSlide v-for="(img, i) in allImages" :key="i">
+            <SwiperSlide
+              v-for="(img, i) in allImages"
+              :key="i"
+              class="product-detail__main-slide"
+              @click="openLightbox(i)"
+            >
               <AppImage
                 :src="img"
                 :alt="product.title"
@@ -361,6 +390,46 @@ onBeforeUnmount(() => {
       </div>
     </div>
   </div>
+
+  <!-- Fullscreen gallery lightbox -->
+  <Teleport to="body">
+    <div v-if="lightboxOpen" class="product-lightbox">
+      <button class="product-lightbox__close" type="button" @click="closeLightbox">
+        <X :size="20" />
+      </button>
+      <div class="product-lightbox__main">
+        <Swiper
+          :modules="[Thumbs, Navigation]"
+          :initial-slide="lightboxActiveIndex"
+          :thumbs="{ swiper: lightboxThumbsSwiper }"
+          navigation
+          class="product-lightbox__swiper"
+        >
+          <SwiperSlide v-for="(img, i) in allImages" :key="i">
+            <img :src="img" :alt="product?.title" class="product-lightbox__img" />
+          </SwiperSlide>
+        </Swiper>
+      </div>
+      <div class="product-lightbox__thumb-strip">
+        <Swiper
+          :modules="[Thumbs]"
+          slides-per-view="auto"
+          :space-between="8"
+          watch-slides-progress
+          class="product-lightbox__thumb-swiper"
+          @swiper="lightboxThumbsSwiper = $event"
+        >
+          <SwiperSlide
+            v-for="(img, i) in allImages"
+            :key="i"
+            class="product-lightbox__thumb-slide"
+          >
+            <img :src="img" class="product-lightbox__thumb-img" />
+          </SwiperSlide>
+        </Swiper>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <style lang="scss">
@@ -424,6 +493,29 @@ onBeforeUnmount(() => {
     overflow: hidden;
     background: $color-gray-50;
     --ai-ratio: 4/3;
+
+    :deep(.swiper-button-prev),
+    :deep(.swiper-button-next) {
+      width: 36px;
+      height: 36px;
+      border-radius: $radius-md;
+      background: rgb(255 255 255 / 82%);
+      backdrop-filter: blur(4px);
+      color: $color-gray-600;
+      transition: color $transition-fast;
+
+      &::after {
+        font-size: 13px;
+      }
+
+      &:hover {
+        color: $color-gray-800;
+      }
+    }
+  }
+
+  &__main-slide {
+    cursor: zoom-in;
   }
 
   &__thumbs {
@@ -769,6 +861,102 @@ onBeforeUnmount(() => {
     border: none;
     font-size: inherit;
     padding: 0;
+  }
+}
+
+.product-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgb(0 0 0 / 93%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 56px 24px 24px;
+
+  &__close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-full;
+    background: rgb(255 255 255 / 12%);
+    color: $color-white;
+    cursor: pointer;
+    transition: background $transition-fast;
+    z-index: 1;
+
+    &:hover {
+      background: rgb(255 255 255 / 25%);
+    }
+  }
+
+  &__main {
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__swiper {
+    width: 100%;
+    height: 100%;
+    --swiper-navigation-size: 20px;
+
+    :deep(.swiper-button-prev),
+    :deep(.swiper-button-next) {
+      width: 40px;
+      height: 40px;
+      border-radius: $radius-md;
+      background: rgb(255 255 255 / 12%);
+      backdrop-filter: blur(4px);
+      color: $color-white;
+      transition:
+        color $transition-fast,
+        background $transition-fast;
+
+      &::after {
+        font-size: 14px;
+      }
+
+      &:hover {
+        background: rgb(255 255 255 / 22%);
+        color: rgb(255 255 255 / 70%);
+      }
+    }
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  &__thumb-strip {
+    flex-shrink: 0;
+  }
+
+  &__thumb-slide {
+    width: 72px !important;
+    height: 72px;
+  }
+
+  &__thumb-img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: $radius-md;
+    border: 2px solid rgb(255 255 255 / 20%);
+    cursor: pointer;
+    display: block;
+    transition: border-color $transition-fast;
+
+    .swiper-slide-thumb-active & {
+      border-color: $color-white;
+    }
   }
 }
 </style>

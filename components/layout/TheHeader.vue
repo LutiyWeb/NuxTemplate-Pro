@@ -95,11 +95,7 @@ function onBackToLogin() {
         <button
           class="the-header__action-btn"
           type="button"
-          @click="
-            authStore.isLoggedIn
-              ? router.push('/cabinet?section=favorites')
-              : (uiStore.authModalOpen = true)
-          "
+          @click="router.push(authStore.isLoggedIn ? '/cabinet?section=favorites' : '/wishlist')"
         >
           <Heart :size="20" />
           <span v-if="wishlistsStore.count" class="the-header__badge">{{

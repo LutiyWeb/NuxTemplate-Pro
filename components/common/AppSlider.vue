@@ -189,15 +189,17 @@ onBeforeUnmount(() => {
     :deep(.swiper-button-next) {
       width: 20px;
       height: 20px;
-      padding: 14px;
+      padding: 8px;
       box-sizing: content-box;
-      transition: opacity $transition-fast;
+      border-radius: $radius-md;
+      transition: color $transition-fast;
 
       &::after {
         font-weight: 700;
       }
+
       &:hover {
-        opacity: 0.6;
+        color: $color-gray-800;
       }
     }
 
