@@ -31,11 +31,13 @@
   }
 }
 
-.swiper-nav-bg {
+.swiper-nav-image {
   .swiper-button-prev,
   .swiper-button-next {
     --swiper-navigation-sides-offset: 22px;
     --swiper-navigation-size: 14px;
+    transition: color $transition-fast;
+
     &::before {
       content: '';
       position: absolute;
@@ -43,6 +45,15 @@
       z-index: -1;
       background-color: rgb(255 255 255 / 0.6);
       border-radius: $radius-md;
+      transition: background-color $transition-fast;
+    }
+
+    &:hover {
+      color: $color-gray-900;
+
+      &::before {
+        background-color: rgb(255 255 255 / 0.85);
+      }
     }
   }
 }

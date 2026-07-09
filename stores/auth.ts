@@ -103,6 +103,20 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function refresh(): Promise<boolean> {
+    try {
+      const res = await $fetch<{ data: { user: User; accessToken: string } }>(
+        `${config.public.apiBase}/api/auth/refresh`,
+        { method: 'POST', credentials: 'include' },
+      )
+      _save(res.data.accessToken, res.data.user)
+      return true
+    } catch {
+      _clear()
+      return false
+    }
+  }
+
   function logout() {
     _clear()
   }
@@ -133,6 +147,7 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     forgotPassword,
     resetPassword,
+    refresh,
     logout,
     deleteAccount,
   }
