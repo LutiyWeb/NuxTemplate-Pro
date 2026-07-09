@@ -5,55 +5,61 @@ const emit = defineEmits<{
   'update:perPage': [number]
 }>()
 
+const sortModel = computed({
+  get: () => props.sort,
+  set: (val) => emit('update:sort', val),
+})
+
+const perPageModel = computed({
+  get: () => props.perPage,
+  set: (val) => emit('update:perPage', val),
+})
+
 const sortOptions = [
   { label: 'Новинки', value: 'newest' },
-  { label: 'Цена: по возрастанию', value: 'price_asc' },
-  { label: 'Цена: по убыванию', value: 'price_desc' },
-  { label: 'По рейтингу', value: 'rating' },
+  { label: 'Ціна: від дешевих', value: 'price_asc' },
+  { label: 'Ціна: від дорогих', value: 'price_desc' },
+  { label: 'За рейтингом', value: 'rating' },
 ]
 
-const perPageOptions = [20, 40, 60]
+const perPageOptions = [
+  { label: '20 на сторінці', value: 20 },
+  { label: '40 на сторінці', value: 40 },
+  { label: '60 на сторінці', value: 60 },
+]
 </script>
 
 <template>
   <div class="catalog-toolbar">
-    <select
-      :value="sort"
-      class="catalog-toolbar__select"
-      @change="emit('update:sort', ($event.target as HTMLSelectElement).value)"
-    >
-      <option v-for="opt in sortOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-    </select>
-
-    <select
-      :value="perPage"
-      class="catalog-toolbar__select"
-      @change="emit('update:perPage', Number(($event.target as HTMLSelectElement).value))"
-    >
-      <option v-for="n in perPageOptions" :key="n" :value="n">{{ n }} на странице</option>
-    </select>
+    <Dropdown
+      v-model="sortModel"
+      :options="sortOptions"
+      option-label="label"
+      option-value="value"
+      class="catalog-toolbar__dropdown"
+    />
+    <Dropdown
+      v-model="perPageModel"
+      :options="perPageOptions"
+      option-label="label"
+      option-value="value"
+      class="catalog-toolbar__dropdown"
+    />
   </div>
 </template>
 
 <style lang="scss">
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .catalog-toolbar {
   display: flex;
   gap: 12px;
   align-items: center;
-  margin-bottom: 16px;
+  flex-shrink: 0;
 
-  &__select {
-    padding: 8px 12px;
-    border: 1px solid $color-gray-200;
-    border-radius: $radius-md;
+  &__dropdown {
     font-size: $font-size-sm;
     font-family: $font-family-base;
-    color: $color-gray-700;
-    cursor: pointer;
-    outline: none;
-    transition: border-color $transition-fast;
-
-    &:focus { border-color: $color-primary; }
   }
 }
 </style>

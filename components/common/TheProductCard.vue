@@ -1,87 +1,141 @@
 <script setup lang="ts">
-import type { Product } from '~/types/product'
 import { ShoppingCart, Heart } from 'lucide-vue-next'
+import type { Product } from '~/types/product'
 
-interface Props { product?: Product; loading?: boolean }
+interface Props {
+  product?: Product
+  loading?: boolean
+}
 withDefaults(defineProps<Props>(), { loading: false })
 
 const NuxtLink = resolveComponent('NuxtLink')
 
 const cartStore = useCartStore()
-const favoritesStore = useFavoritesStore()
-const authStore = useAuthStore()
-const uiStore = useUiStore()
+const wishlistsStore = useWishlistsStore()
+const toastStore = useToastStore()
 
-const toastVisible = ref(false)
-let toastTimer: ReturnType<typeof setTimeout> | null = null
+const LABEL_MAP: Record<string, string> = {
+  new: 'Новинка',
+  sale: 'Акція',
+  hit: 'Хіт',
+}
+
+const isOutOfStock = (product: Product) => product.stock === 0
+
+function getHoverImage(product: Product): string | null {
+  if (!product.images?.length) return null
+  return product.images.find((img) => img !== product.thumbnail) ?? null
+}
 
 function handleCartClick(product: Product) {
   cartStore.add(product)
-  toastVisible.value = true
-  if (toastTimer) clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => { toastVisible.value = false }, 2000)
+  toastStore.add('Товар додано до кошика', 'success')
 }
 
 function handleFavClick(product: Product) {
-  if (!authStore.isLoggedIn) { uiStore.authModalOpen = true; return }
-  favoritesStore.toggle(product.id)
+  wishlistsStore.toggle(product.id)
 }
-
-onUnmounted(() => { if (toastTimer) clearTimeout(toastTimer) })
 </script>
 
 <template>
   <component
     :is="!loading && product ? NuxtLink : 'article'"
-    v-bind="!loading && product ? { to: `/product/${product.id}` } : {}"
+    v-bind="
+      !loading && product
+        ? { to: isOutOfStock(product) ? `/product/${product.id}?oos=1` : `/product/${product.id}` }
+        : {}
+    "
     :class="['product-card', { 'product-card--loading': loading }]"
   >
-    <div class="product-card__media">
+    <div
+      :class="[
+        'product-card__media',
+        { 'product-card__media--oos': !loading && product && isOutOfStock(product) },
+      ]"
+    >
       <div v-if="loading" class="product-card__shimmer product-card__shimmer--image" />
-      <img v-else-if="product?.thumbnail" :src="product.thumbnail" :alt="product.title" loading="lazy" />
+      <AppImage
+        v-else-if="product?.thumbnail"
+        :src="product.thumbnail"
+        :alt="product.title"
+        :sizes="{ mobile: { w: 240, h: 360 }, desktop: { w: 320, h: 480 } }"
+      />
+
+      <div
+        v-if="!loading && product && getHoverImage(product) && !isOutOfStock(product)"
+        class="product-card__hover-img"
+        :style="{ backgroundImage: `url(${getHoverImage(product)})` }"
+      />
+
+      <div v-if="!loading && product && isOutOfStock(product)" class="product-card__oos">
+        <span class="product-card__oos-badge">Немає в наявності</span>
+      </div>
+
+      <div v-if="!loading && product?.labels?.length" class="product-card__labels">
+        <span
+          v-for="label in product.labels"
+          :key="label"
+          :class="['product-card__label', `product-card__label--${label}`]"
+        >
+          {{ LABEL_MAP[label] ?? label }}
+        </span>
+      </div>
+
+      <button
+        v-if="!loading && product"
+        :class="[
+          'product-card__fav-btn',
+          { 'product-card__fav-btn--active': wishlistsStore.has(product.id) },
+        ]"
+        type="button"
+        @click.prevent="handleFavClick(product)"
+      >
+        <Heart :size="14" :fill="wishlistsStore.has(product.id) ? 'currentColor' : 'none'" />
+      </button>
+
+      <button
+        v-if="!loading && product && !isOutOfStock(product)"
+        class="product-card__cart-btn"
+        type="button"
+        @click.prevent="handleCartClick(product)"
+      >
+        <ShoppingCart :size="15" />
+        Додати до кошика
+      </button>
     </div>
 
     <div class="product-card__body">
       <template v-if="loading">
         <div class="product-card__shimmer product-card__shimmer--badge" />
         <div class="product-card__shimmer product-card__shimmer--title" />
-        <div class="product-card__shimmer product-card__shimmer--desc" />
-        <div class="product-card__shimmer product-card__shimmer--footer" />
+        <div class="product-card__shimmer product-card__shimmer--price" />
       </template>
       <template v-else-if="product">
-        <span class="product-card__category">{{ product.category }}</span>
         <h3 class="product-card__title">{{ product.title }}</h3>
-        <p class="product-card__desc">{{ product.description }}</p>
-        <div class="product-card__footer">
-          <span class="product-card__rating">★ {{ product.rating }}</span>
-          <span class="product-card__price">${{ product.price }}</span>
+        <div class="product-card__price-row">
+          <div class="product-card__prices">
+            <span
+              :class="[
+                'product-card__price',
+                { 'product-card__price--discounted': product.compareAtPrice },
+              ]"
+            >
+              ${{ product.price }}
+            </span>
+            <span v-if="product.compareAtPrice" class="product-card__compare-price">
+              ${{ product.compareAtPrice }}
+            </span>
+          </div>
+          <span v-if="product.category" class="product-card__category">{{ product.category }}</span>
         </div>
       </template>
-    </div>
-
-    <!-- Fav button — always visible -->
-    <button
-      v-if="!loading && product"
-      :class="['product-card__fav-btn', { 'product-card__fav-btn--active': favoritesStore.has(product.id) }]"
-      type="button"
-      @click.prevent="handleFavClick(product)"
-    >
-      <Heart :size="14" :fill="favoritesStore.has(product.id) ? 'currentColor' : 'none'" />
-    </button>
-
-    <div v-if="!loading && product" class="product-card__overlay">
-      <p v-if="toastVisible" class="product-card__toast">Товар добавлен в корзину</p>
-      <div class="product-card__actions">
-        <span class="product-card__cta">Подробнее</span>
-        <button class="product-card__cart-btn" type="button" @click.prevent="handleCartClick(product)">
-          <ShoppingCart :size="16" />
-        </button>
-      </div>
     </div>
   </component>
 </template>
 
 <style lang="scss">
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .product-card {
   position: relative;
   display: flex;
@@ -90,98 +144,113 @@ onUnmounted(() => { if (toastTimer) clearTimeout(toastTimer) })
   height: 100%;
   border-radius: $radius-xl;
   background: $color-white;
-  box-shadow:
-    -6px 0 16px -6px rgb(0 0 0 / 8%),
-    6px 0 16px -6px rgb(0 0 0 / 8%),
-    0 8px 20px -4px rgb(0 0 0 / 10%);
+  box-shadow: $shadow-card;
   overflow: hidden;
   cursor: pointer;
-  transition: box-shadow $transition-base, transform $transition-base;
+  transition:
+    box-shadow $transition-base,
+    transform $transition-base;
   text-decoration: none;
   color: inherit;
 
   &:hover:not(&--loading) {
-    box-shadow:
-      -6px 0 24px -6px rgb(0 0 0 / 12%),
-      6px 0 24px -6px rgb(0 0 0 / 12%),
-      0 14px 28px -4px rgb(0 0 0 / 16%);
+    box-shadow: $shadow-card-hover;
     transform: translateY(-3px);
   }
 
   &__media {
-    aspect-ratio: 15 / 7;
+    position: relative;
+    aspect-ratio: 5 / 5.1;
     background: $color-gray-100;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-
-    img { width: 100%; height: 100%; object-fit: cover; }
+    --ai-height: 100%;
   }
 
-  &__body {
+  &__hover-img {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: scale(1.05);
+    transition:
+      opacity 0.5s ease,
+      transform 0.5s ease;
+    z-index: 1;
+    background-size: cover;
+    background-position: center;
+  }
+
+  &:hover &__hover-img {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &__media--oos {
+    filter: grayscale(60%);
+  }
+
+  &__oos {
+    position: absolute;
+    inset: 0;
     display: flex;
-    flex-direction: column;
-    flex: 1;
-    gap: 8px;
-    padding: 16px;
+    align-items: center;
+    justify-content: center;
+    background: rgb(0 0 0 / 28%);
+    z-index: 3;
   }
 
-  &__category {
+  &__oos-badge {
+    padding: 6px 14px;
+    background: $color-white;
+    color: $color-gray-700;
     font-size: $font-size-xs;
     font-weight: $font-weight-semibold;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: $color-primary;
+    border-radius: $radius-full;
+    letter-spacing: 0.03em;
   }
 
-  &__title {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    font-size: $font-size-base;
-    font-weight: $font-weight-semibold;
-    color: $color-gray-900;
-    margin: 0;
-  }
-
-  &__desc {
-    font-size: $font-size-sm;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    color: $color-gray-500;
-    margin: 0;
-  }
-
-  &__footer {
+  &__labels {
+    position: absolute;
+    top: 10px;
+    left: 10px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
-    padding-top: 12px;
-    border-top: 1px solid $color-gray-100;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 2;
   }
 
-  &__rating {
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    color: $color-warning;
-  }
+  &__label {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: $radius-sm;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.03em;
+    background: $color-gray-200;
+    color: $color-gray-600;
 
-  &__price {
-    font-size: $font-size-base;
-    font-weight: $font-weight-bold;
-    color: $color-gray-900;
+    &--new {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+    &--sale {
+      background: #fee2e2;
+      color: #c0392b;
+    }
+    &--hit {
+      background: #fef3c7;
+      color: #b45309;
+    }
   }
 
   &__fav-btn {
     position: absolute;
     top: 8px;
     right: 8px;
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border-radius: $radius-full;
     background: $color-white;
     border: 1px solid $color-gray-100;
@@ -191,82 +260,138 @@ onUnmounted(() => { if (toastTimer) clearTimeout(toastTimer) })
     cursor: pointer;
     color: $color-gray-400;
     z-index: 2;
-    transition: color $transition-fast, background $transition-fast, border-color $transition-fast;
-    box-shadow: 0 1px 4px rgb(0 0 0 / 8%);
+    transition:
+      color $transition-fast,
+      border-color $transition-fast;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 10%);
 
-    &:hover { color: $color-danger; border-color: $color-danger; }
-    &--active { color: $color-danger; border-color: rgb(239 68 68 / 30%); }
-  }
-
-  &__overlay {
-    position: absolute;
-    bottom: 0;
-    inset-inline: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 16px;
-    background: linear-gradient(to top, rgb(255 255 255 / 97%) 60%, transparent 100%);
-    transform: translateY(100%);
-    transition: transform $transition-base;
-  }
-
-  &:hover &__overlay { transform: translateY(0); }
-
-  &__actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  &__cta {
-    display: block;
-    flex: 1;
-    padding: 8px 16px;
-    background: $color-primary;
-    border-radius: $radius-md;
-    color: $color-white;
-    text-align: center;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
+    &:hover {
+      color: $color-danger;
+      border-color: $color-danger;
+    }
+    &--active {
+      color: $color-danger;
+      border-color: rgb(239 68 68 / 30%);
+    }
   }
 
   &__cart-btn {
-    width: 40px;
-    height: 40px;
-    background: $color-gray-100;
-    border: 1px solid $color-gray-200;
-    border-radius: $radius-md;
-    cursor: pointer;
-    font-size: 16px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background $transition-fast, color $transition-fast;
-
-    &:hover { background: $color-primary; color: $color-white; border-color: $color-primary; }
-  }
-
-  &__toast {
+    gap: 8px;
+    padding: 12px;
     background: $color-gray-900;
     color: $color-white;
-    border-radius: $radius-md;
+    border: none;
     font-size: $font-size-xs;
-    text-align: center;
-    padding: 6px 10px;
-    margin: 0;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transform: translateY(100%);
+    transition:
+      transform $transition-base,
+      background $transition-fast;
+    z-index: 2;
+
+    &:hover {
+      background: $color-gray-700;
+    }
+
+    @include mixins.respond-to(md) {
+      font-size: $font-size-sm;
+    }
   }
 
-  // Shimmer elements
+  &:hover &__cart-btn {
+    transform: translateY(0);
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 6px;
+    padding: 12px 14px 14px;
+  }
+
+  &__category {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: $color-gray-400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 45%;
+  }
+
+  &__title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-900;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  &__price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: auto;
+  }
+
+  &__prices {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  &__price {
+    font-size: $font-size-base;
+    font-weight: $font-weight-bold;
+    color: $color-gray-900;
+
+    &--discounted {
+      color: $color-primary;
+    }
+  }
+
+  &__compare-price {
+    font-size: $font-size-sm;
+    color: $color-gray-400;
+    text-decoration: line-through;
+  }
+
+  // Shimmer
   &__shimmer {
     @include mixins.shimmer;
     border-radius: $radius-md;
 
-    &--image { width: 100%; height: 100%; border-radius: 0; }
-    &--badge { width: 80px; height: 12px; }
-    &--title { width: 85%; height: 16px; }
-    &--desc { width: 100%; height: 14px; }
-    &--footer { width: 100%; height: 16px; }
+    &--image {
+      position: absolute;
+      inset: 0;
+      border-radius: 0;
+    }
+    &--badge {
+      width: 64px;
+      height: 12px;
+    }
+    &--title {
+      width: 85%;
+      height: 32px;
+    }
+    &--price {
+      width: 60px;
+      height: 16px;
+    }
   }
 }
 </style>

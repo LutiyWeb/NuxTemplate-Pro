@@ -6,7 +6,7 @@ const emit = defineEmits<{ 'update:open': [boolean] }>()
 
 const router = useRouter()
 const cartStore = useCartStore()
-const favoritesStore = useFavoritesStore()
+const wishlistsStore = useWishlistsStore()
 const productsStore = useProductsStore()
 
 const stopNavWatch = router.afterEach(() => {
@@ -14,11 +14,14 @@ const stopNavWatch = router.afterEach(() => {
 })
 onUnmounted(stopNavWatch)
 
-watch(() => props.open, async (isOpen) => {
-  if (isOpen && productsStore.products.length === 0) {
-    await productsStore.fetchProducts({ limit: 8 })
-  }
-})
+watch(
+  () => props.open,
+  async (isOpen) => {
+    if (isOpen && productsStore.products.length === 0) {
+      await productsStore.fetchProducts({ limit: 8 })
+    }
+  },
+)
 
 const recommendations = computed(() => productsStore.products.slice(0, 8))
 const selectedIds = ref<number[]>([])
@@ -28,10 +31,12 @@ const totalPrice = computed(() =>
   cartStore.items.reduce((sum, e) => sum + (e.product.price ?? 0) * e.qty, 0),
 )
 
-function formatPrice(p: number) { return p.toLocaleString('uk-UA') + ' ₴' }
+function formatPrice(p: number) {
+  return p.toLocaleString('uk-UA') + ' ₴'
+}
 
-const allSelected = computed(() =>
-  cartStore.items.length > 0 && selectedIds.value.length === cartStore.items.length,
+const allSelected = computed(
+  () => cartStore.items.length > 0 && selectedIds.value.length === cartStore.items.length,
 )
 
 function toggleAll() {
@@ -52,7 +57,7 @@ function removeSelected() {
 
 function addSelectedToFavorites() {
   selectedIds.value.forEach((id) => {
-    if (!favoritesStore.has(id)) favoritesStore.toggle(id)
+    if (!wishlistsStore.has(id)) wishlistsStore.toggle(id)
   })
   selectedIds.value = []
 }
@@ -67,7 +72,9 @@ function addSelectedToFavorites() {
         <div class="cart-modal__panel">
           <div class="cart-modal__head">
             <h2 class="cart-modal__title">Корзина ({{ cartStore.count }})</h2>
-            <button class="cart-modal__close" type="button" @click="emit('update:open', false)"><X :size="14" /></button>
+            <button class="cart-modal__close" type="button" @click="emit('update:open', false)">
+              <X :size="14" />
+            </button>
           </div>
 
           <div class="cart-modal__body">
@@ -78,14 +85,20 @@ function addSelectedToFavorites() {
                   Выбрано {{ selectedIds.length }} из {{ cartStore.items.length }}
                 </label>
                 <div v-if="selectedIds.length" class="cart-modal__bulk-actions">
-                  <button type="button" @click="addSelectedToFavorites"><Heart :size="14" /> В избранное</button>
-                  <button type="button" @click="pendingDelete = true"><Trash2 :size="14" /> Удалить</button>
+                  <button type="button" @click="addSelectedToFavorites">
+                    <Heart :size="14" /> В избранное
+                  </button>
+                  <button type="button" @click="pendingDelete = true">
+                    <Trash2 :size="14" /> Удалить
+                  </button>
                 </div>
               </div>
 
               <div v-if="pendingDelete" class="cart-modal__confirm">
                 <span>Удалить {{ selectedIds.length }} товар(ов)?</span>
-                <button type="button" class="cart-modal__confirm-ok" @click="removeSelected">Удалить</button>
+                <button type="button" class="cart-modal__confirm-ok" @click="removeSelected">
+                  Удалить
+                </button>
                 <button type="button" @click="pendingDelete = false">Отмена</button>
               </div>
 
@@ -105,16 +118,21 @@ function addSelectedToFavorites() {
             </div>
 
             <div v-if="recommendations.length" class="cart-modal__recs">
-              <TheSlider
+              <AppSlider
                 title="Рекомендуем"
                 :slides="recommendations"
                 :space-between="12"
-                :breakpoints="{ 0: { slidesPerView: 2 }, 640: { slidesPerView: 3 }, 1024: { slidesPerView: 4 } }"
+                :peek="true"
+                :breakpoints="{
+                  0: { slidesPerView: 1.5 },
+                  640: { slidesPerView: 3 },
+                  1024: { slidesPerView: 4 },
+                }"
               >
                 <template #default="slotProps">
-                  <TheProductCard v-if="slotProps?.slide" :product="(slotProps.slide as any)" />
+                  <TheProductCard v-if="slotProps?.slide" :product="slotProps.slide as any" />
                 </template>
-              </TheSlider>
+              </AppSlider>
             </div>
           </div>
 
@@ -129,6 +147,8 @@ function addSelectedToFavorites() {
 </template>
 
 <style lang="scss">
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .cart-modal {
   position: fixed;
   inset: 0;
@@ -162,7 +182,11 @@ function addSelectedToFavorites() {
     flex-shrink: 0;
   }
 
-  &__title { font-size: $font-size-xl; font-weight: $font-weight-bold; margin: 0; }
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    margin: 0;
+  }
 
   &__close {
     width: 32px;
@@ -175,7 +199,9 @@ function addSelectedToFavorites() {
     justify-content: center;
     transition: background $transition-fast;
 
-    &:hover { background: $color-gray-200; }
+    &:hover {
+      background: $color-gray-200;
+    }
   }
 
   &__body {
@@ -215,7 +241,9 @@ function addSelectedToFavorites() {
       cursor: pointer;
       transition: background $transition-fast;
 
-      &:hover { background: $color-gray-200; }
+      &:hover {
+        background: $color-gray-200;
+      }
     }
   }
 
@@ -228,8 +256,15 @@ function addSelectedToFavorites() {
     border-radius: $radius-md;
     font-size: $font-size-sm;
 
-    &-ok { color: $color-danger; font-weight: $font-weight-semibold; cursor: pointer; }
-    button:last-child { cursor: pointer; color: $color-gray-500; }
+    &-ok {
+      color: $color-danger;
+      font-weight: $font-weight-semibold;
+      cursor: pointer;
+    }
+    button:last-child {
+      cursor: pointer;
+      color: $color-gray-500;
+    }
   }
 
   &__empty {
@@ -242,11 +277,18 @@ function addSelectedToFavorites() {
     padding: 48px 0;
     color: $color-gray-400;
 
-    span { font-size: 48px; }
-    p { font-size: $font-size-base; margin: 0; }
+    span {
+      font-size: 48px;
+    }
+    p {
+      font-size: $font-size-base;
+      margin: 0;
+    }
   }
 
-  &__recs { margin-top: 24px; }
+  &__recs {
+    margin-top: 24px;
+  }
 
   &__footer {
     display: flex;
@@ -257,7 +299,10 @@ function addSelectedToFavorites() {
     flex-shrink: 0;
   }
 
-  &__total { font-size: $font-size-lg; font-weight: $font-weight-bold; }
+  &__total {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+  }
 
   &__checkout {
     display: inline-flex;
@@ -268,16 +313,27 @@ function addSelectedToFavorites() {
     font-weight: $font-weight-semibold;
     transition: background $transition-fast;
 
-    &:hover { background: $color-primary-dark; }
+    &:hover {
+      background: $color-primary-dark;
+    }
   }
 }
 
 .cart-modal-enter-active,
-.cart-modal-leave-active { transition: opacity $transition-base; }
+.cart-modal-leave-active {
+  transition: opacity $transition-base;
+
+  .cart-modal__panel {
+    transition: transform $transition-base;
+  }
+}
+
 .cart-modal-enter-from,
-.cart-modal-leave-to { opacity: 0; }
-.cart-modal-enter-active .cart-modal__panel,
-.cart-modal-leave-active .cart-modal__panel { transition: transform $transition-base; }
-.cart-modal-enter-from .cart-modal__panel,
-.cart-modal-leave-to .cart-modal__panel { transform: translateX(100%); }
+.cart-modal-leave-to {
+  opacity: 0;
+
+  .cart-modal__panel {
+    transform: translateX(100%);
+  }
+}
 </style>

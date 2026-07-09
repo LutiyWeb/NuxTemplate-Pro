@@ -1,63 +1,114 @@
 <script setup lang="ts">
+import { SearchX } from 'lucide-vue-next'
+import type { Product } from '~/types/product'
+
 useHead({ title: 'Поиск — Nexus Commerce' })
 
 const route = useRoute()
-const store = useProductsStore()
-const query = computed(() => route.query.q as string || '')
+const router = useRouter()
+const config = useRuntimeConfig()
 
-watch(query, async (q) => {
-  if (q) await store.fetchProducts({ limit: 40 })
-}, { immediate: true })
+const LIMIT = 20
 
-const results = computed(() => {
-  if (!query.value) return []
-  const q = query.value.toLowerCase()
-  return store.products.filter((p) =>
-    p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q),
-  )
-})
+const q = computed(() => (route.query.q as string) || '')
+const page = computed(() => Number(route.query.page) || 1)
+
+const products = ref<Product[]>([])
+const meta = ref({ page: 1, limit: LIMIT, total: 0, totalPages: 1 })
+const loading = ref(false)
+
+async function fetchResults() {
+  if (!q.value) return
+  loading.value = true
+  try {
+    const res = await $fetch<{ data: Product[]; meta: typeof meta.value }>(
+      `${config.public.apiBase}/api/search`,
+      { query: { q: q.value, page: page.value, limit: LIMIT } },
+    )
+    products.value = res.data
+    meta.value = res.meta
+  } catch {
+    products.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+watch([q, page], fetchResults, { immediate: true })
+
+function onPageChange(p: number) {
+  router.push({ query: { ...route.query, page: p } })
+}
 </script>
 
 <template>
   <div class="search-page container">
     <TheTitle tag="h1" size="m">
-      {{ query ? `Результаты: "${query}"` : 'Поиск' }}
+      {{ q ? `Результаты: "${q}"` : 'Поиск' }}
     </TheTitle>
 
-    <p v-if="query" class="search-page__count">
-      Найдено: {{ results.length }} товаров
-    </p>
+    <p v-if="q && !loading" class="search-page__count">Найдено: {{ meta.total }} товаров</p>
 
-    <div v-if="store.loading" class="search-page__grid">
-      <TheProductCard v-for="n in 8" :key="n" :loading="true" />
+    <div v-if="loading" class="search-page__grid">
+      <TheProductCard v-for="n in LIMIT" :key="n" :loading="true" />
     </div>
 
-    <div v-else-if="results.length" class="search-page__grid">
-      <TheProductCard v-for="p in results" :key="p.id" :product="p" />
-    </div>
+    <template v-else-if="products.length">
+      <div class="search-page__grid">
+        <TheProductCard v-for="p in products" :key="p.id" :product="p" />
+      </div>
 
-    <p v-else-if="query" class="search-page__empty">Ничего не найдено. Попробуйте другой запрос.</p>
+      <CatalogPagination
+        v-if="meta.totalPages > 1"
+        :page="meta.page"
+        :total-pages="meta.totalPages"
+        @update:page="onPageChange"
+      />
+    </template>
+
+    <AppEmpty
+      v-else-if="q"
+      title="Ничего не найдено"
+      description="Попробуйте изменить запрос или поискать что-то другое"
+    >
+      <template #icon>
+        <SearchX :size="56" :stroke-width="1.2" />
+      </template>
+      <template #action>
+        <AppButton variant="outline" size="md" @click="router.push('/catalog')">
+          Перейти в каталог
+        </AppButton>
+      </template>
+    </AppEmpty>
   </div>
 </template>
 
 <style lang="scss">
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .search-page {
   padding-block: 32px;
   display: flex;
   flex-direction: column;
   gap: 24px;
 
-  &__count { color: $color-gray-500; font-size: $font-size-sm; margin: 0; }
+  &__count {
+    color: $color-gray-500;
+    font-size: $font-size-sm;
+    margin: 0;
+  }
 
   &__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
 
-    @media (min-width: 768px) { grid-template-columns: repeat(3, 1fr); }
-    @media (min-width: 1024px) { grid-template-columns: repeat(4, 1fr); }
+    @include mixins.respond-to(md) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @include mixins.respond-to(lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
-
-  &__empty { color: $color-gray-400; font-size: $font-size-lg; }
 }
 </style>

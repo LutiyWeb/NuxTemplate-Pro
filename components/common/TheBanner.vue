@@ -18,9 +18,11 @@ withDefaults(defineProps<Props>(), { variant: 'default' })
 </template>
 
 <style lang="scss">
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .the-banner {
   border-radius: $radius-2xl;
-  padding: 64px 48px;
+  padding: 28px;
   text-align: center;
   display: flex;
   flex-direction: column;

@@ -14,6 +14,8 @@ withDefaults(defineProps<Props>(), { size: 24 })
 </template>
 
 <style lang="scss">
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .app-icon {
   display: inline-flex;
   align-items: center;

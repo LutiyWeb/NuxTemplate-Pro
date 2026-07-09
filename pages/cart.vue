@@ -4,7 +4,7 @@ import { ShoppingCart, Heart, Trash2 } from 'lucide-vue-next'
 useSeoMeta({ title: 'Корзина — Nexus Commerce' })
 
 const cartStore = useCartStore()
-const favoritesStore = useFavoritesStore()
+const wishlistsStore = useWishlistsStore()
 const productsStore = useProductsStore()
 
 const selectedIds = ref<number[]>([])
@@ -32,7 +32,7 @@ function removeSelected() {
 
 function addSelectedToFavorites() {
   selectedIds.value.forEach((id) => {
-    if (!favoritesStore.has(id)) favoritesStore.toggle(id)
+    if (!wishlistsStore.has(id)) wishlistsStore.toggle(id)
   })
   selectedIds.value = []
 }
@@ -52,19 +52,28 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
 
 <template>
   <div class="cart-page container">
-    <AppBreadcrumbs
-      :crumbs="[{ label: 'Главная', to: '/' }, { label: 'Корзина' }]"
-      class="cart-page__breadcrumbs"
-    />
-    <h1 class="cart-page__heading">Корзина <span class="cart-page__count">{{ cartStore.count }}</span></h1>
+    <div class="cart-page__title-row">
+      <h1 class="cart-page__heading">
+        Корзина <span class="cart-page__count">{{ cartStore.count }}</span>
+      </h1>
+      <AppBreadcrumbs :crumbs="[{ label: 'Главная', to: '/' }, { label: 'Корзина' }]" />
+    </div>
 
     <!-- Empty -->
-    <div v-if="!cartStore.items.length" class="cart-page__empty">
-      <ShoppingCart :size="56" :stroke-width="1.5" class="cart-page__empty-icon" />
-      <p class="cart-page__empty-title">Корзина пуста</p>
-      <p class="cart-page__empty-desc">Добавьте товары, чтобы оформить заказ</p>
-      <AppButton variant="primary" size="md" @click="navigateTo('/catalog')">Перейти в каталог</AppButton>
-    </div>
+    <AppEmpty
+      v-if="!cartStore.items.length"
+      title="Корзина пуста"
+      description="Добавьте товары, чтобы оформить заказ"
+    >
+      <template #icon>
+        <ShoppingCart :size="56" :stroke-width="1.2" />
+      </template>
+      <template #action>
+        <AppButton variant="primary" size="md" @click="navigateTo('/catalog')">
+          Перейти в каталог
+        </AppButton>
+      </template>
+    </AppEmpty>
 
     <!-- Layout with items -->
     <div v-else class="cart-page__layout">
@@ -89,7 +98,9 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
         <!-- Delete confirm -->
         <div v-if="pendingDelete" class="cart-page__confirm">
           <span>Удалить {{ selectedIds.length }} товар(ов)?</span>
-          <button type="button" class="cart-page__confirm-ok" @click="removeSelected">Удалить</button>
+          <button type="button" class="cart-page__confirm-ok" @click="removeSelected">
+            Удалить
+          </button>
           <button type="button" @click="pendingDelete = false">Отмена</button>
         </div>
 
@@ -133,28 +144,41 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
 
     <!-- Recommendations -->
     <div v-if="recommendations.length" class="cart-page__recs">
-      <TheSlider
+      <AppSlider
         title="Рекомендуем"
         :slides="recommendations"
         :space-between="16"
-        :breakpoints="{ 0: { slidesPerView: 2 }, 640: { slidesPerView: 3 }, 1024: { slidesPerView: 4 } }"
+        :peek="true"
+        :breakpoints="{
+          0: { slidesPerView: 1.5 },
+          640: { slidesPerView: 3 },
+          1024: { slidesPerView: 4 },
+          1280: { slidesPerView: 5 },
+        }"
       >
         <template #default="slotProps">
-          <TheProductCard v-if="slotProps?.slide" :product="(slotProps.slide as any)" />
+          <TheProductCard v-if="slotProps?.slide" :product="slotProps.slide as any" />
         </template>
-      </TheSlider>
+      </AppSlider>
     </div>
   </div>
 </template>
 
 <style lang="scss">
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .cart-page {
   padding-block: 40px;
   display: flex;
   flex-direction: column;
   gap: 40px;
 
-  &__breadcrumbs { margin-bottom: -24px; }
+  &__title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
 
   &__heading {
     font-size: $font-size-2xl;
@@ -181,18 +205,29 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
     text-align: center;
   }
 
-  &__empty-icon { color: $color-gray-200; }
-  &__empty-title { font-size: $font-size-xl; font-weight: $font-weight-semibold; color: $color-gray-700; }
-  &__empty-desc { font-size: $font-size-sm; color: $color-gray-400; }
+  &__empty-icon {
+    color: $color-gray-200;
+  }
+  &__empty-title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-700;
+  }
+  &__empty-desc {
+    font-size: $font-size-sm;
+    color: $color-gray-400;
+  }
 
   // Two-column layout
   &__layout {
     display: grid;
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 1fr;
     gap: 24px;
     align-items: flex-start;
 
-    @media (max-width: 900px) { grid-template-columns: 1fr; }
+    @include mixins.respond-to(lg) {
+      grid-template-columns: 1fr 300px;
+    }
   }
 
   // Items column
@@ -241,11 +276,15 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
       cursor: pointer;
       transition: background $transition-fast;
 
-      &:hover { background: $color-gray-200; }
+      &:hover {
+        background: $color-gray-200;
+      }
     }
   }
 
-  &__bulk-delete { color: $color-danger !important; }
+  &__bulk-delete {
+    color: $color-danger;
+  }
 
   // Confirm bar
   &__confirm {
@@ -258,11 +297,20 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
     font-size: $font-size-sm;
     margin-bottom: 4px;
 
-    span { flex: 1; color: $color-gray-700; }
+    span {
+      flex: 1;
+      color: $color-gray-700;
+    }
 
-    button { cursor: pointer; font-size: $font-size-sm; }
+    button {
+      cursor: pointer;
+      font-size: $font-size-sm;
+    }
 
-    &-ok { color: $color-danger; font-weight: $font-weight-semibold; }
+    &-ok {
+      color: $color-danger;
+      font-weight: $font-weight-semibold;
+    }
   }
 
   // Summary card
@@ -299,7 +347,10 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
     color: $color-gray-600;
   }
 
-  &__summary-free { color: $color-success; font-weight: $font-weight-medium; }
+  &__summary-free {
+    color: $color-success;
+    font-weight: $font-weight-medium;
+  }
 
   &__summary-total {
     display: flex;
@@ -324,7 +375,9 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
     transition: background $transition-fast;
     text-align: center;
 
-    &:hover { background: $color-primary-dark; }
+    &:hover {
+      background: $color-primary-dark;
+    }
   }
 
   &__continue {
@@ -337,12 +390,19 @@ const recommendations = computed(() => productsStore.products.slice(0, 8))
     font-size: $font-size-sm;
     color: $color-gray-600;
     cursor: pointer;
-    transition: background $transition-fast, border-color $transition-fast;
+    transition:
+      background $transition-fast,
+      border-color $transition-fast;
 
-    &:hover { background: $color-gray-50; border-color: $color-gray-300; }
+    &:hover {
+      background: $color-gray-50;
+      border-color: $color-gray-300;
+    }
   }
 
   // Recommendations
-  &__recs { padding-top: 8px; }
+  &__recs {
+    padding-top: 8px;
+  }
 }
 </style>

@@ -16,16 +16,27 @@ defineProps<{ crumbs: Crumb[] }>()
         <NuxtLink v-if="crumb.to && i < crumbs.length - 1" :to="crumb.to" class="breadcrumbs__link">
           {{ crumb.label }}
         </NuxtLink>
-        <span v-else class="breadcrumbs__current" :aria-current="i === crumbs.length - 1 ? 'page' : undefined">
+        <span
+          v-else
+          class="breadcrumbs__current"
+          :aria-current="i === crumbs.length - 1 ? 'page' : undefined"
+        >
           {{ crumb.label }}
         </span>
-        <ChevronRight v-if="i < crumbs.length - 1" :size="12" class="breadcrumbs__sep" aria-hidden="true" />
+        <ChevronRight
+          v-if="i < crumbs.length - 1"
+          :size="12"
+          class="breadcrumbs__sep"
+          aria-hidden="true"
+        />
       </li>
     </ol>
   </nav>
 </template>
 
 <style lang="scss">
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .breadcrumbs {
   &__list {
     display: flex;
@@ -45,7 +56,9 @@ defineProps<{ crumbs: Crumb[] }>()
     color: $color-gray-500;
     transition: color $transition-fast;
 
-    &:hover { color: $color-primary; }
+    &:hover {
+      color: $color-primary;
+    }
   }
 
   &__current {

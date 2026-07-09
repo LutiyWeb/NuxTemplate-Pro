@@ -1,9 +1,14 @@
 export function useBreakpoints() {
-  const width = ref(process.client ? window.innerWidth : 1280)
+  const width = ref(0)
 
-  const update = () => { width.value = window.innerWidth }
+  const update = () => {
+    width.value = window.innerWidth
+  }
 
-  onMounted(() => window.addEventListener('resize', update))
+  onMounted(() => {
+    width.value = window.innerWidth
+    window.addEventListener('resize', update)
+  })
   onUnmounted(() => window.removeEventListener('resize', update))
 
   return {

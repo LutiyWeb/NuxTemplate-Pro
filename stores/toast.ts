@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export type ToastType = 'success' | 'error' | 'info'
+export type ToastType = 'success' | 'error' | 'warning'
 
 export interface Toast {
   id: number
@@ -19,7 +19,7 @@ export const useToastStore = defineStore('toast', () => {
   }
 
   function remove(id: number) {
-    const idx = toasts.value.findIndex(t => t.id === id)
+    const idx = toasts.value.findIndex((t) => t.id === id)
     if (idx >= 0) toasts.value.splice(idx, 1)
   }
 

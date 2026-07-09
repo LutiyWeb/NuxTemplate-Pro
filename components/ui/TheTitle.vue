@@ -14,13 +14,21 @@ withDefaults(defineProps<Props>(), { tag: 'h2', size: 'm' })
 </template>
 
 <style lang="scss">
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .the-title {
   font-weight: $font-weight-bold;
   color: $color-gray-900;
   line-height: $line-height-tight;
 
-  &--s { font-size: $title-size-s; }
-  &--m { font-size: $title-size-m; }
-  &--l { font-size: $title-size-l; }
+  &--s {
+    font-size: $title-size-s;
+  }
+  &--m {
+    font-size: $title-size-m;
+  }
+  &--l {
+    font-size: $title-size-l;
+  }
 }
 </style>

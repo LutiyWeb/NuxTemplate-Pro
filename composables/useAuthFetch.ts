@@ -7,7 +7,7 @@ export function useAuthFetch() {
       ...options,
       headers: {
         Authorization: `Bearer ${authStore.token}`,
-        ...(options.headers as Record<string, string> ?? {}),
+        ...((options.headers as Record<string, string>) ?? {}),
       },
     })
   }

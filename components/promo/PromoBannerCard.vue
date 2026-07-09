@@ -19,6 +19,8 @@ withDefaults(defineProps<Props>(), { tag: 'Акция' })
 </template>
 
 <style lang="scss">
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .promo-card {
   display: flex;
   flex-direction: column;
@@ -31,7 +33,9 @@ withDefaults(defineProps<Props>(), { tag: 'Акция' })
   transition: transform $transition-base;
   text-decoration: none;
 
-  &:hover { transform: translateY(-2px); }
+  &:hover {
+    transform: translateY(-2px);
+  }
 
   &__tag {
     display: inline-block;

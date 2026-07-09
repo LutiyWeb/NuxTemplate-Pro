@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-
-interface User { id: number; firstName: string; lastName: string; email: string; phone?: string }
+import type { User } from '~/api/auth'
 
 export const useAuthStore = defineStore('auth', () => {
   const config = useRuntimeConfig()
@@ -33,12 +32,13 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('auth_user')
   }
 
-  async function login(email: string, password: string) {
+  async function login(email: string, password: string, captchaToken?: string) {
     loading.value = true
     error.value = null
     try {
-      const res = await apiClient.post('/api/auth/login', { email, password })
-      _save(res.data.data.token, res.data.data.user)
+      const res = await apiClient.post('/api/auth/login', { email, password, captchaToken })
+      _save(res.data.data.accessToken, res.data.data.user)
+      await useWishlistsStore().syncGuest()
     } catch (err) {
       error.value = axios.isAxiosError(err)
         ? (err.response?.data?.error?.message ?? 'Ошибка входа')
@@ -49,12 +49,20 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(data: { firstName: string; lastName: string; email: string; password: string; phone?: string }) {
+  async function register(data: {
+    firstName: string
+    lastName: string
+    email: string
+    password: string
+    phone?: string
+    captchaToken?: string
+  }) {
     loading.value = true
     error.value = null
     try {
       const res = await apiClient.post('/api/auth/register', data)
-      _save(res.data.data.token, res.data.data.user)
+      _save(res.data.data.accessToken, res.data.data.user)
+      await useWishlistsStore().syncGuest()
     } catch (err) {
       error.value = axios.isAxiosError(err)
         ? (err.response?.data?.error?.message ?? 'Ошибка регистрации')
@@ -65,7 +73,39 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function logout() { _clear() }
+  async function forgotPassword(email: string, captchaToken?: string) {
+    loading.value = true
+    error.value = null
+    try {
+      await apiClient.post('/api/auth/forgot-password', { email, captchaToken })
+    } catch (err) {
+      error.value = axios.isAxiosError(err)
+        ? (err.response?.data?.error?.message ?? 'Ошибка отправки письма')
+        : 'Ошибка отправки письма'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function resetPassword(token: string, password: string) {
+    loading.value = true
+    error.value = null
+    try {
+      await apiClient.post('/api/auth/reset-password', { token, password })
+    } catch (err) {
+      error.value = axios.isAxiosError(err)
+        ? (err.response?.data?.error?.message ?? 'Помилка скидання пароля')
+        : 'Помилка скидання пароля'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  function logout() {
+    _clear()
+  }
 
   async function deleteAccount() {
     loading.value = true
@@ -83,5 +123,17 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  return { token, user, loading, error, isLoggedIn, login, register, logout, deleteAccount }
+  return {
+    token,
+    user,
+    loading,
+    error,
+    isLoggedIn,
+    login,
+    register,
+    forgotPassword,
+    resetPassword,
+    logout,
+    deleteAccount,
+  }
 })

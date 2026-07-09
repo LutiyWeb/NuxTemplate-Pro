@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { z } from 'zod'
+import { checkoutSchema, CHECKOUT_ERROR_MESSAGES } from '~/api/checkout'
+import type { Address } from '~/api/addresses'
 
 useSeoMeta({ title: 'Оформление заказа — Nexus Commerce' })
 
@@ -7,17 +8,6 @@ const cartStore = useCartStore()
 const authStore = useAuthStore()
 const toastStore = useToastStore()
 const { authFetch } = useAuthFetch()
-
-interface Address {
-  id: number
-  city: string
-  street: string
-  house: string
-  apartment: string | null
-  recipientName: string | null
-  phone: string | null
-  isDefault: boolean
-}
 
 // If cart is empty redirect to cart page
 if (process.client && !cartStore.items.length) navigateTo('/cart')
@@ -35,16 +25,6 @@ const form = reactive({
   house: '',
   apartment: '',
   notes: '',
-})
-
-const schema = z.object({
-  recipientName: z.string().trim().min(2, 'Введите имя получателя'),
-  phone: z.string().trim().min(10, 'Введите корректный номер телефона'),
-  city: z.string().trim().min(1, 'Введите город'),
-  street: z.string().trim().min(1, 'Введите улицу'),
-  house: z.string().trim().min(1, 'Введите номер дома'),
-  apartment: z.string().optional(),
-  notes: z.string().optional(),
 })
 
 const errors = ref<Partial<Record<keyof typeof form, string>>>({})
@@ -66,10 +46,12 @@ onMounted(async () => {
     try {
       const res = await authFetch<{ data: Address[] }>('/api/addresses')
       savedAddresses.value = res.data
-      const def = res.data.find(a => a.isDefault)
+      const def = res.data.find((a) => a.isDefault)
       if (def) applyAddress(def)
-    } catch {}
-    finally { loading.value = false }
+    } catch {
+    } finally {
+      loading.value = false
+    }
   }
 })
 
@@ -89,9 +71,9 @@ function selectAddress(addr: Address) {
 
 async function submit() {
   errors.value = {}
-  const result = schema.safeParse(form)
+  const result = checkoutSchema.safeParse(form)
   if (!result.success) {
-    result.error.errors.forEach(e => {
+    result.error.issues.forEach((e) => {
       const key = e.path[0] as keyof typeof form
       if (!errors.value[key]) errors.value[key] = e.message
     })
@@ -100,31 +82,29 @@ async function submit() {
 
   submitting.value = true
   try {
-    // TODO: replace with real API call when /api/orders is ready
-    // const res = await authFetch('/api/orders', {
-    //   method: 'POST',
-    //   body: {
-    //     deliveryAddress: {
-    //       recipientName: form.recipientName,
-    //       phone: form.phone,
-    //       city: form.city,
-    //       street: form.street,
-    //       house: form.house,
-    //       apartment: form.apartment || undefined,
-    //     },
-    //     notes: form.notes || undefined,
-    //   },
-    // })
-    // cartStore.clear()
-    // navigateTo(`/order/${res.data.id}`)
+    const body = selectedAddressId.value
+      ? { addressId: selectedAddressId.value, notes: form.notes || undefined }
+      : {
+          deliveryAddress: {
+            recipientName: form.recipientName,
+            phone: form.phone,
+            city: form.city,
+            street: form.street,
+            house: form.house,
+            apartment: form.apartment || undefined,
+          },
+          notes: form.notes || undefined,
+        }
 
-    // Temporary: just show toast and clear cart
-    await new Promise(r => setTimeout(r, 800))
-    cartStore.clear()
-    toastStore.add('Заказ успешно оформлен!')
-    navigateTo('/')
-  } catch {
-    toastStore.add('Не удалось оформить заказ. Попробуйте снова.', 'error')
+    const res = await authFetch<{ data: { id: number } }>('/api/orders', { method: 'POST', body })
+    await cartStore.clear()
+    navigateTo(`/order/${res.data.id}`)
+  } catch (err: unknown) {
+    const msg = (err as { data?: { error?: { message?: string } } })?.data?.error?.message
+    toastStore.add(
+      CHECKOUT_ERROR_MESSAGES[msg ?? ''] ?? 'Не удалось оформить заказ. Попробуйте снова.',
+      'error',
+    )
   } finally {
     submitting.value = false
   }
@@ -147,7 +127,6 @@ async function submit() {
     <div class="checkout__layout">
       <!-- Left: form -->
       <div class="checkout__form-col">
-
         <!-- Saved addresses -->
         <div v-if="savedAddresses.length" class="checkout__section">
           <h2 class="checkout__section-title">Сохранённые адреса</h2>
@@ -155,11 +134,17 @@ async function submit() {
             <button
               v-for="addr in savedAddresses"
               :key="addr.id"
-              :class="['checkout__address-card', { 'checkout__address-card--active': selectedAddressId === addr.id }]"
+              :class="[
+                'checkout__address-card',
+                { 'checkout__address-card--active': selectedAddressId === addr.id },
+              ]"
               type="button"
               @click="selectAddress(addr)"
             >
-              <span class="checkout__address-line">{{ addr.city }}, {{ addr.street }}, {{ addr.house }}<template v-if="addr.apartment">, кв. {{ addr.apartment }}</template></span>
+              <span class="checkout__address-line"
+                >{{ addr.city }}, {{ addr.street }}, {{ addr.house
+                }}<template v-if="addr.apartment">, кв. {{ addr.apartment }}</template></span
+              >
               <span v-if="addr.isDefault" class="checkout__address-badge">По умолчанию</span>
             </button>
           </div>
@@ -201,11 +186,7 @@ async function submit() {
                 placeholder="1"
                 :error="errors.house"
               />
-              <AppInputText
-                v-model="form.apartment"
-                label="Квартира"
-                placeholder="42"
-              />
+              <AppInputText v-model="form.apartment" label="Квартира" placeholder="42" />
             </div>
           </div>
         </div>
@@ -227,13 +208,24 @@ async function submit() {
         <h2 class="checkout__summary-title">Ваш заказ</h2>
 
         <div class="checkout__summary-items">
-          <div v-for="item in cartStore.items" :key="item.product.id" class="checkout__summary-item">
-            <img v-if="item.product.thumbnail" :src="item.product.thumbnail" :alt="item.product.title" class="checkout__summary-img" />
+          <div
+            v-for="item in cartStore.items"
+            :key="item.product.id"
+            class="checkout__summary-item"
+          >
+            <img
+              v-if="item.product.thumbnail"
+              :src="item.product.thumbnail"
+              :alt="item.product.title"
+              class="checkout__summary-img"
+            />
             <div class="checkout__summary-info">
               <span class="checkout__summary-name">{{ item.product.title }}</span>
               <span class="checkout__summary-qty">{{ item.qty }} шт.</span>
             </div>
-            <span class="checkout__summary-price">{{ formatPrice(item.product.price * item.qty) }}</span>
+            <span class="checkout__summary-price">{{
+              formatPrice(item.product.price * item.qty)
+            }}</span>
           </div>
         </div>
 
@@ -268,13 +260,17 @@ async function submit() {
 </template>
 
 <style lang="scss">
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .checkout {
   padding-block: 32px;
   display: flex;
   flex-direction: column;
   gap: 24px;
 
-  &__breadcrumbs { margin-bottom: 8px; }
+  &__breadcrumbs {
+    margin-bottom: 8px;
+  }
 
   &__heading {
     font-size: $font-size-2xl;
@@ -284,11 +280,13 @@ async function submit() {
 
   &__layout {
     display: grid;
-    grid-template-columns: 1fr 360px;
+    grid-template-columns: 1fr;
     gap: 24px;
     align-items: flex-start;
 
-    @media (max-width: 900px) { grid-template-columns: 1fr; }
+    @include mixins.respond-to(lg) {
+      grid-template-columns: 1fr 360px;
+    }
   }
 
   &__form-col {
@@ -332,9 +330,14 @@ async function submit() {
     border-radius: $radius-lg;
     text-align: left;
     cursor: pointer;
-    transition: border-color $transition-fast, background $transition-fast;
+    transition:
+      border-color $transition-fast,
+      background $transition-fast;
 
-    &:hover { border-color: $color-primary; background: rgb(79 70 229 / 3%); }
+    &:hover {
+      border-color: $color-primary;
+      background: rgb(79 70 229 / 3%);
+    }
 
     &--active {
       border-color: $color-primary;
@@ -342,7 +345,10 @@ async function submit() {
     }
   }
 
-  &__address-line { font-size: $font-size-sm; color: $color-gray-700; }
+  &__address-line {
+    font-size: $font-size-sm;
+    color: $color-gray-700;
+  }
 
   &__address-badge {
     font-size: $font-size-xs;
@@ -363,10 +369,12 @@ async function submit() {
 
   &__fields-row {
     display: grid;
-    grid-template-columns: 1fr 80px 80px;
+    grid-template-columns: 1fr;
     gap: 12px;
 
-    @media (max-width: 480px) { grid-template-columns: 1fr; }
+    @include mixins.respond-to(sm) {
+      grid-template-columns: 1fr 80px 80px;
+    }
   }
 
   // Textarea
@@ -383,8 +391,12 @@ async function submit() {
     transition: border-color $transition-fast;
     background: $color-white;
 
-    &::placeholder { color: $color-gray-400; }
-    &:focus { border-color: $color-primary; }
+    &::placeholder {
+      color: $color-gray-400;
+    }
+    &:focus {
+      border-color: $color-primary;
+    }
   }
 
   // Summary
@@ -445,7 +457,10 @@ async function submit() {
     text-overflow: ellipsis;
   }
 
-  &__summary-qty { font-size: $font-size-xs; color: $color-gray-400; }
+  &__summary-qty {
+    font-size: $font-size-xs;
+    color: $color-gray-400;
+  }
 
   &__summary-price {
     font-size: $font-size-sm;
@@ -469,7 +484,10 @@ async function submit() {
     color: $color-gray-600;
   }
 
-  &__summary-free { color: $color-success; font-weight: $font-weight-medium; }
+  &__summary-free {
+    color: $color-success;
+    font-weight: $font-weight-medium;
+  }
 
   &__summary-total {
     display: flex;

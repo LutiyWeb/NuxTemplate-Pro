@@ -18,7 +18,9 @@ const pages = computed(() => {
       :disabled="page <= 1"
       type="button"
       @click="emit('update:page', page - 1)"
-    >‹</button>
+    >
+      ‹
+    </button>
 
     <template v-for="(p, i) in pages" :key="p">
       <span v-if="i > 0 && p - pages[i - 1] > 1" class="catalog-pagination__dots">…</span>
@@ -26,7 +28,9 @@ const pages = computed(() => {
         :class="['catalog-pagination__btn', { 'catalog-pagination__btn--active': p === page }]"
         type="button"
         @click="emit('update:page', p)"
-      >{{ p }}</button>
+      >
+        {{ p }}
+      </button>
     </template>
 
     <button
@@ -34,11 +38,15 @@ const pages = computed(() => {
       :disabled="page >= totalPages"
       type="button"
       @click="emit('update:page', page + 1)"
-    >›</button>
+    >
+      ›
+    </button>
   </div>
 </template>
 
 <style lang="scss">
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .catalog-pagination {
   display: flex;
   align-items: center;
@@ -55,10 +63,19 @@ const pages = computed(() => {
     background: $color-white;
     font-size: $font-size-sm;
     cursor: pointer;
-    transition: background $transition-fast, border-color $transition-fast, color $transition-fast;
+    transition:
+      background $transition-fast,
+      border-color $transition-fast,
+      color $transition-fast;
 
-    &:not(:disabled):hover { border-color: $color-primary; color: $color-primary; }
-    &:disabled { opacity: 0.4; cursor: not-allowed; }
+    &:not(:disabled):hover {
+      border-color: $color-primary;
+      color: $color-primary;
+    }
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
 
     &--active {
       background: $color-primary;
@@ -67,6 +84,9 @@ const pages = computed(() => {
     }
   }
 
-  &__dots { padding: 0 4px; color: $color-gray-400; }
+  &__dots {
+    padding: 0 4px;
+    color: $color-gray-400;
+  }
 }
 </style>

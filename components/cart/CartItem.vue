@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { CartEntry } from '~/stores/cart'
 import { Trash2 } from 'lucide-vue-next'
+import type { CartEntry } from '~/stores/cart'
 
-const props = defineProps<{
+defineProps<{
   item: CartEntry
   selected: boolean
 }>()
@@ -13,7 +13,9 @@ const emit = defineEmits<{
   updateQty: [number, number]
 }>()
 
-const cartStore = useCartStore()
+function formatPrice(p: number) {
+  return p.toLocaleString('uk-UA') + ' ₴'
+}
 </script>
 
 <template>
@@ -25,19 +27,21 @@ const cartStore = useCartStore()
       @change="emit('update:selected', ($event.target as HTMLInputElement).checked)"
     />
 
-    <img
-      v-if="item.product.thumbnail"
-      :src="item.product.thumbnail"
-      :alt="item.product.title"
-      class="cart-item__img"
-    />
-    <div v-else class="cart-item__img cart-item__img--placeholder" />
+    <NuxtLink :to="`/product/${item.product.id}`" class="cart-item__img-link">
+      <img
+        v-if="item.product.thumbnail"
+        :src="item.product.thumbnail"
+        :alt="item.product.title"
+        class="cart-item__img"
+      />
+      <div v-else class="cart-item__img cart-item__img--placeholder" />
+    </NuxtLink>
 
     <div class="cart-item__info">
       <NuxtLink :to="`/product/${item.product.id}`" class="cart-item__title">
         {{ item.product.title }}
       </NuxtLink>
-      <span class="cart-item__price">${{ item.product.price }}</span>
+      <span class="cart-item__price">{{ formatPrice(item.product.price) }}</span>
     </div>
 
     <div class="cart-item__qty">
@@ -46,31 +50,85 @@ const cartStore = useCartStore()
       <button type="button" @click="emit('updateQty', item.product.id, 1)">+</button>
     </div>
 
-    <button class="cart-item__remove" type="button" @click="emit('remove', item.product.id)"><Trash2 :size="16" /></button>
+    <button class="cart-item__remove" type="button" @click="emit('remove', item.product.id)">
+      <Trash2 :size="16" />
+    </button>
   </div>
 </template>
 
 <style lang="scss">
+@use '~/assets/styles/variables' as *;
+@use '~/assets/styles/mixins' as mixins;
 .cart-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  row-gap: 6px;
   padding: 12px 0;
   border-bottom: 1px solid $color-gray-100;
+  align-items: start;
 
-  &__check { flex-shrink: 0; width: 16px; height: 16px; cursor: pointer; }
+  @include mixins.respond-to(md) {
+    grid-template-columns: auto 64px 1fr auto auto;
+    grid-template-rows: auto;
+    align-items: center;
+  }
 
-  &__img {
-    width: 64px;
-    height: 64px;
-    object-fit: cover;
+  &__check {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: center;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+
+    @include mixins.respond-to(md) {
+      grid-row: 1;
+    }
+  }
+
+  &__img-link {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    display: block;
     border-radius: $radius-md;
     flex-shrink: 0;
 
-    &--placeholder { background: $color-gray-100; }
+    @include mixins.respond-to(md) {
+      grid-row: 1;
+    }
   }
 
-  &__info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  &__img {
+    display: block;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: $radius-md;
+
+    &--placeholder {
+      background: $color-gray-100;
+    }
+
+    @include mixins.respond-to(md) {
+      width: 64px;
+      height: 64px;
+    }
+  }
+
+  &__info {
+    grid-column: 3;
+    grid-row: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    @include mixins.respond-to(md) {
+      grid-column: 3;
+    }
+  }
 
   &__title {
     font-size: $font-size-sm;
@@ -80,16 +138,28 @@ const cartStore = useCartStore()
     overflow: hidden;
     text-overflow: ellipsis;
 
-    &:hover { color: $color-primary; }
+    &:hover {
+      color: $color-primary;
+    }
   }
 
-  &__price { font-size: $font-size-sm; font-weight: $font-weight-bold; color: $color-gray-900; }
+  &__price {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    color: $color-gray-900;
+  }
 
   &__qty {
+    grid-column: 3 / 5;
+    grid-row: 2;
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-shrink: 0;
+
+    @include mixins.respond-to(md) {
+      grid-column: 4;
+      grid-row: 1;
+    }
 
     button {
       width: 28px;
@@ -103,26 +173,40 @@ const cartStore = useCartStore()
       justify-content: center;
       transition: background $transition-fast;
 
-      &:hover { background: $color-gray-200; }
+      &:hover {
+        background: $color-gray-200;
+      }
     }
 
-    span { font-size: $font-size-sm; font-weight: $font-weight-medium; min-width: 20px; text-align: center; }
+    span {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      min-width: 20px;
+      text-align: center;
+    }
   }
 
   &__remove {
-    flex-shrink: 0;
+    grid-column: 4;
+    grid-row: 1;
     width: 32px;
     height: 32px;
     background: transparent;
+    border: none;
     border-radius: $radius-md;
     cursor: pointer;
-    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background $transition-fast;
 
-    &:hover { background: rgb(239 68 68 / 10%); }
+    @include mixins.respond-to(md) {
+      grid-column: 5;
+    }
+
+    &:hover {
+      background: rgb(239 68 68 / 10%);
+    }
   }
 }
 </style>
