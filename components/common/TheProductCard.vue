@@ -291,7 +291,7 @@ function handleFavClick(product: Product) {
     font-size: $font-size-xs;
     font-weight: $font-weight-medium;
     cursor: pointer;
-    transform: translateY(100%);
+    transform: translateY(0);
     transition:
       transform $transition-base,
       background $transition-fast;
@@ -303,11 +303,14 @@ function handleFavClick(product: Product) {
 
     @include mixins.respond-to(md) {
       font-size: $font-size-sm;
+      transform: translateY(100%);
     }
   }
 
   &:hover &__cart-btn {
-    transform: translateY(0);
+    @include mixins.respond-to(md) {
+      transform: translateY(0);
+    }
   }
 
   &__body {

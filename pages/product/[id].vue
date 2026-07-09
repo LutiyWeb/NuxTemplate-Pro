@@ -191,7 +191,7 @@ onBeforeUnmount(() => {
             :modules="[Thumbs, Navigation]"
             :thumbs="isMd ? { swiper: thumbsSwiper } : undefined"
             navigation
-            class="product-detail__main-swiper swiper-nav-bg"
+            class="product-detail__main-swiper swiper-nav-bg swiper-nav-image"
           >
             <SwiperSlide
               v-for="(img, i) in allImages"
@@ -419,11 +419,7 @@ onBeforeUnmount(() => {
           class="product-lightbox__thumb-swiper"
           @swiper="lightboxThumbsSwiper = $event"
         >
-          <SwiperSlide
-            v-for="(img, i) in allImages"
-            :key="i"
-            class="product-lightbox__thumb-slide"
-          >
+          <SwiperSlide v-for="(img, i) in allImages" :key="i" class="product-lightbox__thumb-slide">
             <img :src="img" class="product-lightbox__thumb-img" />
           </SwiperSlide>
         </Swiper>
@@ -496,21 +492,21 @@ onBeforeUnmount(() => {
 
     :deep(.swiper-button-prev),
     :deep(.swiper-button-next) {
-      width: 36px;
-      height: 36px;
-      border-radius: $radius-md;
-      background: rgb(255 255 255 / 82%);
-      backdrop-filter: blur(4px);
-      color: $color-gray-600;
-      transition: color $transition-fast;
+      // width: 36px;
+      // height: 36px;
+      // border-radius: $radius-md;
+      // background: rgb(255 255 255 / 82%);
+      // backdrop-filter: blur(4px);
+      // color: $color-gray-600;
+      // transition: color $transition-fast;
 
-      &::after {
-        font-size: 13px;
-      }
+      // &::after {
+      //   font-size: 13px;
+      // }
 
-      &:hover {
-        color: $color-gray-800;
-      }
+      // &:hover {
+      //   color: $color-gray-800;
+      // }
     }
   }
 

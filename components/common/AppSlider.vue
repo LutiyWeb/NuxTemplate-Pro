@@ -19,6 +19,7 @@ interface Props {
   linkTo?: RouteLocationRaw
   linkCount?: number
   peek?: boolean
+  swiperClass?: string
 }
 
 withDefaults(defineProps<Props>(), {
@@ -34,6 +35,7 @@ withDefaults(defineProps<Props>(), {
   linkTo: undefined,
   linkCount: undefined,
   peek: false,
+  swiperClass: '',
 })
 
 const { isSm } = useBreakpoints()
@@ -98,7 +100,7 @@ onBeforeUnmount(() => {
       :loop="loop"
       :autoplay="autoplay ? { delay: autoplayDelay, disableOnInteraction: false } : false"
       :breakpoints="breakpoints"
-      :class="['app-slider__swiper', { 'app-slider__swiper--peek': peek }]"
+      :class="['app-slider__swiper', { 'app-slider__swiper--peek': peek }, swiperClass]"
       @swiper="onSwiper"
       @slide-change="onSlideChange"
     >

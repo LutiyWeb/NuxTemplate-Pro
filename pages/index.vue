@@ -66,7 +66,7 @@ const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
     <!-- Hero -->
     <section class="py-13">
       <div class="container">
-        <AppSlider :slides="heroSlides" :loop="true" :autoplay="true" :autoplay-delay="12000">
+        <AppSlider :slides="heroSlides" :loop="true" :autoplay="true" :autoplay-delay="12000" swiper-class="swiper-nav-image">
           <template #default="slotProps">
             <NuxtLink
               v-if="slotProps?.slide"
@@ -282,6 +282,7 @@ const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
   display: flex;
   flex-direction: column;
   gap: 0;
+  overflow: hidden;
 
   &__promo-header {
     display: flex;
