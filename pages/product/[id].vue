@@ -403,7 +403,7 @@ onBeforeUnmount(() => {
           :initial-slide="lightboxActiveIndex"
           :thumbs="{ swiper: lightboxThumbsSwiper }"
           navigation
-          class="product-lightbox__swiper"
+          class="product-lightbox__swiper swiper-nav-image"
         >
           <SwiperSlide v-for="(img, i) in allImages" :key="i">
             <img :src="img" :alt="product?.title" class="product-lightbox__img" />
@@ -899,29 +899,6 @@ onBeforeUnmount(() => {
   &__swiper {
     width: 100%;
     height: 100%;
-    --swiper-navigation-size: 20px;
-
-    :deep(.swiper-button-prev),
-    :deep(.swiper-button-next) {
-      width: 40px;
-      height: 40px;
-      border-radius: $radius-md;
-      background: rgb(255 255 255 / 12%);
-      backdrop-filter: blur(4px);
-      color: $color-white;
-      transition:
-        color $transition-fast,
-        background $transition-fast;
-
-      &::after {
-        font-size: 14px;
-      }
-
-      &:hover {
-        background: rgb(255 255 255 / 22%);
-        color: rgb(255 255 255 / 70%);
-      }
-    }
   }
 
   &__img {
