@@ -69,6 +69,7 @@ export default defineNuxtConfig({
         process.env.NODE_ENV === 'production'
           ? process.env.NUXT_PUBLIC_HCAPTCHA_SITE_KEY
           : '10000000-ffff-ffff-ffff-000000000001',
+      googleClientId: process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID || '',
     },
   },
 

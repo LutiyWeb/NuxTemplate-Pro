@@ -26,6 +26,16 @@ function onCaptchaExpired() {
   captchaToken.value = ''
 }
 
+async function handleGoogleSuccess(response: { credential: string }) {
+  try {
+    await authStore.loginWithGoogle(response.credential)
+    emit('update:open', false)
+    emit('success')
+  } catch {
+    // authStore.error уже заполнен
+  }
+}
+
 async function submit() {
   formError.value = ''
   try {
@@ -96,11 +106,7 @@ async function submit() {
       <AppInputText v-model="email" label="Email" placeholder="email@example.com" />
       <AppPasswordInput v-model="password" label="Пароль" placeholder="Минимум 8 символов" />
 
-      <AppCaptcha
-        ref="captchaRef"
-        @verify="onCaptchaVerify"
-        @expired="onCaptchaExpired"
-      />
+      <AppCaptcha ref="captchaRef" @verify="onCaptchaVerify" @expired="onCaptchaExpired" />
 
       <p v-if="formError || authStore.error" class="app-modal__error">
         {{ formError || authStore.error }}
@@ -124,6 +130,14 @@ async function submit() {
       >
         Забыли пароль?
       </button>
+
+      <div class="auth-modal__divider">
+        <span class="auth-modal__divider-text">или</span>
+      </div>
+
+      <div class="auth-modal__google">
+        <GoogleLogin :callback="handleGoogleSuccess" />
+      </div>
     </form>
   </AppModal>
 </template>
@@ -136,6 +150,32 @@ async function submit() {
     display: flex;
     gap: 8px;
     margin-bottom: 24px;
+  }
+
+  &__divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-block: -8px;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: $color-gray-200;
+    }
+  }
+
+  &__divider-text {
+    font-size: $font-size-xs;
+    color: $color-gray-400;
+    white-space: nowrap;
+  }
+
+  &__google {
+    display: flex;
+    justify-content: center;
   }
 
   &__tab {
