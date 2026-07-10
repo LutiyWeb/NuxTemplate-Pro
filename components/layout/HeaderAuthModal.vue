@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { z } from 'zod'
 import type AppCaptcha from '~/components/common/AppCaptcha.vue'
 
 defineProps<{ open: boolean }>()
@@ -10,16 +11,58 @@ const email = ref('')
 const password = ref('')
 const firstName = ref('')
 const lastName = ref('')
-const formError = ref('')
 const captchaToken = ref('')
+const captchaError = ref('')
 const captchaRef = ref<InstanceType<typeof AppCaptcha> | null>(null)
 
+const submitted = ref(false)
+const errors = ref<Record<string, string>>({})
+
+const loginSchema = z.object({
+  email: z.string().min(1, 'Введите email').email('Некорректный email'),
+  password: z.string().min(1, 'Введите пароль'),
+})
+
+const registerSchema = z.object({
+  email: z.string().min(1, 'Введите email').email('Некорректный email'),
+  password: z.string().min(8, 'Минимум 8 символов'),
+  firstName: z.string().min(2, 'Минимум 2 символа'),
+  lastName: z.string().min(2, 'Минимум 2 символа'),
+})
+
+function validate(): boolean {
+  const schema = mode.value === 'login' ? loginSchema : registerSchema
+  const result = schema.safeParse({
+    email: email.value,
+    password: password.value,
+    firstName: firstName.value,
+    lastName: lastName.value,
+  })
+  if (result.success) {
+    errors.value = {}
+    return true
+  }
+  const fieldErrors = result.error.flatten().fieldErrors
+  errors.value = Object.fromEntries(
+    Object.entries(fieldErrors).map(([k, v]) => [k, v?.[0] ?? '']),
+  )
+  return false
+}
+
+watch([email, password, firstName, lastName], () => {
+  if (submitted.value) validate()
+})
+
 watch(mode, () => {
+  submitted.value = false
+  errors.value = {}
   captchaToken.value = ''
+  captchaError.value = ''
 })
 
 function onCaptchaVerify(token: string) {
   captchaToken.value = token
+  captchaError.value = ''
 }
 
 function onCaptchaExpired() {
@@ -37,31 +80,18 @@ async function handleGoogleSuccess(response: { credential: string }) {
 }
 
 async function submit() {
-  formError.value = ''
+  submitted.value = true
+  if (!validate()) return
+
+  if (!captchaToken.value) {
+    captchaError.value = 'Пройдите проверку капчи'
+    return
+  }
+
   try {
     if (mode.value === 'login') {
-      if (!email.value || !password.value) {
-        formError.value = 'Заполните все поля'
-        return
-      }
-      if (!captchaToken.value) {
-        formError.value = 'Пройдите проверку капчи'
-        return
-      }
       await authStore.login(email.value, password.value, captchaToken.value)
     } else {
-      if (!email.value || !password.value || !firstName.value || !lastName.value) {
-        formError.value = 'Заполните все поля'
-        return
-      }
-      if (password.value.length < 8) {
-        formError.value = 'Пароль минимум 8 символов'
-        return
-      }
-      if (!captchaToken.value) {
-        formError.value = 'Пройдите проверку капчи'
-        return
-      }
       await authStore.register({
         email: email.value,
         password: password.value,
@@ -74,6 +104,7 @@ async function submit() {
     emit('success')
   } catch {
     captchaToken.value = ''
+    captchaError.value = ''
     captchaRef.value?.reset()
   }
 }
@@ -100,16 +131,16 @@ async function submit() {
 
     <form class="app-modal__form" @submit.prevent="submit">
       <template v-if="mode === 'register'">
-        <AppInputText v-model="firstName" label="Имя" placeholder="Иван" />
-        <AppInputText v-model="lastName" label="Фамилия" placeholder="Иванов" />
+        <AppInputText v-model="firstName" label="Имя" placeholder="Введите имя" :error="errors.firstName" />
+        <AppInputText v-model="lastName" label="Фамилия" placeholder="Введите фамилию" :error="errors.lastName" />
       </template>
-      <AppInputText v-model="email" label="Email" placeholder="email@example.com" />
-      <AppPasswordInput v-model="password" label="Пароль" placeholder="Минимум 8 символов" />
+      <AppInputText v-model="email" label="Email" placeholder="email@example.com" :error="errors.email" />
+      <AppPasswordInput v-model="password" label="Пароль" placeholder="Минимум 8 символов" :error="errors.password" />
 
       <AppCaptcha ref="captchaRef" @verify="onCaptchaVerify" @expired="onCaptchaExpired" />
 
-      <p v-if="formError || authStore.error" class="app-modal__error">
-        {{ formError || authStore.error }}
+      <p v-if="captchaError || authStore.error" class="app-modal__error">
+        {{ captchaError || authStore.error }}
       </p>
 
       <AppButton
