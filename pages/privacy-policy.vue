@@ -5,18 +5,17 @@ useHead({ title: 'Політика конфіденційності — Nexus Co
 <template>
   <div class="legal-page container">
     <TheTitle tag="h1" size="m">Політика конфіденційності</TheTitle>
+    <p class="legal-page__updated">Дата останнього оновлення: 11 липня 2026 року</p>
 
-    <div class="legal-page__section">
-      <h2 class="legal-page__heading">1. Загальні положення</h2>
+    <AppAccordion title="1. Загальні положення" :default-open="true">
       <p class="legal-page__text">
         Ця Політика конфіденційності описує, як Nexus Commerce збирає, використовує та захищає
         персональні дані користувачів сайту. Використовуючи сайт, ви погоджуєтесь з умовами цієї
         Політики.
       </p>
-    </div>
+    </AppAccordion>
 
-    <div class="legal-page__section">
-      <h2 class="legal-page__heading">2. Які дані ми збираємо</h2>
+    <AppAccordion title="2. Які дані ми збираємо">
       <p class="legal-page__text">
         У процесі реєстрації та оформлення замовлень ми можемо збирати такі дані:
       </p>
@@ -27,10 +26,9 @@ useHead({ title: 'Політика конфіденційності — Nexus Co
         <li>Адреса доставки (місто, вулиця, будинок, квартира)</li>
         <li>Дані про замовлення та історію покупок</li>
       </ul>
-    </div>
+    </AppAccordion>
 
-    <div class="legal-page__section">
-      <h2 class="legal-page__heading">3. Мета використання даних</h2>
+    <AppAccordion title="3. Мета використання даних">
       <p class="legal-page__text">Зібрані дані використовуються виключно для:</p>
       <ul class="legal-page__list">
         <li>Обробки та виконання замовлень</li>
@@ -39,37 +37,38 @@ useHead({ title: 'Політика конфіденційності — Nexus Co
         <li>Надсилання інформаційних повідомлень (за згодою)</li>
         <li>Виконання вимог законодавства</li>
       </ul>
-    </div>
+      <p class="legal-page__text">
+        Персональні дані зберігаються протягом строку, необхідного для виконання цілей, визначених
+        цією Політикою (але не менше 3-х років з моменту останнього замовлення згідно з податковим
+        законодавством), або до моменту відкликання згоди користувачем.
+      </p>
+    </AppAccordion>
 
-    <div class="legal-page__section">
-      <h2 class="legal-page__heading">4. Передача даних третім особам</h2>
+    <AppAccordion title="4. Передача даних третім особам">
       <p class="legal-page__text">
         Ми не передаємо ваші персональні дані третім особам без вашої згоди, за винятком випадків,
         передбачених законодавством, або необхідних для виконання замовлення (служби доставки,
         платіжні системи). Партнери зобов'язані дотримуватись конфіденційності ваших даних.
       </p>
-    </div>
+    </AppAccordion>
 
-    <div class="legal-page__section">
-      <h2 class="legal-page__heading">5. Захист даних</h2>
+    <AppAccordion title="5. Захист даних">
       <p class="legal-page__text">
         Ми застосовуємо технічні та організаційні заходи для захисту ваших персональних даних від
         несанкціонованого доступу, зміни, розголошення або знищення. Передача платіжних даних
         здійснюється через захищені канали зі шифруванням SSL/TLS.
       </p>
-    </div>
+    </AppAccordion>
 
-    <div class="legal-page__section">
-      <h2 class="legal-page__heading">6. Файли cookie</h2>
+    <AppAccordion title="6. Файли cookie">
       <p class="legal-page__text">
         Сайт використовує файли cookie для забезпечення коректної роботи, аналізу трафіку та
         персоналізації контенту. Ви можете вимкнути cookie у налаштуваннях браузера, однак це може
         вплинути на функціональність сайту.
       </p>
-    </div>
+    </AppAccordion>
 
-    <div class="legal-page__section">
-      <h2 class="legal-page__heading">7. Ваші права</h2>
+    <AppAccordion title="7. Ваші права">
       <p class="legal-page__text">
         Відповідно до Закону України «Про захист персональних даних» ви маєте право:
       </p>
@@ -80,15 +79,18 @@ useHead({ title: 'Політика конфіденційності — Nexus Co
         <li>Відкликати згоду на обробку даних</li>
         <li>Подати скаргу до уповноваженого органу</li>
       </ul>
-    </div>
+    </AppAccordion>
 
-    <div class="legal-page__section">
-      <h2 class="legal-page__heading">8. Контакти</h2>
+    <AppAccordion title="8. Контакти">
+      <p class="legal-page__text">
+        Володілець персональних даних: Фізична особа-підприємець [ПІБ], запис в ЄДР № [номер запису
+        в ЄДР], ІПН: [ІПН]. Юридична адреса: [адреса реєстрації].
+      </p>
       <p class="legal-page__text">
         З питань щодо персональних даних звертайтесь: <br />
         Email: privacy@nexus-commerce.ua <br />
         Телефон: +38 (044) 000-00-00
       </p>
-    </div>
+    </AppAccordion>
   </div>
 </template>

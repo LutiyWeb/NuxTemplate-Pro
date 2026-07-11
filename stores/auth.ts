@@ -103,6 +103,23 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function loginWithGoogle(credential: string) {
+    loading.value = true
+    error.value = null
+    try {
+      const res = await apiClient.post('/api/auth/google', { credential })
+      _save(res.data.data.accessToken, res.data.data.user)
+      await useWishlistsStore().syncGuest()
+    } catch (err) {
+      error.value = axios.isAxiosError(err)
+        ? (err.response?.data?.error?.message ?? 'Ошибка входа через Google')
+        : 'Ошибка входа через Google'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   async function refresh(): Promise<boolean> {
     try {
       const res = await $fetch<{ data: { user: User; accessToken: string } }>(
@@ -145,6 +162,7 @@ export const useAuthStore = defineStore('auth', () => {
     isLoggedIn,
     login,
     register,
+    loginWithGoogle,
     forgotPassword,
     resetPassword,
     refresh,

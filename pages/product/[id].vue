@@ -403,7 +403,7 @@ onBeforeUnmount(() => {
           :initial-slide="lightboxActiveIndex"
           :thumbs="{ swiper: lightboxThumbsSwiper }"
           navigation
-          class="product-lightbox__swiper"
+          class="product-lightbox__swiper swiper-nav-image"
         >
           <SwiperSlide v-for="(img, i) in allImages" :key="i">
             <img :src="img" :alt="product?.title" class="product-lightbox__img" />
@@ -681,11 +681,10 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     gap: 0;
+    height: 100%;
     border: 1px solid $color-gray-200;
     border-radius: $radius-md;
     overflow: hidden;
-    height: 48px;
-    flex-shrink: 0;
   }
 
   &__qty-btn {
@@ -716,11 +715,10 @@ onBeforeUnmount(() => {
     font-weight: $font-weight-semibold;
     color: $color-gray-900;
     border-inline: 1px solid $color-gray-200;
-    line-height: 48px;
   }
 
   &__add-btn {
-    flex: 1;
+    white-space: nowrap;
     justify-content: center;
   }
 
@@ -899,29 +897,6 @@ onBeforeUnmount(() => {
   &__swiper {
     width: 100%;
     height: 100%;
-    --swiper-navigation-size: 20px;
-
-    :deep(.swiper-button-prev),
-    :deep(.swiper-button-next) {
-      width: 40px;
-      height: 40px;
-      border-radius: $radius-md;
-      background: rgb(255 255 255 / 12%);
-      backdrop-filter: blur(4px);
-      color: $color-white;
-      transition:
-        color $transition-fast,
-        background $transition-fast;
-
-      &::after {
-        font-size: 14px;
-      }
-
-      &:hover {
-        background: rgb(255 255 255 / 22%);
-        color: rgb(255 255 255 / 70%);
-      }
-    }
   }
 
   &__img {

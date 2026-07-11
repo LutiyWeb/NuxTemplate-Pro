@@ -63,7 +63,13 @@
   padding-block: 48px;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 0;
+
+  &__updated {
+    font-size: $font-size-sm;
+    color: $color-gray-400;
+    margin: -24px 0 16px;
+  }
 
   &__section {
     display: flex;
