@@ -681,11 +681,10 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     gap: 0;
+    height: 100%;
     border: 1px solid $color-gray-200;
     border-radius: $radius-md;
     overflow: hidden;
-    height: 48px;
-    flex-shrink: 0;
   }
 
   &__qty-btn {
@@ -716,11 +715,10 @@ onBeforeUnmount(() => {
     font-weight: $font-weight-semibold;
     color: $color-gray-900;
     border-inline: 1px solid $color-gray-200;
-    line-height: 48px;
   }
 
   &__add-btn {
-    flex: 1;
+    white-space: nowrap;
     justify-content: center;
   }
 
