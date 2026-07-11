@@ -7,6 +7,7 @@
     <TheFooter />
     <AppBackdrop />
     <TheToast />
+    <CookieWidget />
   </div>
 </template>
 

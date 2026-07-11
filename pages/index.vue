@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { POPULAR_CARDS, ARTICLES_CARDS } from '~/data/landingCards'
 import { CARD_GAP } from '~/constants/layout'
 
 useHead({ title: 'Nexus Commerce — Главная' })
@@ -21,6 +20,7 @@ const featuredProducts = computed(() => {
   if (products.length) return [{ ...products[0], stock: 0 }, ...products.slice(1)]
   return products
 })
+const popularProducts = computed(() => store.products.slice(0, 10))
 const newProducts = computed(() => store.products.slice(12, 20))
 const skeletons = Array.from({ length: 5 })
 const skeletonsSmall = Array.from({ length: 8 })
@@ -59,6 +59,21 @@ const promoBannerBreakpoints = {
 }
 
 const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
+
+const PROMO_TILES_CONFIG = [
+  { id: 1, label: "Комп'ютери", gradient: 'linear-gradient(135deg, rgb(79 70 229) 0%, rgb(55 48 163) 100%)', to: '/catalog' },
+  { id: 2, label: 'Ноутбуки',   gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)', to: '/catalog' },
+  { id: 3, label: 'Навушники',  gradient: 'linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%)',   to: '/catalog' },
+  { id: 4, label: 'Смартфони',  gradient: 'linear-gradient(135deg, rgb(124 58 237) 0%, rgb(91 33 182) 100%)', to: '/catalog' },
+  { id: 5, label: 'Аксесуари',  gradient: 'linear-gradient(135deg, rgb(5 150 105) 0%, rgb(4 120 87) 100%)',  to: '/catalog' },
+]
+
+const promoTiles = computed(() =>
+  PROMO_TILES_CONFIG.map((tile, i) => ({
+    ...tile,
+    image: store.products[5 + i]?.thumbnail ?? '',
+  })),
+)
 </script>
 
 <template>
@@ -66,7 +81,13 @@ const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
     <!-- Hero -->
     <section class="py-13">
       <div class="container">
-        <AppSlider :slides="heroSlides" :loop="true" :autoplay="true" :autoplay-delay="12000" swiper-class="swiper-nav-image">
+        <AppSlider
+          :slides="heroSlides"
+          :loop="true"
+          :autoplay="true"
+          :autoplay-delay="12000"
+          swiper-class="swiper-nav-image"
+        >
           <template #default="slotProps">
             <NuxtLink
               v-if="slotProps?.slide"
@@ -144,31 +165,6 @@ const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
       </div>
     </section>
 
-    <!-- Popular templates -->
-    <section class="py-13">
-      <div class="container">
-        <AppSlider
-          :slides="POPULAR_CARDS"
-          :space-between="CARD_GAP"
-          title="Популярные шаблоны"
-          link-label="Смотреть все"
-          link-to="/catalog"
-          :link-count="POPULAR_CARDS.length"
-          :breakpoints="{ 0: { slidesPerView: 1 }, 1024: { slidesPerView: 2 } }"
-        >
-          <template #default="slotProps">
-            <TheCardHorizontal
-              v-if="slotProps?.slide"
-              :title="slotProps.slide.title as string"
-              :description="slotProps.slide.description as string"
-              :badge="slotProps.slide.badge as string"
-              :image-right="slotProps.slide.imageRight as boolean"
-            />
-          </template>
-        </AppSlider>
-      </div>
-    </section>
-
     <!-- All products -->
     <section class="py-13">
       <div class="container">
@@ -193,6 +189,58 @@ const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
       </div>
     </section>
 
+    <!-- Promo image tiles -->
+    <section class="py-13">
+      <div class="container">
+        <div class="home__tiles-header">
+          <h2 class="home__tiles-title">Гарячі пропозиції</h2>
+        </div>
+        <div v-if="store.loading" class="home__tiles-grid">
+          <Skeleton
+            v-for="n in 5"
+            :key="n"
+            height="100%"
+            border-radius="12px"
+            class="home__tile-skeleton"
+          />
+        </div>
+        <div v-else class="home__tiles-grid">
+          <PromoImageTile
+            v-for="tile in promoTiles"
+            :key="tile.id"
+            :image="tile.image"
+            :label="tile.label"
+            :gradient="tile.gradient"
+            :to="tile.to"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular products -->
+    <section class="py-13">
+      <div class="container">
+        <div v-if="store.loading" class="home__skeleton-row">
+          <TheProductCard v-for="(_, i) in skeletons" :key="i" :loading="true" />
+        </div>
+        <AppSlider
+          v-else
+          :slides="popularProducts"
+          :space-between="CARD_GAP"
+          :breakpoints="productBreakpoints"
+          :peek="true"
+          title="Хіти продажів"
+          link-label="Дивитись всі"
+          link-to="/catalog"
+          :link-count="store.meta.total"
+        >
+          <template #default="slotProps">
+            <TheProductCard v-if="slotProps?.slide" :product="slotProps.slide as any" />
+          </template>
+        </AppSlider>
+      </div>
+    </section>
+
     <!-- Banner primary -->
     <section class="py-13">
       <div class="container">
@@ -206,31 +254,6 @@ const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
             <AppButton variant="secondary" size="lg">Смотреть цены</AppButton>
           </template>
         </TheBanner>
-      </div>
-    </section>
-
-    <!-- Articles -->
-    <section class="py-13">
-      <div class="container">
-        <AppSlider
-          :slides="ARTICLES_CARDS"
-          :space-between="CARD_GAP"
-          title="Статьи и гайды"
-          link-label="Смотреть все"
-          link-to="/catalog"
-          :link-count="ARTICLES_CARDS.length"
-          :breakpoints="{ 0: { slidesPerView: 1 }, 1024: { slidesPerView: 2 } }"
-        >
-          <template #default="slotProps">
-            <TheCardHorizontal
-              v-if="slotProps?.slide"
-              :title="slotProps.slide.title as string"
-              :description="slotProps.slide.description as string"
-              :badge="slotProps.slide.badge as string"
-              :image-right="slotProps.slide.imageRight as boolean"
-            />
-          </template>
-        </AppSlider>
       </div>
     </section>
 
@@ -306,6 +329,53 @@ const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
     &:hover {
       color: $color-primary-dark;
     }
+  }
+
+  &__tiles-header {
+    margin-bottom: 12px;
+  }
+
+  &__tiles-title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-gray-900;
+
+    @include mixins.respond-to(md) {
+      font-size: $font-size-2xl;
+    }
+  }
+
+  &__tiles-grid {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-block: 12px;
+    margin-block: -12px;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    > * {
+      flex: 0 0 260px;
+
+      @include mixins.respond-to(md) {
+        flex: 0 0 300px;
+      }
+    }
+
+    @include mixins.respond-to(xl) {
+      overflow: visible;
+
+      > * {
+        flex: 1 1 0;
+      }
+    }
+  }
+
+  &__tile-skeleton {
+    aspect-ratio: 4 / 2;
   }
 
   &__skeleton-row {
