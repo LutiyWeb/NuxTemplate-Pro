@@ -6,8 +6,7 @@ useHead({ title: 'Оплата та доставка — Nexus Commerce' })
   <div class="legal-page container">
     <TheTitle tag="h1" size="m">Оплата та доставка</TheTitle>
 
-    <div class="legal-page__section">
-      <h2 class="legal-page__heading">Способи оплати</h2>
+    <AppAccordion title="Способи оплати" :default-open="true">
       <table class="legal-page__table">
         <thead>
           <tr>
@@ -38,10 +37,9 @@ useHead({ title: 'Оплата та доставка — Nexus Commerce' })
         Усі онлайн-платежі обробляються через захищений платіжний шлюз. Ми не зберігаємо дані
         банківських карток.
       </p>
-    </div>
+    </AppAccordion>
 
-    <div class="legal-page__section">
-      <h2 class="legal-page__heading">Способи доставки</h2>
+    <AppAccordion title="Способи доставки">
       <table class="legal-page__table">
         <thead>
           <tr>
@@ -73,31 +71,30 @@ useHead({ title: 'Оплата та доставка — Nexus Commerce' })
           </tr>
         </tbody>
       </table>
-    </div>
+    </AppAccordion>
 
-    <div class="legal-page__section">
-      <h2 class="legal-page__heading">Безкоштовна доставка</h2>
+    <AppAccordion title="Безкоштовна доставка">
       <p class="legal-page__text">
         Безкоштовна доставка у відділення Нова Пошта діє для замовлень від 1 500 грн. Акція
         поширюється на доставку по всій території України.
       </p>
-    </div>
+    </AppAccordion>
 
-    <div class="legal-page__section">
-      <h2 class="legal-page__heading">Терміни обробки замовлення</h2>
+    <AppAccordion title="Терміни обробки замовлення">
       <p class="legal-page__text">
         Замовлення, оформлені до 14:00 у робочі дні, передаються до служби доставки у той самий
         день. Замовлення після 14:00 або у вихідні — наступного робочого дня. Ви отримаєте SMS та
         Email з трек-номером після відправки.
       </p>
-    </div>
+    </AppAccordion>
 
-    <div class="legal-page__section">
-      <h2 class="legal-page__heading">Доставка на тимчасово окуповані території</h2>
+    <AppAccordion title="Доставка на тимчасово окуповані території">
       <p class="legal-page__text">
-        На жаль, ми не здійснюємо доставку на тимчасово окуповані та прифронтові території. Перелік
-        недоступних регіонів уточнюйте у службі підтримки.
+        Доставка здійснюється виключно в ті населені пункти та відділення логістичних служб, які є
+        відкритими та фактично здійснюють обслуговування клієнтів на момент відправки замовлення.
+        Актуальний перелік працюючих відділень уточнюйте на сайтах перевізників або у нашій службі
+        підтримки.
       </p>
-    </div>
+    </AppAccordion>
   </div>
 </template>
