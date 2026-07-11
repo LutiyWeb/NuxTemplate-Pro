@@ -61,11 +61,36 @@ const promoBannerBreakpoints = {
 const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
 
 const PROMO_TILES_CONFIG = [
-  { id: 1, label: "Комп'ютери", gradient: 'linear-gradient(135deg, rgb(79 70 229) 0%, rgb(55 48 163) 100%)', to: '/catalog' },
-  { id: 2, label: 'Ноутбуки',   gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)', to: '/catalog' },
-  { id: 3, label: 'Навушники',  gradient: 'linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%)',   to: '/catalog' },
-  { id: 4, label: 'Смартфони',  gradient: 'linear-gradient(135deg, rgb(124 58 237) 0%, rgb(91 33 182) 100%)', to: '/catalog' },
-  { id: 5, label: 'Аксесуари',  gradient: 'linear-gradient(135deg, rgb(5 150 105) 0%, rgb(4 120 87) 100%)',  to: '/catalog' },
+  {
+    id: 1,
+    label: "Комп'ютери",
+    gradient: 'linear-gradient(135deg, rgb(79 70 229) 0%, rgb(55 48 163) 100%)',
+    to: '/catalog',
+  },
+  {
+    id: 2,
+    label: 'Ноутбуки',
+    gradient: 'linear-gradient(135deg, rgb(6 182 212) 0%, rgb(8 145 178) 100%)',
+    to: '/catalog',
+  },
+  {
+    id: 3,
+    label: 'Навушники',
+    gradient: 'linear-gradient(135deg, rgb(30 41 59) 0%, rgb(15 23 42) 100%)',
+    to: '/catalog',
+  },
+  {
+    id: 4,
+    label: 'Смартфони',
+    gradient: 'linear-gradient(135deg, rgb(124 58 237) 0%, rgb(91 33 182) 100%)',
+    to: '/catalog',
+  },
+  {
+    id: 5,
+    label: 'Аксесуари',
+    gradient: 'linear-gradient(135deg, rgb(5 150 105) 0%, rgb(4 120 87) 100%)',
+    to: '/catalog',
+  },
 ]
 
 const promoTiles = computed(() =>
@@ -107,6 +132,10 @@ const promoTiles = computed(() =>
                   :src="(slotProps.slide as any).thumbnail"
                   :alt="(slotProps.slide as any).title"
                   class="hero-slide__img"
+                  width="340"
+                  height="340"
+                  loading="eager"
+                  fetchpriority="high"
                 />
               </div>
             </NuxtLink>
