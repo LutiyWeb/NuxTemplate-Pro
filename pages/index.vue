@@ -109,8 +109,6 @@ const promoTiles = computed(() =>
         <AppSlider
           :slides="heroSlides"
           :loop="true"
-          :autoplay="true"
-          :autoplay-delay="12000"
           swiper-class="swiper-nav-image"
         >
           <template #default="slotProps">
@@ -152,7 +150,7 @@ const promoTiles = computed(() =>
     </section>
 
     <!-- Promo banners -->
-    <section class="py-13">
+    <!-- <section class="py-13">
       <div class="container">
         <AppSlider
           v-if="promoNeedsSlider"
@@ -192,7 +190,7 @@ const promoTiles = computed(() =>
           </div>
         </template>
       </div>
-    </section>
+    </section> -->
 
     <!-- All products -->
     <section class="py-13">
@@ -328,6 +326,17 @@ const promoTiles = computed(() =>
 <style lang="scss">
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
+.swiper:not(.swiper-initialized) .swiper-wrapper {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  border: 3px solid red;
+}
+
+.swiper:not(.swiper-initialized) .swiper-slide {
+  flex-shrink: 0;
+  width: 85%;
+}
 .home {
   --swiper-navigation-top-offset: calc(50% - 20px);
 

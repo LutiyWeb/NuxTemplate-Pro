@@ -42,6 +42,10 @@ export default defineNuxtConfig({
     '~/assets/styles/globals.scss',
   ],
 
+  features: {
+    inlineStyles: false,
+  },
+
   vite: {
     plugins: [svgLoader()],
     server: {
