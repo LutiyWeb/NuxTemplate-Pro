@@ -299,7 +299,7 @@ onBeforeUnmount(() => {
     </ClientOnly>
 
     <div v-if="loading" class="cab-fav__grid">
-      <Skeleton v-for="n in 6" :key="n" width="100%" height="260px" border-radius="12px" />
+      <AppSkeleton v-for="n in 6" :key="n" width="100%" height="260px" border-radius="12px" />
     </div>
 
     <div v-else-if="error" class="cab-fav__empty">

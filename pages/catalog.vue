@@ -507,6 +507,10 @@ const breadcrumbs = computed(() => {
     @include mixins.respond-to(lg) {
       grid-template-columns: repeat(4, 1fr);
     }
+
+    @include mixins.respond-to(xl) {
+      grid-template-columns: repeat(5, 1fr);
+    }
   }
 
   &__sort-drawer {

@@ -149,23 +149,23 @@ onBeforeUnmount(() => {
     <!-- Loading -->
     <div v-if="loading" class="product-detail__layout">
       <div class="product-detail__media">
-        <Skeleton width="100%" height="420px" border-radius="16px" />
+        <AppSkeleton width="100%" height="420px" border-radius="16px" />
         <div class="product-detail__thumbs-skeleton">
-          <Skeleton v-for="n in 4" :key="n" width="72px" height="72px" border-radius="8px" />
+          <AppSkeleton v-for="n in 4" :key="n" width="72px" height="72px" border-radius="8px" />
         </div>
       </div>
       <div class="product-detail__info">
-        <Skeleton width="100px" height="14px" class="product-detail__skel-gap" />
-        <Skeleton width="80%" height="32px" class="product-detail__skel-gap" />
-        <Skeleton width="100%" height="14px" class="product-detail__skel-gap" />
-        <Skeleton width="90%" height="14px" class="product-detail__skel-gap" />
-        <Skeleton
+        <AppSkeleton width="100px" height="14px" class="product-detail__skel-gap" />
+        <AppSkeleton width="80%" height="32px" class="product-detail__skel-gap" />
+        <AppSkeleton width="100%" height="14px" class="product-detail__skel-gap" />
+        <AppSkeleton width="90%" height="14px" class="product-detail__skel-gap" />
+        <AppSkeleton
           width="140px"
           height="40px"
           class="product-detail__skel-gap"
           style="margin-top: 16px"
         />
-        <Skeleton width="100%" height="56px" border-radius="12px" style="margin-top: 24px" />
+        <AppSkeleton width="100%" height="56px" border-radius="12px" style="margin-top: 24px" />
       </div>
     </div>
 

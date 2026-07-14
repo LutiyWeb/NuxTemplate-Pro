@@ -33,9 +33,9 @@ const STATUS_CLASS: Record<OrderStatus, string> = {
     <!-- Loading -->
     <div v-if="ordersStore.loading" class="cab-orders__list">
       <div v-for="n in 3" :key="n" class="cab-orders__skeleton">
-        <Skeleton width="120px" height="14px" />
-        <Skeleton width="80px" height="14px" />
-        <Skeleton width="90px" height="14px" />
+        <AppSkeleton width="120px" height="14px" />
+        <AppSkeleton width="80px" height="14px" />
+        <AppSkeleton width="90px" height="14px" />
       </div>
     </div>
 
