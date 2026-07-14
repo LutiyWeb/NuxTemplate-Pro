@@ -109,8 +109,6 @@ const promoTiles = computed(() =>
         <AppSlider
           :slides="heroSlides"
           :loop="true"
-          :autoplay="true"
-          :autoplay-delay="12000"
           swiper-class="swiper-nav-image"
         >
           <template #default="slotProps">
