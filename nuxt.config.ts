@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: true,
 
-  modules: ['@pinia/nuxt', 'nuxt-primevue', '@nuxt/image'],
+  modules: ['@pinia/nuxt', '@nuxt/image'],
 
   image: {
     quality: 80,
@@ -13,28 +13,8 @@ export default defineNuxtConfig({
     domains: ['images.unsplash.com'],
   },
 
-  primevue: {
-    usePrimeVue: true,
-    options: { ripple: true },
-    components: {
-      include: [
-        'InputText',
-        'Button',
-        'Password',
-        'Card',
-        'Sidebar',
-        'Dialog',
-        'Skeleton',
-        'Textarea',
-        'Dropdown',
-      ],
-    },
-  },
-
   css: [
     'modern-normalize/modern-normalize.css',
-    'primevue/resources/themes/aura-light-green/theme.css',
-    'primevue/resources/primevue.min.css',
     'swiper/css',
     'swiper/css/navigation',
     'swiper/css/pagination',

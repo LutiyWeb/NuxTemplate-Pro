@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ShoppingCart, Heart } from 'lucide-vue-next'
+import { ShoppingCart, Heart, Bell } from 'lucide-vue-next'
 import type { Product } from '~/types/product'
 
 interface Props {
@@ -34,6 +34,11 @@ function handleCartClick(product: Product) {
 
 function handleFavClick(product: Product) {
   wishlistsStore.toggle(product.id)
+}
+
+function handleNotifyClick(e: Event) {
+  e.preventDefault()
+  toastStore.add('Ми повідомимо вас, коли товар з\'явиться в наявності', 'success')
 }
 </script>
 
@@ -71,13 +76,16 @@ function handleFavClick(product: Product) {
         <span class="product-card__oos-badge">Немає в наявності</span>
       </div>
 
-      <div v-if="!loading && product?.labels?.length" class="product-card__labels">
+      <div v-if="!loading && product" class="product-card__labels">
         <span
           v-for="label in product.labels"
           :key="label"
           :class="['product-card__label', `product-card__label--${label}`]"
         >
           {{ LABEL_MAP[label] ?? label }}
+        </span>
+        <span v-if="product.category" class="product-card__category-badge">
+          {{ product.category }}
         </span>
       </div>
 
@@ -127,6 +135,23 @@ function handleFavClick(product: Product) {
             </span>
           </div>
           <span v-if="product.category" class="product-card__category">{{ product.category }}</span>
+          <button
+            v-if="!isOutOfStock(product)"
+            class="product-card__cart-icon-btn"
+            type="button"
+            @click.prevent="handleCartClick(product)"
+          >
+            <ShoppingCart :size="16" />
+          </button>
+          <button
+            v-else
+            class="product-card__notify-icon-btn"
+            type="button"
+            @click="handleNotifyClick"
+          >
+            <Bell :size="14" />
+            Повідомте про наявність
+          </button>
         </div>
       </template>
     </div>
@@ -280,7 +305,7 @@ function handleFavClick(product: Product) {
     bottom: 0;
     left: 0;
     right: 0;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     gap: 8px;
@@ -291,7 +316,6 @@ function handleFavClick(product: Product) {
     font-size: $font-size-xs;
     font-weight: $font-weight-medium;
     cursor: pointer;
-    transform: translateY(0);
     transition:
       transform $transition-base,
       background $transition-fast;
@@ -302,6 +326,7 @@ function handleFavClick(product: Product) {
     }
 
     @include mixins.respond-to(md) {
+      display: flex;
       font-size: $font-size-sm;
       transform: translateY(100%);
     }
@@ -322,13 +347,83 @@ function handleFavClick(product: Product) {
   }
 
   &__category {
+    display: none;
+
+    @include mixins.respond-to(md) {
+      display: block;
+      font-size: $font-size-xs;
+      font-weight: $font-weight-medium;
+      color: $color-gray-400;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 45%;
+    }
+  }
+
+  &__category-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: $color-white;
+    color: $color-gray-600;
     font-size: $font-size-xs;
     font-weight: $font-weight-medium;
-    color: $color-gray-400;
+    border-radius: $radius-sm;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 10%);
+
+    @include mixins.respond-to(md) {
+      display: none;
+    }
+  }
+
+  &__notify-icon-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    height: 37px;
+    border-radius: $radius-sm;
+    background: $color-primary;
+    color: $color-white;
+    border: none;
+    cursor: pointer;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 45%;
+    flex-shrink: 1;
+    min-width: 0;
+    transition: background $transition-fast;
+
+    &:hover {
+      background: $color-primary-dark;
+    }
+
+    @include mixins.respond-to(md) {
+      display: none;
+    }
+  }
+
+  &__cart-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 37px;
+    height: 37px;
+    border-radius: $radius-sm;
+    background: $color-primary;
+    color: $color-white;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background $transition-fast;
+
+    &:hover {
+      background: $color-primary-dark;
+    }
+
+    @include mixins.respond-to(md) {
+      display: none;
+    }
   }
 
   &__title {

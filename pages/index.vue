@@ -3,16 +3,83 @@ import { CARD_GAP } from '~/constants/layout'
 
 useHead({ title: 'Nexus Commerce — Главная' })
 
+interface MainBanner {
+  id: number
+  title: string
+  description: string | null
+  media_url: string
+  media_type: 'image' | 'video'
+  link_url: string | null
+  sort_order: number
+}
+
+interface SpecialBanner {
+  title: string
+  description?: string
+  image_url: string
+  link_url: string | null
+}
+
+interface BannersResponse {
+  data: {
+    main_banner: MainBanner[]
+    special_banners: {
+      special_1: SpecialBanner | null
+      special_2: SpecialBanner | null
+    }
+  }
+}
+
+const config = useRuntimeConfig()
 const store = useProductsStore()
 const categoriesStore = useCategoriesStore()
 const { isMd } = useBreakpoints()
+
+const { data: bannersData } = useFetch<BannersResponse>('/api/banners', {
+  baseURL: config.public.apiBase,
+})
 
 onMounted(() => {
   store.fetchProducts({ limit: 20 })
   categoriesStore.fetchCategories()
 })
 
-const heroSlides = computed(() => store.products.slice(0, 5))
+const FALLBACK_MAIN: MainBanner[] = [
+  {
+    id: 1,
+    title: 'Beats Studio Pro',
+    description: 'Преміальний звук та активне шумоподавлення. Бездротова свобода до 40 годин.',
+    media_url: '/banners/test-headphones.png',
+    media_type: 'image',
+    link_url: '/catalog',
+    sort_order: 1,
+  },
+]
+
+const FALLBACK_SPECIAL_1: SpecialBanner = {
+  title: 'Навушники тижня',
+  description: 'Бездротовий звук преміум-класу з активним шумоподавленням та до 40 годин автономності.',
+  image_url: '/banners/test-headphones.png',
+  link_url: '/catalog',
+}
+
+const FALLBACK_SPECIAL_2: SpecialBanner = {
+  title: 'Хіт сезону',
+  description: 'Найпопулярніша модель серед наших покупців. Обмежена кількість за спеціальною ціною.',
+  image_url: '/banners/test-headphones.png',
+  link_url: '/catalog',
+}
+
+const heroSlides = computed(() => {
+  const fromApi = bannersData.value?.data?.main_banner ?? []
+  return fromApi.length ? fromApi : FALLBACK_MAIN
+})
+const special1 = computed(
+  () => bannersData.value?.data?.special_banners?.special_1 ?? FALLBACK_SPECIAL_1,
+)
+const special2 = computed(
+  () => bannersData.value?.data?.special_banners?.special_2 ?? FALLBACK_SPECIAL_2,
+)
 
 const featuredProducts = computed(() => {
   const products = store.products.slice(0, 12)
@@ -112,31 +179,14 @@ const promoTiles = computed(() =>
           swiper-class="swiper-nav-image"
         >
           <template #default="slotProps">
-            <NuxtLink
+            <HeroBanner
               v-if="slotProps?.slide"
-              :to="`/product/${(slotProps.slide as any).id}`"
-              class="hero-slide"
-            >
-              <div class="hero-slide__content">
-                <span v-if="(slotProps.slide as any).category" class="hero-slide__eyebrow">
-                  {{ (slotProps.slide as any).category }}
-                </span>
-                <h2 class="hero-slide__title">{{ (slotProps.slide as any).title }}</h2>
-                <p class="hero-slide__sub">Смотрите лучшие товары в этой категории</p>
-                <span class="hero-slide__cta">Смотреть товар</span>
-              </div>
-              <div class="hero-slide__image">
-                <img
-                  :src="(slotProps.slide as any).thumbnail"
-                  :alt="(slotProps.slide as any).title"
-                  class="hero-slide__img"
-                  width="340"
-                  height="340"
-                  loading="eager"
-                  fetchpriority="high"
-                />
-              </div>
-            </NuxtLink>
+              :title="(slotProps.slide as MainBanner).title"
+              :description="(slotProps.slide as MainBanner).description"
+              :media-url="(slotProps.slide as MainBanner).media_url"
+              :media-type="(slotProps.slide as MainBanner).media_type"
+              :link-url="(slotProps.slide as MainBanner).link_url"
+            />
           </template>
         </AppSlider>
       </div>
@@ -223,7 +273,7 @@ const promoTiles = computed(() =>
           <h2 class="home__tiles-title">Гарячі пропозиції</h2>
         </div>
         <div v-if="store.loading" class="home__tiles-grid">
-          <Skeleton
+          <AppSkeleton
             v-for="n in 5"
             :key="n"
             height="100%"
@@ -268,19 +318,15 @@ const promoTiles = computed(() =>
       </div>
     </section>
 
-    <!-- Banner primary -->
-    <section class="py-13">
+    <!-- Banner special_1 -->
+    <section v-if="special1" class="py-13">
       <div class="container">
-        <TheBanner variant="primary">
-          <template #eyebrow>Special Offer</template>
-          <TheTitle :size="isMd ? 'l' : 'm'" tag="h2" style="color: inherit"
-            >Получи все Pro-шаблоны по одной цене</TheTitle
-          >
-          <p>Доступ ко всем премиум-шаблонам и будущим обновлениям по единой лицензии.</p>
-          <template #actions>
-            <AppButton variant="secondary" size="lg">Смотреть цены</AppButton>
-          </template>
-        </TheBanner>
+        <SpecialBanner
+          :title="special1.title"
+          :description="special1.description"
+          :image-url="special1.image_url"
+          :link-url="special1.link_url"
+        />
       </div>
     </section>
 
@@ -305,19 +351,16 @@ const promoTiles = computed(() =>
       </div>
     </section>
 
-    <!-- Banner dark -->
-    <section class="py-13">
+    <!-- Banner special_2 -->
+    <section v-if="special2" class="py-13">
       <div class="container">
-        <TheBanner variant="dark">
-          <template #eyebrow>Open Source</template>
-          <TheTitle :size="isMd ? 'l' : 'm'" tag="h2" style="color: inherit"
-            >Присоединяйся к сообществу</TheTitle
-          >
-          <p>Вноси правки, предлагай компоненты и делись проектами.</p>
-          <template #actions>
-            <AppButton variant="secondary" size="lg">GitHub</AppButton>
-          </template>
-        </TheBanner>
+        <SpecialBanner
+          :title="special2.title"
+          :description="special2.description"
+          :image-url="special2.image_url"
+          :link-url="special2.link_url"
+          :reverse="true"
+        />
       </div>
     </section>
   </div>
@@ -433,122 +476,4 @@ const promoTiles = computed(() =>
   }
 }
 
-.hero-slide {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  min-height: 340px;
-  padding: 16px 20px;
-  border-radius: $radius-2xl;
-  background: $color-gray-100;
-  text-decoration: none;
-
-  @include mixins.respond-to(md) {
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 440px;
-    padding: 40px 64px;
-    gap: 48px;
-  }
-
-  &__content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    flex: 1 1 0;
-    min-width: 0;
-    text-align: center;
-
-    @include mixins.respond-to(md) {
-      align-items: flex-start;
-      gap: 16px;
-      text-align: left;
-    }
-  }
-
-  &__eyebrow {
-    font-size: $font-size-xs;
-    font-weight: $font-weight-semibold;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: $color-primary;
-  }
-
-  &__title {
-    font-size: $font-size-lg;
-    font-weight: $font-weight-bold;
-    margin: 0;
-    color: $color-gray-900;
-    line-height: 1.2;
-    max-width: 520px;
-
-    @include mixins.respond-to(md) {
-      font-size: $font-size-4xl;
-    }
-  }
-
-  &__sub {
-    font-size: $font-size-xs;
-    color: $color-gray-500;
-    margin: 0;
-    max-width: 440px;
-
-    @include mixins.respond-to(md) {
-      font-size: $font-size-base;
-    }
-  }
-
-  &__cta {
-    display: inline-flex;
-    align-self: center;
-    padding: 8px 16px;
-    background: $color-primary;
-    color: $color-white;
-    border-radius: $radius-md;
-    font-weight: $font-weight-semibold;
-    font-size: $font-size-sm;
-    transition: background $transition-fast;
-
-    @include mixins.respond-to(md) {
-      align-self: flex-start;
-      padding: 12px 24px;
-      font-size: $font-size-base;
-    }
-
-    &:hover {
-      background: $color-primary-dark;
-    }
-  }
-
-  &__image {
-    display: flex;
-    order: -1;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    height: 184px;
-
-    @include mixins.respond-to(md) {
-      order: 0;
-      height: auto;
-      flex: 0 0 38%;
-      max-width: 38%;
-    }
-  }
-
-  &__img {
-    width: 100%;
-    max-height: 184px;
-    object-fit: contain;
-    display: block;
-
-    @include mixins.respond-to(md) {
-      max-height: 340px;
-    }
-  }
-}
 </style>

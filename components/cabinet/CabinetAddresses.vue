@@ -131,7 +131,7 @@ onMounted(load)
 
     <!-- Loading -->
     <div v-if="loading" class="cab-addr__list">
-      <Skeleton v-for="n in 2" :key="n" width="100%" height="80px" border-radius="12px" />
+      <AppSkeleton v-for="n in 2" :key="n" width="100%" height="80px" border-radius="12px" />
     </div>
 
     <!-- Empty -->

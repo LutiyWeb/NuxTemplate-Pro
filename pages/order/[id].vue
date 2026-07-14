@@ -51,7 +51,7 @@ function formatDate(iso: string) {
 
     <!-- Loading -->
     <div v-if="pending" class="order-page__loading">
-      <Skeleton width="100%" height="200px" border-radius="16px" />
+      <AppSkeleton width="100%" height="200px" border-radius="16px" />
     </div>
 
     <!-- Error -->
