@@ -53,7 +53,7 @@ withDefaults(defineProps<Props>(), {
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  min-height: 480px;
+  min-height: 450px;
   padding: 16px 20px;
   border-radius: $radius-2xl;
   background: $color-gray-100;
@@ -63,7 +63,7 @@ withDefaults(defineProps<Props>(), {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    min-height: 600px;
+    min-height: 500px;
     padding: 40px 64px;
     gap: 48px;
   }
@@ -111,22 +111,35 @@ withDefaults(defineProps<Props>(), {
   &__cta {
     display: inline-flex;
     align-self: center;
-    padding: 8px 16px;
-    background: $color-primary;
+    padding: 14px 28px;
+    background: linear-gradient(
+      120deg,
+      $color-primary-light,
+      $color-primary,
+      $color-primary-dark,
+      $color-primary
+    );
+    background-size: 300% 300%;
     color: $color-white;
     border-radius: $radius-md;
     font-weight: $font-weight-semibold;
-    font-size: $font-size-sm;
-    transition: background $transition-fast;
+    font-size: $font-size-base;
+    box-shadow: 0 4px 16px rgb(79 70 229 / 35%);
+    transition:
+      box-shadow $transition-fast,
+      transform $transition-fast;
+    animation: hero-cta-gradient-flow 6s ease infinite;
 
     @include mixins.respond-to(md) {
       align-self: flex-start;
-      padding: 12px 24px;
-      font-size: $font-size-base;
+      padding: 18px 36px;
+      font-size: $font-size-lg;
     }
 
     &:hover {
-      background: $color-primary-dark;
+      animation-play-state: paused;
+      box-shadow: 0 6px 20px rgb(79 70 229 / 45%);
+      transform: translateY(-1px);
     }
   }
 
@@ -154,6 +167,16 @@ withDefaults(defineProps<Props>(), {
       aspect-ratio: auto;
       max-height: 510px;
     }
+  }
+}
+
+@keyframes hero-cta-gradient-flow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
   }
 }
 </style>

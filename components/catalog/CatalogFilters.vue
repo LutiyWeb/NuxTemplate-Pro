@@ -299,6 +299,7 @@ onBeforeUnmount(() => clearTimeout(brandTimer))
     flex-direction: column;
     gap: 8px;
     max-height: 220px;
+    padding-right: 6px;
     overflow-y: auto;
   }
 

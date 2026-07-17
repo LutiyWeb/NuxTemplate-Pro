@@ -58,14 +58,16 @@ const FALLBACK_MAIN: MainBanner[] = [
 
 const FALLBACK_SPECIAL_1: SpecialBanner = {
   title: 'Навушники тижня',
-  description: 'Бездротовий звук преміум-класу з активним шумоподавленням та до 40 годин автономності.',
+  description:
+    'Бездротовий звук преміум-класу з активним шумоподавленням та до 40 годин автономності.',
   image_url: '/banners/test-headphones.png',
   link_url: '/catalog',
 }
 
 const FALLBACK_SPECIAL_2: SpecialBanner = {
   title: 'Хіт сезону',
-  description: 'Найпопулярніша модель серед наших покупців. Обмежена кількість за спеціальною ціною.',
+  description:
+    'Найпопулярніша модель серед наших покупців. Обмежена кількість за спеціальною ціною.',
   image_url: '/banners/test-headphones.png',
   link_url: '/catalog',
 }
@@ -96,7 +98,7 @@ const productBreakpoints = {
   0: { slidesPerView: 1.5 },
   768: { slidesPerView: 3 },
   1024: { slidesPerView: 4 },
-  1280: { slidesPerView: 5 },
+  1280: { slidesPerView: 6 },
 }
 
 const PROMO_BANNERS = [
@@ -173,11 +175,7 @@ const promoTiles = computed(() =>
     <!-- Hero -->
     <section class="py-13">
       <div class="container">
-        <AppSlider
-          :slides="heroSlides"
-          :loop="true"
-          swiper-class="swiper-nav-image"
-        >
+        <AppSlider :slides="heroSlides" :loop="true" swiper-class="swiper-nav-image">
           <template #default="slotProps">
             <HeroBanner
               v-if="slotProps?.slide"
@@ -363,6 +361,13 @@ const promoTiles = computed(() =>
         />
       </div>
     </section>
+
+    <!-- SEO text -->
+    <section class="py-13">
+      <div class="container">
+        <HomeSeoText />
+      </div>
+    </section>
   </div>
 </template>
 
@@ -475,5 +480,4 @@ const promoTiles = computed(() =>
     }
   }
 }
-
 </style>

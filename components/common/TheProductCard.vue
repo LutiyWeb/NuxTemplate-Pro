@@ -38,7 +38,7 @@ function handleFavClick(product: Product) {
 
 function handleNotifyClick(e: Event) {
   e.preventDefault()
-  toastStore.add('Ми повідомимо вас, коли товар з\'явиться в наявності', 'success')
+  toastStore.add("Ми повідомимо вас, коли товар з'явиться в наявності", 'success')
 }
 </script>
 
@@ -122,6 +122,9 @@ function handleNotifyClick(e: Event) {
         <h3 class="product-card__title">{{ product.title }}</h3>
         <div class="product-card__price-row">
           <div class="product-card__prices">
+            <span v-if="product.compareAtPrice" class="product-card__compare-price">
+              ${{ product.compareAtPrice }}
+            </span>
             <span
               :class="[
                 'product-card__price',
@@ -129,9 +132,6 @@ function handleNotifyClick(e: Event) {
               ]"
             >
               ${{ product.price }}
-            </span>
-            <span v-if="product.compareAtPrice" class="product-card__compare-price">
-              ${{ product.compareAtPrice }}
             </span>
           </div>
           <span v-if="product.category" class="product-card__category">{{ product.category }}</span>
@@ -407,9 +407,9 @@ function handleNotifyClick(e: Event) {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 37px;
-    height: 37px;
-    border-radius: $radius-sm;
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-md;
     background: $color-primary;
     color: $color-white;
     border: none;
@@ -440,20 +440,22 @@ function handleNotifyClick(e: Event) {
 
   &__price-row {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
     gap: 6px;
     margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid $color-gray-200;
   }
 
   &__prices {
     display: flex;
+    flex-direction: column;
     align-items: baseline;
-    gap: 6px;
   }
 
   &__price {
-    font-size: $font-size-base;
+    font-size: $font-size-lg;
     font-weight: $font-weight-bold;
     color: $color-gray-900;
 

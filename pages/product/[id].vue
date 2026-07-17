@@ -72,6 +72,13 @@ const originalPrice = computed(() => {
   return Math.round(p.price / (1 - p.discountPercentage / 100))
 })
 
+// TODO: replace with real dynamic spec set once backend defines per-category fields
+const quickSpecs = computed(() => [
+  { label: 'Бренд', value: product.value?.brand ?? '—' },
+  { label: 'Артикул', value: product.value?.sku ?? '—' },
+  { label: 'Рейтинг', value: product.value?.rating ? String(product.value.rating) : '—' },
+])
+
 const mockSpecs = computed(() => [
   { label: 'Бренд', value: product.value?.brand ?? 'Не указан' },
   { label: 'Категория', value: product.value?.category ?? '—' },
@@ -264,6 +271,18 @@ onBeforeUnmount(() => {
             ]"
             >{{ !isOutOfStock ? 'В наявності' : 'Немає в наявності' }}</span
           >
+        </div>
+
+        <!-- Quick specs -->
+        <div class="product-detail__quick-specs">
+          <div
+            v-for="spec in quickSpecs"
+            :key="spec.label"
+            class="product-detail__quick-spec"
+          >
+            <span class="product-detail__quick-spec-label">{{ spec.label }}</span>
+            <span class="product-detail__quick-spec-value">{{ spec.value }}</span>
+          </div>
         </div>
 
         <p class="product-detail__desc">{{ product.description }}</p>
@@ -629,6 +648,42 @@ onBeforeUnmount(() => {
     &--out {
       color: $color-danger;
     }
+  }
+
+  // Quick specs
+  &__quick-specs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  &__quick-spec {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    padding: 10px 8px;
+    text-align: center;
+    background: $color-gray-50;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-md;
+  }
+
+  &__quick-spec-label {
+    font-size: $font-size-xs;
+    color: $color-gray-500;
+  }
+
+  &__quick-spec-value {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-gray-900;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__desc {

@@ -11,18 +11,29 @@ withDefaults(defineProps<Props>(), { reverse: false })
 </script>
 
 <template>
-  <div :class="['special-banner', { 'special-banner--reverse': reverse }]">
+  <NuxtLink
+    v-if="linkUrl"
+    :to="linkUrl"
+    :class="['special-banner', { 'special-banner--reverse': reverse }]"
+  >
     <div class="special-banner__image">
       <img :src="imageUrl" :alt="title" class="special-banner__img" />
     </div>
     <div class="special-banner__content">
       <h2 class="special-banner__title">{{ title }}</h2>
       <p v-if="description" class="special-banner__description">{{ description }}</p>
-      <div v-if="linkUrl" class="special-banner__actions">
-        <NuxtLink :to="linkUrl">
-          <AppButton variant="primary" size="lg">Дивитись</AppButton>
-        </NuxtLink>
+      <div class="special-banner__actions">
+        <AppButton variant="primary" size="lg" tag="span">Дивитись</AppButton>
       </div>
+    </div>
+  </NuxtLink>
+  <div v-else :class="['special-banner', { 'special-banner--reverse': reverse }]">
+    <div class="special-banner__image">
+      <img :src="imageUrl" :alt="title" class="special-banner__img" />
+    </div>
+    <div class="special-banner__content">
+      <h2 class="special-banner__title">{{ title }}</h2>
+      <p v-if="description" class="special-banner__description">{{ description }}</p>
     </div>
   </div>
 </template>
