@@ -1,8 +1,9 @@
 <script setup lang="ts">
 interface Props {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
-  size?: 'sm' | 'md' | 'lg'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'gradient'
+  size?: 'sm' | 'md' | 'lg' | 'xl'
   tag?: 'button' | 'a' | 'span'
+  to?: string
   disabled?: boolean
   loading?: boolean
 }
@@ -17,8 +18,22 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
+  <NuxtLink
+    v-if="to"
+    :to="to"
+    :class="[
+      'app-btn',
+      `app-btn--${variant}`,
+      `app-btn--${size}`,
+      { 'app-btn--disabled': disabled || loading },
+    ]"
+  >
+    <span v-if="loading" class="app-btn__spinner" />
+    <slot />
+  </NuxtLink>
   <component
     :is="tag"
+    v-else
     :class="['app-btn', `app-btn--${variant}`, `app-btn--${size}`]"
     :disabled="disabled || loading"
   >
@@ -48,9 +63,11 @@ withDefaults(defineProps<Props>(), {
     box-shadow $transition-fast,
     transform $transition-fast;
 
-  &:disabled {
+  &:disabled,
+  &--disabled {
     opacity: 0.55;
     cursor: not-allowed;
+    pointer-events: none;
   }
 
   // Sizes
@@ -63,8 +80,14 @@ withDefaults(defineProps<Props>(), {
     font-size: 15px;
   }
   &--lg {
-    padding: 12px;
+    padding: 16px;
     font-size: $font-size-base;
+  }
+
+  &--xl {
+    min-width: 240px;
+    padding: 20px;
+    font-size: $font-size-xl;
   }
 
   // Variants
@@ -123,6 +146,25 @@ withDefaults(defineProps<Props>(), {
     }
   }
 
+  &--gradient {
+    background: linear-gradient(
+      120deg,
+      lighten($color-secondary, 15%),
+      $color-secondary,
+      $color-secondary-dark,
+      $color-secondary
+    );
+    background-size: 300% 300%;
+    color: $color-white;
+    box-shadow: 0 4px 16px rgb(6 182 212 / 35%);
+    animation: app-btn-gradient-flow 6s ease infinite;
+
+    &:not(:disabled):hover {
+      box-shadow: 0 8px 24px rgb(6 182 212 / 55%);
+      transform: translateY(-1px);
+    }
+  }
+
   &__spinner {
     width: 14px;
     height: 14px;
@@ -136,6 +178,16 @@ withDefaults(defineProps<Props>(), {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes app-btn-gradient-flow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
   }
 }
 </style>

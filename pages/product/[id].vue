@@ -247,14 +247,6 @@ onBeforeUnmount(() => {
 
         <div class="product-detail__title-row">
           <h1 class="product-detail__title">{{ product.title }}</h1>
-          <button
-            :class="['product-detail__fav-btn', { 'product-detail__fav-btn--active': isFav }]"
-            type="button"
-            :title="isFav ? 'Убрать из избранного' : 'В избранное'"
-            @click="toggleFav"
-          >
-            <Heart :size="20" :fill="isFav ? 'currentColor' : 'none'" />
-          </button>
         </div>
 
         <!-- Rating & meta -->
@@ -275,11 +267,7 @@ onBeforeUnmount(() => {
 
         <!-- Quick specs -->
         <div class="product-detail__quick-specs">
-          <div
-            v-for="spec in quickSpecs"
-            :key="spec.label"
-            class="product-detail__quick-spec"
-          >
+          <div v-for="spec in quickSpecs" :key="spec.label" class="product-detail__quick-spec">
             <span class="product-detail__quick-spec-label">{{ spec.label }}</span>
             <span class="product-detail__quick-spec-value">{{ spec.value }}</span>
           </div>
@@ -296,20 +284,28 @@ onBeforeUnmount(() => {
           <span v-if="product.discountPercentage" class="product-detail__discount">
             -{{ Math.round(product.discountPercentage) }}%
           </span>
-          <AppButton
-            variant="outline"
-            size="lg"
-            class="product-detail__fav-full-btn"
-            @click="toggleFav"
-          >
-            <Heart :size="16" :fill="isFav ? 'currentColor' : 'none'" />
-            {{ isFav ? 'В обраному' : 'В обране' }}
-          </AppButton>
         </div>
 
-        <!-- Quantity + Add to cart / Out of stock -->
-        <template v-if="!isOutOfStock">
-          <div class="product-detail__purchase">
+        <!-- Out of stock hint -->
+        <div v-if="isOutOfStock" class="product-detail__oos-banner">
+          <span class="product-detail__oos-label">Немає в наявності</span>
+          <p class="product-detail__oos-hint">
+            Залиште заявку — ми повідомимо, коли товар з'явиться
+          </p>
+        </div>
+
+        <!-- Actions: favorite toggle + quantity/buy (or notify) -->
+        <div class="product-detail__actions">
+          <button
+            :class="['product-detail__fav-btn', { 'product-detail__fav-btn--active': isFav }]"
+            type="button"
+            :title="isFav ? 'Убрать из избранного' : 'В избранное'"
+            @click="toggleFav"
+          >
+            <Heart :size="18" :fill="isFav ? 'currentColor' : 'none'" />
+          </button>
+
+          <template v-if="!isOutOfStock">
             <div class="product-detail__qty">
               <button
                 class="product-detail__qty-btn"
@@ -325,24 +321,17 @@ onBeforeUnmount(() => {
               </button>
             </div>
             <AppButton
-              variant="primary"
-              size="lg"
+              variant="gradient"
+              size="xl"
               class="product-detail__add-btn"
               @click="addToCart"
             >
-              <ShoppingCart :size="18" /> Додати до кошика
+              <ShoppingCart :size="24" /> Додати до кошика
             </AppButton>
-          </div>
-        </template>
+          </template>
 
-        <template v-else>
-          <div class="product-detail__oos-banner">
-            <span class="product-detail__oos-label">Немає в наявності</span>
-            <p class="product-detail__oos-hint">
-              Залиште заявку — ми повідомимо, коли товар з'явиться
-            </p>
-          </div>
           <AppButton
+            v-else
             variant="outline"
             size="lg"
             class="product-detail__notify-btn"
@@ -350,7 +339,7 @@ onBeforeUnmount(() => {
           >
             Повідомити про наявність
           </AppButton>
-        </template>
+        </div>
 
         <!-- Perks -->
         <div class="product-detail__perks">
@@ -508,25 +497,6 @@ onBeforeUnmount(() => {
     overflow: hidden;
     background: $color-gray-50;
     --ai-ratio: 4/3;
-
-    :deep(.swiper-button-prev),
-    :deep(.swiper-button-next) {
-      // width: 36px;
-      // height: 36px;
-      // border-radius: $radius-md;
-      // background: rgb(255 255 255 / 82%);
-      // backdrop-filter: blur(4px);
-      // color: $color-gray-600;
-      // transition: color $transition-fast;
-
-      // &::after {
-      //   font-size: 13px;
-      // }
-
-      // &:hover {
-      //   color: $color-gray-800;
-      // }
-    }
   }
 
   &__main-slide {
@@ -542,8 +512,6 @@ onBeforeUnmount(() => {
   }
 
   &__thumb-img {
-    // width: 72px;
-    // height: 72px;
     object-fit: cover;
     border-radius: $radius-md;
     border: 2px solid $color-gray-200;
@@ -592,28 +560,6 @@ onBeforeUnmount(() => {
 
     @include mixins.respond-to(2xl) {
       font-size: $font-size-2xl;
-    }
-  }
-
-  &__fav-btn {
-    flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: $radius-md;
-    color: $color-gray-400;
-    cursor: pointer;
-    transition:
-      background $transition-fast,
-      color $transition-fast;
-    &:hover {
-      background: $color-gray-100;
-      color: $color-danger;
-    }
-    &--active {
-      color: $color-danger;
     }
   }
 
@@ -695,9 +641,9 @@ onBeforeUnmount(() => {
 
   // Price
   &__price-row {
-    display: grid;
-    grid-template-columns: 122px 1fr;
+    display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 12px;
     margin-bottom: 12px;
   }
@@ -723,20 +669,43 @@ onBeforeUnmount(() => {
     font-weight: $font-weight-bold;
   }
 
-  // Purchase row
-  &__purchase {
-    display: grid;
-    grid-template-columns: 122px 1fr;
+  // Actions row: favorite toggle + quantity/buy (or notify)
+  &__actions {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  &__fav-btn {
+    flex: 0 0 44px;
+    width: 44px;
+    display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+    justify-content: center;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-md;
+    color: $color-gray-400;
+    cursor: pointer;
+    transition:
+      background $transition-fast,
+      color $transition-fast,
+      border-color $transition-fast;
+    &:hover {
+      border-color: $color-danger;
+      color: $color-danger;
+    }
+    &--active {
+      border-color: $color-danger;
+      color: $color-danger;
+    }
   }
 
   &__qty {
     display: flex;
     align-items: center;
     gap: 0;
-    height: 100%;
+    flex-shrink: 0;
     border: 1px solid $color-gray-200;
     border-radius: $radius-md;
     overflow: hidden;
@@ -772,14 +741,21 @@ onBeforeUnmount(() => {
     border-inline: 1px solid $color-gray-200;
   }
 
-  &__add-btn {
+  // ".app-btn--gradient" chained in so these layout overrides
+  // out-specificity AppButton's own size/variant rules reliably
+  &__add-btn.app-btn--gradient {
+    flex: 1;
     white-space: nowrap;
     justify-content: center;
-  }
 
-  &__fav-full-btn {
-    width: 100%;
-    justify-content: center;
+    @include mixins.respond-to(md) {
+      flex: 0 0 250px;
+      padding: 16px;
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
   }
 
   &__oos-banner {
@@ -806,9 +782,8 @@ onBeforeUnmount(() => {
   }
 
   &__notify-btn {
-    width: 100%;
+    flex: 1;
     justify-content: center;
-    margin-bottom: 24px;
   }
 
   // Perks
