@@ -158,7 +158,7 @@ function handleNotifyClick(e: Event) {
   </component>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
 .product-card {

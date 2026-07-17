@@ -42,7 +42,7 @@ withDefaults(defineProps<Props>(), {
   </component>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
 .app-btn {
@@ -106,6 +106,7 @@ withDefaults(defineProps<Props>(), {
     background: $color-white;
     color: $color-primary;
     border: 1px solid $color-gray-200;
+
     &:not(:disabled):hover {
       background: $color-gray-50;
       border-color: $color-primary;

@@ -13,6 +13,11 @@ interface MainBanner {
   sort_order: number
 }
 
+type SliderItem = {
+  id: string | number
+  [key: string]: unknown
+}
+
 interface SpecialBanner {
   title: string
   description?: string
@@ -33,7 +38,6 @@ interface BannersResponse {
 const config = useRuntimeConfig()
 const store = useProductsStore()
 const categoriesStore = useCategoriesStore()
-const { isMd } = useBreakpoints()
 
 const { data: bannersData } = useFetch<BannersResponse>('/api/banners', {
   baseURL: config.public.apiBase,
@@ -72,9 +76,11 @@ const FALLBACK_SPECIAL_2: SpecialBanner = {
   link_url: '/catalog',
 }
 
-const heroSlides = computed(() => {
+const heroSlides = computed<SliderItem[]>(() => {
   const fromApi = bannersData.value?.data?.main_banner ?? []
-  return fromApi.length ? fromApi : FALLBACK_MAIN
+  const slides = fromApi.length ? fromApi : FALLBACK_MAIN
+
+  return slides as unknown as SliderItem[]
 })
 const special1 = computed(
   () => bannersData.value?.data?.special_banners?.special_1 ?? FALLBACK_SPECIAL_1,
@@ -121,13 +127,6 @@ const PROMO_BANNERS = [
     subtitle: 'на аудио и аксессуары',
   },
 ]
-
-const promoBannerBreakpoints = {
-  0: { slidesPerView: 1 },
-  768: { slidesPerView: 3 },
-}
-
-const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
 
 const PROMO_TILES_CONFIG = [
   {
@@ -179,11 +178,11 @@ const promoTiles = computed(() =>
           <template #default="slotProps">
             <HeroBanner
               v-if="slotProps?.slide"
-              :title="(slotProps.slide as MainBanner).title"
-              :description="(slotProps.slide as MainBanner).description"
-              :media-url="(slotProps.slide as MainBanner).media_url"
-              :media-type="(slotProps.slide as MainBanner).media_type"
-              :link-url="(slotProps.slide as MainBanner).link_url"
+              :title="(slotProps.slide?.title as string | null) ?? ''"
+              :description="(slotProps.slide?.description as string | null) ?? null"
+              :media-url="(slotProps.slide?.media_url as string | null) ?? ''"
+              :media-type="(slotProps.slide?.media_type as 'image' | 'video' | null) ?? 'image'"
+              :link-url="(slotProps.slide?.link_url as string | null) ?? null"
             />
           </template>
         </AppSlider>
@@ -198,47 +197,26 @@ const promoTiles = computed(() =>
     </section>
 
     <!-- Promo banners -->
-    <!-- <section class="py-13">
+    <section class="py-13">
       <div class="container">
-        <AppSlider
-          v-if="promoNeedsSlider"
-          :slides="PROMO_BANNERS"
-          :space-between="CARD_GAP"
-          :breakpoints="promoBannerBreakpoints"
-          title="Акції"
-          link-label="Всі акції"
-          link-to="/promo"
-          :link-count="PROMO_BANNERS.length"
-        >
-          <template #default="slotProps">
-            <PromoBannerCard
-              v-if="slotProps?.slide"
-              :gradient="(slotProps.slide as any).gradient"
-              :title="(slotProps.slide as any).title"
-              :subtitle="(slotProps.slide as any).subtitle"
-            />
-          </template>
-        </AppSlider>
+        <div class="home__promo-header">
+          <h2 class="home__promo-title">Акції</h2>
+          <NuxtLink to="/promo" class="home__promo-link">
+            Всі акції ({{ PROMO_BANNERS.length }})
+          </NuxtLink>
+        </div>
 
-        <template v-else>
-          <div class="home__promo-header">
-            <h2 class="home__promo-title">Акції</h2>
-            <NuxtLink to="/promo" class="home__promo-link">
-              Всі акції ({{ PROMO_BANNERS.length }})
-            </NuxtLink>
-          </div>
-          <div class="grid-col-3">
-            <PromoBannerCard
-              v-for="b in PROMO_BANNERS"
-              :key="b.id"
-              :gradient="b.gradient"
-              :title="b.title"
-              :subtitle="b.subtitle"
-            />
-          </div>
-        </template>
+        <div class="home__promo-list">
+          <PromoBannerCard
+            v-for="b in PROMO_BANNERS"
+            :key="b.id"
+            :gradient="b.gradient"
+            :title="b.title"
+            :subtitle="b.subtitle"
+          />
+        </div>
       </div>
-    </section> -->
+    </section>
 
     <!-- All products -->
     <section class="py-13">
@@ -397,7 +375,33 @@ const promoTiles = computed(() =>
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+  }
+
+  &__promo-list {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-block: 4px 8px;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    > * {
+      flex: 0 0 300px;
+    }
+
+    @include mixins.respond-to(md) {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      overflow: visible;
+
+      > * {
+        flex: 0 0 auto;
+      }
+    }
   }
 
   &__promo-title {

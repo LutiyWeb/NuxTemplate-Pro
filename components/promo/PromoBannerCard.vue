@@ -21,17 +21,22 @@ withDefaults(defineProps<Props>(), { tag: 'Акция' })
 <style lang="scss">
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
+
 .promo-card {
   display: flex;
   flex-direction: column;
   border-radius: $radius-xl;
-  padding: 32px;
+  padding: 16px;
   color: $color-white;
   min-height: 160px;
   position: relative;
   overflow: hidden;
   transition: transform $transition-base;
   text-decoration: none;
+
+  @include mixins.respond-to(md) {
+    padding: 24px;
+  }
 
   &:hover {
     transform: translateY(-2px);

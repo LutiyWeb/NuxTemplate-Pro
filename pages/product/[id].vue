@@ -8,6 +8,8 @@ import type { Product } from '~/types/product'
 const route = useRoute()
 const cartStore = useCartStore()
 const wishlistsStore = useWishlistsStore()
+const authStore = useAuthStore()
+const uiStore = useUiStore()
 
 const config = useRuntimeConfig()
 
@@ -139,301 +141,316 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="product-detail container">
-    <AppBreadcrumbs
-      :crumbs="[
-        { label: 'Главная', to: '/' },
-        { label: 'Каталог', to: '/catalog' },
-        {
-          label: product?.category ?? '...',
-          to: product?.categorySlug ? `/catalog?categorySlug=${product.categorySlug}` : '/catalog',
-        },
-        { label: product?.title ?? '...' },
-      ]"
-      class="product-detail__breadcrumbs"
-    />
+  <div>
+    <div class="product-detail container">
+      <AppBreadcrumbs
+        :crumbs="[
+          { label: 'Главная', to: '/' },
+          { label: 'Каталог', to: '/catalog' },
+          {
+            label: product?.category ?? '...',
+            to: product?.categorySlug
+              ? `/catalog?categorySlug=${product.categorySlug}`
+              : '/catalog',
+          },
+          { label: product?.title ?? '...' },
+        ]"
+        class="product-detail__breadcrumbs"
+      />
 
-    <!-- Loading -->
-    <div v-if="loading" class="product-detail__layout">
-      <div class="product-detail__media">
-        <AppSkeleton width="100%" height="420px" border-radius="16px" />
-        <div class="product-detail__thumbs-skeleton">
-          <AppSkeleton v-for="n in 4" :key="n" width="72px" height="72px" border-radius="8px" />
+      <!-- Loading -->
+      <div v-if="loading" class="product-detail__layout">
+        <div class="product-detail__media">
+          <AppSkeleton width="100%" height="420px" border-radius="16px" />
+          <div class="product-detail__thumbs-skeleton">
+            <AppSkeleton v-for="n in 4" :key="n" width="72px" height="72px" border-radius="8px" />
+          </div>
+        </div>
+        <div class="product-detail__info">
+          <AppSkeleton width="100px" height="14px" class="product-detail__skel-gap" />
+          <AppSkeleton width="80%" height="32px" class="product-detail__skel-gap" />
+          <AppSkeleton width="100%" height="14px" class="product-detail__skel-gap" />
+          <AppSkeleton width="90%" height="14px" class="product-detail__skel-gap" />
+          <AppSkeleton
+            width="140px"
+            height="40px"
+            class="product-detail__skel-gap"
+            style="margin-top: 16px"
+          />
+          <AppSkeleton width="100%" height="56px" border-radius="12px" style="margin-top: 24px" />
         </div>
       </div>
-      <div class="product-detail__info">
-        <AppSkeleton width="100px" height="14px" class="product-detail__skel-gap" />
-        <AppSkeleton width="80%" height="32px" class="product-detail__skel-gap" />
-        <AppSkeleton width="100%" height="14px" class="product-detail__skel-gap" />
-        <AppSkeleton width="90%" height="14px" class="product-detail__skel-gap" />
-        <AppSkeleton
-          width="140px"
-          height="40px"
-          class="product-detail__skel-gap"
-          style="margin-top: 16px"
-        />
-        <AppSkeleton width="100%" height="56px" border-radius="12px" style="margin-top: 24px" />
+
+      <!-- Error -->
+      <div v-else-if="error || !product" class="product-detail__error">
+        <p>
+          Не удалось загрузить товар. Попробуйте
+          <button
+            type="button"
+            class="product-detail__error-retry"
+            @click="() => refreshNuxtData()"
+          >
+            обновить страницу</button
+          >.
+        </p>
+      </div>
+
+      <!-- Content -->
+      <div v-else-if="product" class="product-detail__layout">
+        <!-- Media -->
+        <div class="product-detail__media">
+          <div v-if="isOutOfStock" class="product-detail__media-oos">
+            <span class="product-detail__media-oos-badge">Немає в наявності</span>
+          </div>
+          <ClientOnly>
+            <Swiper
+              :modules="[Thumbs, Navigation]"
+              :thumbs="isMd ? { swiper: thumbsSwiper } : undefined"
+              navigation
+              class="product-detail__main-swiper swiper-nav-bg swiper-nav-image"
+            >
+              <SwiperSlide
+                v-for="(img, i) in allImages"
+                :key="i"
+                class="product-detail__main-slide"
+                @click="openLightbox(i)"
+              >
+                <AppImage
+                  :src="img"
+                  :alt="product.title"
+                  :lazy="i !== 0"
+                  :sizes="{ mobile: { w: 600, h: 450 }, desktop: { w: 800, h: 600 } }"
+                />
+              </SwiperSlide>
+            </Swiper>
+
+            <Swiper
+              v-if="isMd"
+              :modules="[Thumbs]"
+              slides-per-view="auto"
+              :space-between="8"
+              watch-slides-progress
+              class="product-detail__thumbs"
+              @swiper="thumbsSwiper = $event"
+            >
+              <SwiperSlide
+                v-for="(img, i) in allImages"
+                :key="i"
+                class="product-detail__thumb-slide"
+              >
+                <AppImage
+                  :src="img"
+                  :alt="`thumb ${i}`"
+                  img-class="product-detail__thumb-img"
+                  :sizes="{ mobile: { w: 72, h: 72 }, desktop: { w: 72, h: 72 } }"
+                />
+              </SwiperSlide>
+            </Swiper>
+          </ClientOnly>
+        </div>
+
+        <!-- Info  -->
+        <div class="product-detail__info">
+          <NuxtLink
+            v-if="product.categorySlug"
+            :to="`/catalog?categorySlug=${product.categorySlug}`"
+            class="product-detail__category"
+            >{{ product.category }}</NuxtLink
+          >
+
+          <div class="product-detail__title-row">
+            <h1 class="product-detail__title">{{ product.title }}</h1>
+          </div>
+
+          <!-- Rating & meta -->
+          <div class="product-detail__meta">
+            <span v-if="product.rating" class="product-detail__rating">
+              <Star :size="14" fill="currentColor" />
+              {{ product.rating }}
+            </span>
+            <span v-if="product.brand" class="product-detail__brand">{{ product.brand }}</span>
+            <span
+              :class="[
+                'product-detail__stock',
+                !isOutOfStock ? 'product-detail__stock--in' : 'product-detail__stock--out',
+              ]"
+              >{{ !isOutOfStock ? 'В наявності' : 'Немає в наявності' }}</span
+            >
+          </div>
+
+          <!-- Quick specs -->
+          <div class="product-detail__quick-specs">
+            <div v-for="spec in quickSpecs" :key="spec.label" class="product-detail__quick-spec">
+              <span class="product-detail__quick-spec-label">{{ spec.label }}</span>
+              <span class="product-detail__quick-spec-value">{{ spec.value }}</span>
+            </div>
+          </div>
+
+          <p class="product-detail__desc">{{ product.description }}</p>
+
+          <!-- Price -->
+          <div class="product-detail__price-row">
+            <span class="product-detail__price">${{ product.price }}</span>
+            <span v-if="originalPrice" class="product-detail__price-original"
+              >${{ originalPrice }}</span
+            >
+            <span v-if="product.discountPercentage" class="product-detail__discount">
+              -{{ Math.round(product.discountPercentage) }}%
+            </span>
+          </div>
+
+          <!-- Out of stock hint -->
+          <div v-if="isOutOfStock" class="product-detail__oos-banner">
+            <span class="product-detail__oos-label">Немає в наявності</span>
+            <p class="product-detail__oos-hint">
+              Залиште заявку — ми повідомимо, коли товар з'явиться
+            </p>
+          </div>
+
+          <!-- Actions: favorite toggle + quantity/buy (or notify) -->
+          <div class="product-detail__actions">
+            <button
+              :class="['product-detail__fav-btn', { 'product-detail__fav-btn--active': isFav }]"
+              type="button"
+              :title="isFav ? 'Убрать из избранного' : 'В избранное'"
+              @click="toggleFav"
+            >
+              <Heart :size="18" :fill="isFav ? 'currentColor' : 'none'" />
+            </button>
+
+            <template v-if="!isOutOfStock">
+              <div class="product-detail__qty">
+                <button
+                  class="product-detail__qty-btn"
+                  type="button"
+                  :disabled="qty <= 1"
+                  @click="decrement"
+                >
+                  <Minus :size="14" />
+                </button>
+                <span class="product-detail__qty-val">{{ qty }}</span>
+                <button class="product-detail__qty-btn" type="button" @click="increment">
+                  <Plus :size="14" />
+                </button>
+              </div>
+              <AppButton
+                variant="gradient"
+                size="xl"
+                class="product-detail__add-btn"
+                @click="addToCart"
+              >
+                <ShoppingCart :size="24" /> Додати до кошика
+              </AppButton>
+            </template>
+
+            <AppButton
+              v-else
+              variant="outline"
+              size="lg"
+              class="product-detail__notify-btn"
+              @click="notifyWhenAvailable"
+            >
+              Повідомити про наявність
+            </AppButton>
+          </div>
+
+          <!-- Perks -->
+          <div class="product-detail__perks">
+            <div class="product-detail__perk">
+              <Truck :size="16" />
+              <span>Бесплатная доставка от $50</span>
+            </div>
+            <div class="product-detail__perk">
+              <Shield :size="16" />
+              <span>Гарантия 12 месяцев</span>
+            </div>
+            <div class="product-detail__perk">
+              <Package :size="16" />
+              <span>Возврат в течение 30 дней</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div v-if="product" class="product-detail__tabs">
+        <div class="product-detail__tabs-nav">
+          <button
+            v-for="tab in tabs"
+            :key="tab.key"
+            :class="[
+              'product-detail__tab-btn',
+              { 'product-detail__tab-btn--active': activeTab === tab.key },
+            ]"
+            type="button"
+            @click="activeTab = tab.key"
+          >
+            {{ tab.label }}
+          </button>
+        </div>
+
+        <div class="product-detail__tab-content">
+          <div v-if="activeTab === 'specs'">
+            <table class="product-detail__specs">
+              <tbody>
+                <tr v-for="spec in mockSpecs" :key="spec.label">
+                  <td class="product-detail__spec-label">{{ spec.label }}</td>
+                  <td class="product-detail__spec-value">{{ spec.value }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div v-else-if="activeTab === 'reviews'">
+            <ProductReviews :product-id="product.id" />
+          </div>
+
+          <div v-else-if="activeTab === 'qa'" class="product-detail__qa-empty">
+            <p>Питань поки немає. Будьте першим, хто задасть питання!</p>
+          </div>
+        </div>
       </div>
     </div>
-
-    <!-- Error -->
-    <div v-else-if="error || !product" class="product-detail__error">
-      <p>
-        Не удалось загрузить товар. Попробуйте
-        <button type="button" class="product-detail__error-retry" @click="() => refreshNuxtData()">
-          обновить страницу</button
-        >.
-      </p>
-    </div>
-
-    <!-- Content -->
-    <div v-else-if="product" class="product-detail__layout">
-      <!-- Media -->
-      <div class="product-detail__media">
-        <div v-if="isOutOfStock" class="product-detail__media-oos">
-          <span class="product-detail__media-oos-badge">Немає в наявності</span>
-        </div>
-        <ClientOnly>
+    <!-- Fullscreen gallery lightbox -->
+    <Teleport to="body">
+      <div v-if="lightboxOpen" class="product-lightbox">
+        <button class="product-lightbox__close" type="button" @click="closeLightbox">
+          <X :size="20" />
+        </button>
+        <div class="product-lightbox__main">
           <Swiper
             :modules="[Thumbs, Navigation]"
-            :thumbs="isMd ? { swiper: thumbsSwiper } : undefined"
+            :initial-slide="lightboxActiveIndex"
+            :thumbs="{ swiper: lightboxThumbsSwiper }"
             navigation
-            class="product-detail__main-swiper swiper-nav-bg swiper-nav-image"
+            class="product-lightbox__swiper swiper-nav-image"
           >
-            <SwiperSlide
-              v-for="(img, i) in allImages"
-              :key="i"
-              class="product-detail__main-slide"
-              @click="openLightbox(i)"
-            >
-              <AppImage
-                :src="img"
-                :alt="product.title"
-                :lazy="i !== 0"
-                :sizes="{ mobile: { w: 600, h: 450 }, desktop: { w: 800, h: 600 } }"
-              />
+            <SwiperSlide v-for="(img, i) in allImages" :key="i">
+              <img :src="img" :alt="product?.title" class="product-lightbox__img" />
             </SwiperSlide>
           </Swiper>
-
+        </div>
+        <div class="product-lightbox__thumb-strip">
           <Swiper
-            v-if="isMd"
             :modules="[Thumbs]"
             slides-per-view="auto"
             :space-between="8"
             watch-slides-progress
-            class="product-detail__thumbs"
-            @swiper="thumbsSwiper = $event"
+            class="product-lightbox__thumb-swiper"
+            @swiper="lightboxThumbsSwiper = $event"
           >
-            <SwiperSlide v-for="(img, i) in allImages" :key="i" class="product-detail__thumb-slide">
-              <AppImage
-                :src="img"
-                :alt="`thumb ${i}`"
-                img-class="product-detail__thumb-img"
-                :sizes="{ mobile: { w: 72, h: 72 }, desktop: { w: 72, h: 72 } }"
-              />
+            <SwiperSlide
+              v-for="(img, i) in allImages"
+              :key="i"
+              class="product-lightbox__thumb-slide"
+            >
+              <img :src="img" class="product-lightbox__thumb-img" />
             </SwiperSlide>
           </Swiper>
-        </ClientOnly>
-      </div>
-
-      <!-- Info  -->
-      <div class="product-detail__info">
-        <NuxtLink
-          v-if="product.categorySlug"
-          :to="`/catalog?categorySlug=${product.categorySlug}`"
-          class="product-detail__category"
-          >{{ product.category }}</NuxtLink
-        >
-
-        <div class="product-detail__title-row">
-          <h1 class="product-detail__title">{{ product.title }}</h1>
-        </div>
-
-        <!-- Rating & meta -->
-        <div class="product-detail__meta">
-          <span v-if="product.rating" class="product-detail__rating">
-            <Star :size="14" fill="currentColor" />
-            {{ product.rating }}
-          </span>
-          <span v-if="product.brand" class="product-detail__brand">{{ product.brand }}</span>
-          <span
-            :class="[
-              'product-detail__stock',
-              !isOutOfStock ? 'product-detail__stock--in' : 'product-detail__stock--out',
-            ]"
-            >{{ !isOutOfStock ? 'В наявності' : 'Немає в наявності' }}</span
-          >
-        </div>
-
-        <!-- Quick specs -->
-        <div class="product-detail__quick-specs">
-          <div v-for="spec in quickSpecs" :key="spec.label" class="product-detail__quick-spec">
-            <span class="product-detail__quick-spec-label">{{ spec.label }}</span>
-            <span class="product-detail__quick-spec-value">{{ spec.value }}</span>
-          </div>
-        </div>
-
-        <p class="product-detail__desc">{{ product.description }}</p>
-
-        <!-- Price -->
-        <div class="product-detail__price-row">
-          <span class="product-detail__price">${{ product.price }}</span>
-          <span v-if="originalPrice" class="product-detail__price-original"
-            >${{ originalPrice }}</span
-          >
-          <span v-if="product.discountPercentage" class="product-detail__discount">
-            -{{ Math.round(product.discountPercentage) }}%
-          </span>
-        </div>
-
-        <!-- Out of stock hint -->
-        <div v-if="isOutOfStock" class="product-detail__oos-banner">
-          <span class="product-detail__oos-label">Немає в наявності</span>
-          <p class="product-detail__oos-hint">
-            Залиште заявку — ми повідомимо, коли товар з'явиться
-          </p>
-        </div>
-
-        <!-- Actions: favorite toggle + quantity/buy (or notify) -->
-        <div class="product-detail__actions">
-          <button
-            :class="['product-detail__fav-btn', { 'product-detail__fav-btn--active': isFav }]"
-            type="button"
-            :title="isFav ? 'Убрать из избранного' : 'В избранное'"
-            @click="toggleFav"
-          >
-            <Heart :size="18" :fill="isFav ? 'currentColor' : 'none'" />
-          </button>
-
-          <template v-if="!isOutOfStock">
-            <div class="product-detail__qty">
-              <button
-                class="product-detail__qty-btn"
-                type="button"
-                :disabled="qty <= 1"
-                @click="decrement"
-              >
-                <Minus :size="14" />
-              </button>
-              <span class="product-detail__qty-val">{{ qty }}</span>
-              <button class="product-detail__qty-btn" type="button" @click="increment">
-                <Plus :size="14" />
-              </button>
-            </div>
-            <AppButton
-              variant="gradient"
-              size="xl"
-              class="product-detail__add-btn"
-              @click="addToCart"
-            >
-              <ShoppingCart :size="24" /> Додати до кошика
-            </AppButton>
-          </template>
-
-          <AppButton
-            v-else
-            variant="outline"
-            size="lg"
-            class="product-detail__notify-btn"
-            @click="notifyWhenAvailable"
-          >
-            Повідомити про наявність
-          </AppButton>
-        </div>
-
-        <!-- Perks -->
-        <div class="product-detail__perks">
-          <div class="product-detail__perk">
-            <Truck :size="16" />
-            <span>Бесплатная доставка от $50</span>
-          </div>
-          <div class="product-detail__perk">
-            <Shield :size="16" />
-            <span>Гарантия 12 месяцев</span>
-          </div>
-          <div class="product-detail__perk">
-            <Package :size="16" />
-            <span>Возврат в течение 30 дней</span>
-          </div>
         </div>
       </div>
-    </div>
-
-    <!-- Tabs -->
-    <div v-if="product" class="product-detail__tabs">
-      <div class="product-detail__tabs-nav">
-        <button
-          v-for="tab in tabs"
-          :key="tab.key"
-          :class="[
-            'product-detail__tab-btn',
-            { 'product-detail__tab-btn--active': activeTab === tab.key },
-          ]"
-          type="button"
-          @click="activeTab = tab.key"
-        >
-          {{ tab.label }}
-        </button>
-      </div>
-
-      <div class="product-detail__tab-content">
-        <div v-if="activeTab === 'specs'">
-          <table class="product-detail__specs">
-            <tbody>
-              <tr v-for="spec in mockSpecs" :key="spec.label">
-                <td class="product-detail__spec-label">{{ spec.label }}</td>
-                <td class="product-detail__spec-value">{{ spec.value }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div v-else-if="activeTab === 'reviews'">
-          <ProductReviews :product-id="product.id" />
-        </div>
-
-        <div v-else-if="activeTab === 'qa'" class="product-detail__qa-empty">
-          <p>Питань поки немає. Будьте першим, хто задасть питання!</p>
-        </div>
-      </div>
-    </div>
+    </Teleport>
   </div>
-
-  <!-- Fullscreen gallery lightbox -->
-  <Teleport to="body">
-    <div v-if="lightboxOpen" class="product-lightbox">
-      <button class="product-lightbox__close" type="button" @click="closeLightbox">
-        <X :size="20" />
-      </button>
-      <div class="product-lightbox__main">
-        <Swiper
-          :modules="[Thumbs, Navigation]"
-          :initial-slide="lightboxActiveIndex"
-          :thumbs="{ swiper: lightboxThumbsSwiper }"
-          navigation
-          class="product-lightbox__swiper swiper-nav-image"
-        >
-          <SwiperSlide v-for="(img, i) in allImages" :key="i">
-            <img :src="img" :alt="product?.title" class="product-lightbox__img" />
-          </SwiperSlide>
-        </Swiper>
-      </div>
-      <div class="product-lightbox__thumb-strip">
-        <Swiper
-          :modules="[Thumbs]"
-          slides-per-view="auto"
-          :space-between="8"
-          watch-slides-progress
-          class="product-lightbox__thumb-swiper"
-          @swiper="lightboxThumbsSwiper = $event"
-        >
-          <SwiperSlide v-for="(img, i) in allImages" :key="i" class="product-lightbox__thumb-slide">
-            <img :src="img" class="product-lightbox__thumb-img" />
-          </SwiperSlide>
-        </Swiper>
-      </div>
-    </div>
-  </Teleport>
 </template>
 
 <style lang="scss">
