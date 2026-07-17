@@ -452,6 +452,11 @@ function handleNotifyClick(e: Event) {
     display: flex;
     flex-direction: column;
     align-items: baseline;
+
+    @include mixins.respond-to(xl) {
+      flex-direction: row-reverse;
+      gap: 6px;
+    }
   }
 
   &__price {

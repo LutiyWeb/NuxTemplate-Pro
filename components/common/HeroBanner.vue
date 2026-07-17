@@ -17,7 +17,9 @@ withDefaults(defineProps<Props>(), {
     <div class="hero-banner__content">
       <h2 class="hero-banner__title">{{ title }}</h2>
       <p v-if="description" class="hero-banner__sub">{{ description }}</p>
-      <span v-if="linkUrl" class="hero-banner__cta">Дивитись</span>
+      <AppButton v-if="linkUrl" variant="gradient" size="xl" tag="span" class="hero-banner__cta">
+        Дивитись
+      </AppButton>
     </div>
     <div class="hero-banner__image">
       <video
@@ -109,37 +111,10 @@ withDefaults(defineProps<Props>(), {
   }
 
   &__cta {
-    display: inline-flex;
     align-self: center;
-    padding: 14px 28px;
-    background: linear-gradient(
-      120deg,
-      $color-primary-light,
-      $color-primary,
-      $color-primary-dark,
-      $color-primary
-    );
-    background-size: 300% 300%;
-    color: $color-white;
-    border-radius: $radius-md;
-    font-weight: $font-weight-semibold;
-    font-size: $font-size-base;
-    box-shadow: 0 4px 16px rgb(79 70 229 / 35%);
-    transition:
-      box-shadow $transition-fast,
-      transform $transition-fast;
-    animation: hero-cta-gradient-flow 6s ease infinite;
 
     @include mixins.respond-to(md) {
       align-self: flex-start;
-      padding: 18px 36px;
-      font-size: $font-size-lg;
-    }
-
-    &:hover {
-      animation-play-state: paused;
-      box-shadow: 0 6px 20px rgb(79 70 229 / 45%);
-      transform: translateY(-1px);
     }
   }
 
@@ -167,16 +142,6 @@ withDefaults(defineProps<Props>(), {
       aspect-ratio: auto;
       max-height: 510px;
     }
-  }
-}
-
-@keyframes hero-cta-gradient-flow {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
   }
 }
 </style>
