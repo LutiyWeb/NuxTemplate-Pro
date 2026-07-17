@@ -30,11 +30,12 @@ function accept() {
   position: fixed;
   bottom: 16px;
   right: 16px;
-  z-index: 999;
+  left: 16px;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 380px;
+  max-width: 520px;
   padding: 24px;
   background: $color-white;
   border-radius: $radius-xl;

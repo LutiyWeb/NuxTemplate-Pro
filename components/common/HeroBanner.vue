@@ -17,7 +17,9 @@ withDefaults(defineProps<Props>(), {
     <div class="hero-banner__content">
       <h2 class="hero-banner__title">{{ title }}</h2>
       <p v-if="description" class="hero-banner__sub">{{ description }}</p>
-      <span v-if="linkUrl" class="hero-banner__cta">Дивитись</span>
+      <AppButton v-if="linkUrl" variant="gradient" size="xl" tag="span" class="hero-banner__cta">
+        Дивитись
+      </AppButton>
     </div>
     <div class="hero-banner__image">
       <video
@@ -53,7 +55,7 @@ withDefaults(defineProps<Props>(), {
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  min-height: 480px;
+  min-height: 450px;
   padding: 16px 20px;
   border-radius: $radius-2xl;
   background: $color-gray-100;
@@ -63,7 +65,7 @@ withDefaults(defineProps<Props>(), {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    min-height: 600px;
+    min-height: 500px;
     padding: 40px 64px;
     gap: 48px;
   }
@@ -109,24 +111,10 @@ withDefaults(defineProps<Props>(), {
   }
 
   &__cta {
-    display: inline-flex;
     align-self: center;
-    padding: 8px 16px;
-    background: $color-primary;
-    color: $color-white;
-    border-radius: $radius-md;
-    font-weight: $font-weight-semibold;
-    font-size: $font-size-sm;
-    transition: background $transition-fast;
 
     @include mixins.respond-to(md) {
       align-self: flex-start;
-      padding: 12px 24px;
-      font-size: $font-size-base;
-    }
-
-    &:hover {
-      background: $color-primary-dark;
     }
   }
 

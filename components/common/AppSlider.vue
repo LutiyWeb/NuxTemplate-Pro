@@ -119,7 +119,12 @@ onBeforeUnmount(() => {
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/mixins' as mixins;
 .app-slider {
+  --swiper-padding-bottom: 0;
+
   &--peek {
+    --swiper-pagination-bottom: -px;
+    --swiper-padding-bottom: 25px;
+
     overflow: visible;
 
     @include mixins.respond-to(sm) {
@@ -182,8 +187,10 @@ onBeforeUnmount(() => {
         border-radius: $radius-xl;
       }
     }
-    padding-block-start: 12px;
-    padding-block-end: 40px;
+
+    margin-block-start: -24px;
+    padding-block-start: 24px;
+    padding-block-end: var(--swiper-padding-bottom, 40px);
     --swiper-navigation-color: #{$color-gray-500};
     --swiper-navigation-size: 20px;
 
