@@ -112,9 +112,18 @@ withDefaults(defineProps<Props>(), {
 
   &__cta {
     align-self: center;
+    min-width: 180px;
+    padding: 12px;
+    font-size: $font-size-base;
 
     @include mixins.respond-to(md) {
       align-self: flex-start;
+    }
+
+    @include mixins.respond-to(lg) {
+      min-width: 240px;
+      padding: 16px;
+      font-size: $font-size-xl;
     }
   }
 
