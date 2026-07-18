@@ -99,7 +99,6 @@ const mockSpecs = computed(() => [
 const tabs = [
   { key: 'specs', label: 'Характеристики' },
   { key: 'reviews', label: 'Відгуки' },
-  { key: 'qa', label: 'Питання та відповіді' },
 ]
 const activeTab = ref('specs')
 
@@ -288,38 +287,36 @@ onBeforeUnmount(() => {
 
           <p class="product-detail__desc">{{ product.description }}</p>
 
-          <!-- Price -->
-          <div class="product-detail__price-row">
-            <span class="product-detail__price">${{ product.price }}</span>
-            <span v-if="originalPrice" class="product-detail__price-original"
-              >${{ originalPrice }}</span
-            >
-            <span v-if="product.discountPercentage" class="product-detail__discount">
-              -{{ Math.round(product.discountPercentage) }}%
-            </span>
-          </div>
+          <!-- Purchase: price + availability + favorite/qty/buy — reflowed via grid per breakpoint -->
+          <div class="product-detail__purchase">
+            <div class="product-detail__price-row">
+              <span class="product-detail__price">${{ product.price }}</span>
+              <span v-if="originalPrice" class="product-detail__price-original"
+                >${{ originalPrice }}</span
+              >
+              <span v-if="product.discountPercentage" class="product-detail__discount">
+                -{{ Math.round(product.discountPercentage) }}%
+              </span>
+            </div>
 
-          <!-- Out of stock hint -->
-          <div v-if="isOutOfStock" class="product-detail__oos-banner">
-            <span class="product-detail__oos-label">Немає в наявності</span>
-            <p class="product-detail__oos-hint">
-              Залиште заявку — ми повідомимо, коли товар з'явиться
-            </p>
-          </div>
+            <div v-if="isOutOfStock" class="product-detail__oos-banner">
+              <span class="product-detail__oos-label">Немає в наявності</span>
+              <p class="product-detail__oos-hint">
+                Залиште заявку — ми повідомимо, коли товар з'явиться
+              </p>
+            </div>
 
-          <!-- Actions: favorite toggle + quantity/buy (or notify) -->
-          <div class="product-detail__actions">
-            <button
-              :class="['product-detail__fav-btn', { 'product-detail__fav-btn--active': isFav }]"
-              type="button"
-              :title="isFav ? 'Убрать из избранного' : 'В избранное'"
-              @click="toggleFav"
-            >
-              <Heart :size="18" :fill="isFav ? 'currentColor' : 'none'" />
-            </button>
+            <div class="product-detail__controls">
+              <button
+                :class="['product-detail__fav-btn', { 'product-detail__fav-btn--active': isFav }]"
+                type="button"
+                :title="isFav ? 'Убрать из избранного' : 'В избранное'"
+                @click="toggleFav"
+              >
+                <Heart :size="18" :fill="isFav ? 'currentColor' : 'none'" />
+              </button>
 
-            <template v-if="!isOutOfStock">
-              <div class="product-detail__qty">
+              <div v-if="!isOutOfStock" class="product-detail__qty">
                 <button
                   class="product-detail__qty-btn"
                   type="button"
@@ -333,16 +330,17 @@ onBeforeUnmount(() => {
                   <Plus :size="14" />
                 </button>
               </div>
-              <AppButton
-                variant="gradient"
-                size="xl"
-                class="product-detail__add-btn"
-                @click="addToCart"
-              >
-                <ShoppingCart :size="24" /> Додати до кошика
-              </AppButton>
-            </template>
+            </div>
 
+            <AppButton
+              v-if="!isOutOfStock"
+              variant="gradient"
+              size="xl"
+              class="product-detail__add-btn"
+              @click="addToCart"
+            >
+              <ShoppingCart :size="24" /> Додати до кошика
+            </AppButton>
             <AppButton
               v-else
               variant="outline"
@@ -373,41 +371,43 @@ onBeforeUnmount(() => {
       </div>
 
       <!-- Tabs -->
-      <div v-if="product" class="product-detail__tabs">
-        <div class="product-detail__tabs-nav">
-          <button
-            v-for="tab in tabs"
-            :key="tab.key"
-            :class="[
-              'product-detail__tab-btn',
-              { 'product-detail__tab-btn--active': activeTab === tab.key },
-            ]"
-            type="button"
-            @click="activeTab = tab.key"
-          >
-            {{ tab.label }}
-          </button>
+      <div class="product-detail__content">
+        <div v-if="product" class="product-detail__tabs">
+          <div class="product-detail__tabs-nav">
+            <button
+              v-for="tab in tabs"
+              :key="tab.key"
+              :class="[
+                'product-detail__tab-btn',
+                { 'product-detail__tab-btn--active': activeTab === tab.key },
+              ]"
+              type="button"
+              @click="activeTab = tab.key"
+            >
+              {{ tab.label }}
+            </button>
+          </div>
+
+          <div class="product-detail__tab-content">
+            <div v-if="activeTab === 'specs'">
+              <table class="product-detail__specs">
+                <tbody>
+                  <tr v-for="spec in mockSpecs" :key="spec.label">
+                    <td class="product-detail__spec-label">{{ spec.label }}</td>
+                    <td class="product-detail__spec-value">{{ spec.value }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div v-else-if="activeTab === 'reviews'">
+              <ProductReviews :product-id="product.id" />
+            </div>
+          </div>
         </div>
-
-        <div class="product-detail__tab-content">
-          <div v-if="activeTab === 'specs'">
-            <table class="product-detail__specs">
-              <tbody>
-                <tr v-for="spec in mockSpecs" :key="spec.label">
-                  <td class="product-detail__spec-label">{{ spec.label }}</td>
-                  <td class="product-detail__spec-value">{{ spec.value }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div v-else-if="activeTab === 'reviews'">
-            <ProductReviews :product-id="product.id" />
-          </div>
-
-          <div v-else-if="activeTab === 'qa'" class="product-detail__qa-empty">
-            <p>Питань поки немає. Будьте першим, хто задасть питання!</p>
-          </div>
+        <!-- Questions — always visible, not tucked behind a tab -->
+        <div v-if="product" class="product-detail__questions">
+          <ProductQuestions :product-id="product.id" />
         </div>
       </div>
     </div>
@@ -656,13 +656,35 @@ onBeforeUnmount(() => {
     font-size: $font-size-sm;
   }
 
+  // Purchase: price + availability + favorite/qty/buy, reflowed via grid per breakpoint
+  &__purchase {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'price controls'
+      'oos oos'
+      'buy buy';
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 24px;
+
+    @include mixins.respond-to(md) {
+      grid-template-columns: auto 1fr;
+      grid-template-areas:
+        'price price'
+        'oos oos'
+        'controls buy';
+      align-items: stretch;
+    }
+  }
+
   // Price
   &__price-row {
+    grid-area: price;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
-    margin-bottom: 12px;
   }
 
   &__price {
@@ -686,17 +708,24 @@ onBeforeUnmount(() => {
     font-weight: $font-weight-bold;
   }
 
-  // Actions row: favorite toggle + quantity/buy (or notify)
-  &__actions {
+  // Favorite toggle + quantity stepper — pinned beside price on mobile,
+  // beside the buy button on desktop (see &__purchase grid-template-areas)
+  &__controls {
+    grid-area: controls;
     display: flex;
     align-items: stretch;
     gap: 8px;
-    margin-bottom: 24px;
+    justify-self: end;
+
+    @include mixins.respond-to(md) {
+      justify-self: start;
+    }
   }
 
   &__fav-btn {
     flex: 0 0 44px;
     width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -708,6 +737,11 @@ onBeforeUnmount(() => {
       background $transition-fast,
       color $transition-fast,
       border-color $transition-fast;
+
+    @include mixins.respond-to(md) {
+      height: auto;
+    }
+
     &:hover {
       border-color: $color-danger;
       color: $color-danger;
@@ -761,12 +795,13 @@ onBeforeUnmount(() => {
   // ".app-btn--gradient" chained in so these layout overrides
   // out-specificity AppButton's own size/variant rules reliably
   &__add-btn.app-btn--gradient {
-    flex: 1;
+    grid-area: buy;
     white-space: nowrap;
     justify-content: center;
+    min-width: 0;
 
     @include mixins.respond-to(md) {
-      flex: 0 0 250px;
+      max-width: 250px;
       padding: 16px;
     }
 
@@ -776,6 +811,7 @@ onBeforeUnmount(() => {
   }
 
   &__oos-banner {
+    grid-area: oos;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -783,7 +819,6 @@ onBeforeUnmount(() => {
     background: $color-gray-50;
     border: 1px solid $color-gray-200;
     border-radius: $radius-lg;
-    margin-bottom: 12px;
   }
 
   &__oos-label {
@@ -799,8 +834,13 @@ onBeforeUnmount(() => {
   }
 
   &__notify-btn {
-    flex: 1;
+    grid-area: buy;
     justify-content: center;
+
+    @include mixins.respond-to(md) {
+      justify-self: start;
+      width: auto;
+    }
   }
 
   // Perks
@@ -826,7 +866,20 @@ onBeforeUnmount(() => {
     }
   }
 
+  //info
+  &__content {
+    @include mixins.respond-to(xl) {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+  }
+
   // Tabs
+
+  &__tabs {
+    flex-shrink: 0;
+  }
 
   &__tabs-nav {
     display: flex;
@@ -881,11 +934,8 @@ onBeforeUnmount(() => {
     font-weight: $font-weight-medium;
   }
 
-  // Q&A
-  &__qa-empty {
-    padding: 12px 0;
-    color: $color-gray-400;
-    font-size: $font-size-sm;
+  // Questions
+  &__questions {
   }
 
   &__error {

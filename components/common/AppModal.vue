@@ -40,7 +40,7 @@ const emit = defineEmits<{ 'update:open': [boolean] }>()
   border-radius: $radius-xl;
   padding: 32px;
   width: 100%;
-  max-width: 420px;
+  max-width: 500px;
   z-index: $z-modal;
 
   &__close {

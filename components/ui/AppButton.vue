@@ -86,8 +86,14 @@ withDefaults(defineProps<Props>(), {
 
   &--xl {
     min-width: 240px;
-    padding: 20px;
-    font-size: $font-size-xl;
+    padding: 12px;
+    font-size: $font-size-sm;
+
+    @include mixins.respond-to(lg) {
+      min-width: 240px;
+      padding: 20px;
+      font-size: $font-size-xl;
+    }
   }
 
   // Variants
