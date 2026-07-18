@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { checkoutSchema, CHECKOUT_ERROR_MESSAGES } from '~/api/checkout'
-import type { Address } from '~/api/addresses'
+import { checkoutSchema, CHECKOUT_ERROR_MESSAGES } from '~/contracts/checkout'
+import type { Address } from '~/contracts/addresses'
 
 useSeoMeta({ title: 'Оформление заказа — Nexus Commerce' })
 

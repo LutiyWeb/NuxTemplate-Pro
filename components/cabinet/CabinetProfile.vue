@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { vMaska } from 'maska/vue'
 import { Eye, EyeOff, Trash2 } from 'lucide-vue-next'
-import { profileSchema, passwordSchema } from '~/api/profile'
+import { profileSchema, passwordSchema } from '~/contracts/profile'
 
 const authStore = useAuthStore()
 

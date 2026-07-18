@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Paperclip, X } from 'lucide-vue-next'
-import { questionSchema, QUESTION_MAX_FILES, QUESTION_MAX_FILE_SIZE } from '~/api/questions'
+import { questionSchema, QUESTION_MAX_FILES, QUESTION_MAX_FILE_SIZE } from '~/contracts/questions'
 
 interface Props {
   open: boolean

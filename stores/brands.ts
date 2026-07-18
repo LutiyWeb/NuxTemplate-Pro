@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Brand } from '~/api/brands'
+import type { Brand } from '~/contracts/brands'
 
 export type { Brand }
 

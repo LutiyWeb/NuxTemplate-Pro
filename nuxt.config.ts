@@ -45,6 +45,17 @@ export default defineNuxtConfig({
     plugins: { autoprefixer: {} },
   },
 
+  routeRules: {
+    '/about': { prerender: true },
+    '/contacts': { prerender: true },
+    '/legal': { prerender: true },
+    '/privacy-policy': { prerender: true },
+    '/public-offer': { prerender: true },
+    '/returns-exchanges': { prerender: true },
+    '/payment-delivery': { prerender: true },
+    '/rules-questions': { prerender: true },
+  },
+
   runtimeConfig: {
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',

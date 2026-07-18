@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { MessageSquare, X } from 'lucide-vue-next'
-import { reviewSchema } from '~/api/reviews'
+import { reviewSchema } from '~/contracts/reviews'
 import type { Review } from '~/types/review'
 
 defineProps<{ productId: number }>()

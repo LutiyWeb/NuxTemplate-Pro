@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MapPin, Star, Trash2, Plus, X } from 'lucide-vue-next'
-import { addressSchema } from '~/api/addresses'
-import type { Address } from '~/api/addresses'
+import { addressSchema } from '~/contracts/addresses'
+import type { Address } from '~/contracts/addresses'
 
 const { authFetch } = useAuthFetch()
 

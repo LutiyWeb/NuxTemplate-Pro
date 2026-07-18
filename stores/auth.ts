@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import type { User } from '~/api/auth'
+import type { User } from '~/contracts/auth'
 
 export const useAuthStore = defineStore('auth', () => {
   const config = useRuntimeConfig()

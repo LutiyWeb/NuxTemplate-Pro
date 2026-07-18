@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { Product } from '~/types/product'
-import type { CartEntry } from '~/api/cart'
+import type { CartEntry } from '~/contracts/cart'
 
 export type { CartEntry }
 

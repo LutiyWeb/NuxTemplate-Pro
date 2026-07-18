@@ -189,8 +189,8 @@ onBeforeUnmount(() => {
             class="product-detail__error-retry"
             @click="() => refreshNuxtData()"
           >
-            обновить страницу</button
-          >.
+            обновить страницу
+          </button>
         </p>
       </div>
 
@@ -860,6 +860,7 @@ onBeforeUnmount(() => {
     gap: 8px;
     font-size: $font-size-sm;
     color: $color-gray-600;
+
     svg {
       color: $color-primary;
       flex-shrink: 0;
