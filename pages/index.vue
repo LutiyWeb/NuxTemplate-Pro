@@ -206,15 +206,7 @@ const promoTiles = computed(() =>
           </NuxtLink>
         </div>
 
-        <div class="home__promo-list">
-          <PromoBannerCard
-            v-for="b in PROMO_BANNERS"
-            :key="b.id"
-            :gradient="b.gradient"
-            :title="b.title"
-            :subtitle="b.subtitle"
-          />
-        </div>
+        <PromoBannerList :banners="PROMO_BANNERS" class="home__promo-list" />
       </div>
     </section>
 
@@ -376,32 +368,6 @@ const promoTiles = computed(() =>
     align-items: center;
     justify-content: space-between;
     margin-bottom: 12px;
-  }
-
-  &__promo-list {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    padding-block: 4px 8px;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-
-    > * {
-      flex: 0 0 300px;
-    }
-
-    @include mixins.respond-to(md) {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      overflow: visible;
-
-      > * {
-        flex: 0 0 auto;
-      }
-    }
   }
 
   &__promo-title {

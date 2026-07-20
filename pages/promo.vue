@@ -31,7 +31,6 @@ const PROMO_BANNERS = [
   },
 ]
 
-const promoNeedsSlider = computed(() => !isMd.value || PROMO_BANNERS.length > 3)
 const viewMode = ref<'bento' | 'grid'>('bento')
 
 // ─── Sections ────────────────────────────────────────────────────────────────
@@ -106,38 +105,15 @@ const bentoSections = computed(() =>
 <template>
   <div class="promo-page">
     <div class="container">
-      <AppBreadcrumbs
-        :crumbs="[{ label: 'Головна', to: '/' }, { label: 'Акції та знижки' }]"
-        class="promo-page__breadcrumbs"
-      />
-      <TheTitle tag="h1" size="m" class="promo-page__title">Акції та знижки</TheTitle>
-
-      <AppSlider
-        v-if="promoNeedsSlider"
-        :slides="PROMO_BANNERS"
-        :space-between="16"
-        :breakpoints="{ 0: { slidesPerView: 1 }, 768: { slidesPerView: 3 } }"
-        class="promo-page__slider"
-      >
-        <template #default="slotProps">
-          <PromoBannerCard
-            v-if="slotProps?.slide"
-            :gradient="(slotProps.slide as any).gradient"
-            :title="(slotProps.slide as any).title"
-            :subtitle="(slotProps.slide as any).subtitle"
-          />
-        </template>
-      </AppSlider>
-
-      <div v-else class="promo-page__banners grid-col-3">
-        <PromoBannerCard
-          v-for="b in PROMO_BANNERS"
-          :key="b.id"
-          :gradient="b.gradient"
-          :title="b.title"
-          :subtitle="b.subtitle"
+      <div class="promo-page__head">
+        <TheTitle tag="h1" size="m" class="promo-page__title">Акції</TheTitle>
+        <AppBreadcrumbs
+          :crumbs="[{ label: 'Головна', to: '/' }, { label: 'Акції та знижки' }]"
+          class="promo-page__breadcrumbs"
         />
       </div>
+
+      <PromoBannerList :banners="PROMO_BANNERS" class="promo-page__banners" />
 
       <div v-if="store.loading" class="promo-page__skeleton">
         <TheProductCard v-for="n in 10" :key="n" :loading="true" />
@@ -253,6 +229,12 @@ const bentoSections = computed(() =>
 .promo-page {
   padding-block: 32px;
 
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   &__breadcrumbs {
     margin-bottom: 12px;
   }
@@ -261,7 +243,11 @@ const bentoSections = computed(() =>
     margin-bottom: 16px;
   }
   &__banners {
-    margin-bottom: 48px;
+    margin-bottom: 12px;
+
+    @include mixins.respond-to(md) {
+      margin-bottom: 24px;
+    }
   }
 
   &__skeleton {
